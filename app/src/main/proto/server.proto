@@ -8,6 +8,7 @@ syntax="proto3";
 
         service GameStarter{
         rpc startGame(StartRequest)returns(StartReply){}
+        rpc joinGame(JoinRequest) returns(StartReply){}
         }
 
         message StartRequest{
@@ -18,3 +19,7 @@ syntax="proto3";
         string gameid=1;
         }
 
+        message JoinRequest{
+        string name=1;
+        string gameid=2;
+        }
