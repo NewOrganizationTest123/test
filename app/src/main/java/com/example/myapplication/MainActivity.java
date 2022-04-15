@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import io.grpc.ManagedChannel;
@@ -27,6 +28,8 @@ import server.StartRequest;
 public class MainActivity extends AppCompatActivity {
     public static final String GAME_ID_KEY = "com.example.myapplication.GAME_ID_KEY";
     public static final String TAG = "wizzard";
+    public static final String SERVER_ADDRESS = "10.0.2.2";//this is the address for localhost on the host of the emulator. todo use real server address
+    public static final String SERVER_PORT = "50051";// todo use real port
 
     private EditText name;
     private Button startGame;
@@ -41,39 +44,38 @@ public class MainActivity extends AppCompatActivity {
         gameId = findViewById(R.id.editTextNumber);
         joinGame = findViewById(R.id.button3);
         startGame = findViewById(R.id.button);
-        startGame.setOnClickListener(view -> startNewGame(view));
-        joinGame.setOnClickListener(view -> joinGame(view));
+        startGame.setOnClickListener(this::startNewGame);
+        joinGame.setOnClickListener(this::joinGame);
 
     }
 
     public void startNewGame(View view) {
         new GrpcTask(this, true)
                 .execute(
-                        "10.0.2.2",//todo use real host name and port
+                        SERVER_ADDRESS,
                         name.getText().toString(),
-                        "50051", "-1");
+                        SERVER_PORT, "-1");
     }
 
     public void joinGame(View view) {
-        new GrpcTask(this, true)
+        new GrpcTask(this, false)
                 .execute(
-                        "10.0.2.2",//todo use real host name and port
+                        SERVER_ADDRESS,
                         name.getText().toString(),
-                        "50051", gameId.getText().toString()
+                        SERVER_PORT, gameId.getText().toString()
                 );
     }
 
     private static class GrpcTask extends AsyncTask<String, Void, String> {
         private final WeakReference<Activity> activityReference;
         private ManagedChannel channel;
-        private boolean startNewGame;
+        private final boolean startNewGame;
 
 
         private GrpcTask(Activity activity, boolean startNewGame) {
-            this.activityReference = new WeakReference<Activity>(activity);
+            this.activityReference = new WeakReference<>(activity);
             this.startNewGame = startNewGame;
         }
-
 
         @Override
         protected String doInBackground(String... params) {
@@ -82,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             String portStr = params[2];
             String gameid = params[3];
 
-            int port = TextUtils.isEmpty(portStr) ? 0 : Integer.valueOf(portStr);
+            int port = TextUtils.isEmpty(portStr) ? 0 : Integer.parseInt(portStr);
             try {
                 channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
                 GameStarterGrpc.GameStarterBlockingStub stub = GameStarterGrpc.newBlockingStub(channel);
@@ -92,18 +94,16 @@ public class MainActivity extends AppCompatActivity {
                     StartReply reply = stub.startGame(request);
                     return reply.getGameid();
                 } else {
-                    JoinRequest request = JoinRequest.newBuilder().setGameid(gameid).build();
-                    request = JoinRequest.newBuilder().setName(name).build();
+                    JoinRequest request = JoinRequest.newBuilder().setGameid(gameid).setName(name).build();
                     StartReply reply = stub.joinGame(request);
                     return reply.getGameid();
                 }
-
 
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
-                Log.e(TAG, String.valueOf(e.getStackTrace()));
+                Log.e(TAG, Arrays.toString(e.getStackTrace()));
                 pw.flush();
                 return String.format("Failed... : %n%s", sw);
             }
@@ -126,5 +126,4 @@ public class MainActivity extends AppCompatActivity {
             activity.startActivity(intent);
         }
     }
-
 }
