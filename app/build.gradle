@@ -33,7 +33,7 @@ android {
 protobuf {
     protoc { artifact = 'com.google.protobuf:protoc:3.12.0' }
     plugins {
-        grpc { artifact = 'io.grpc:protoc-gen-grpc-java:1.35.0'
+        grpc { artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
         }
     }
     generateProtoTasks {
@@ -63,9 +63,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     // Grpc dependencies
-    implementation 'io.grpc:grpc-okhttp:1.45.0'
-    implementation 'io.grpc:grpc-protobuf-lite:1.45.0'
-    implementation 'io.grpc:grpc-stub:1.45.0'
+    implementation "io.grpc:grpc-okhttp:${grpcVersion}"
+    implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
     implementation 'org.apache.tomcat:annotations-api:6.0.53'
 
     protobuf files("${project.rootDir}/protobuf")
