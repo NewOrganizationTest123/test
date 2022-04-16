@@ -20,8 +20,64 @@ plugins {
 }
 
 subprojects {
+    def isAndroid = project.name in [ 'app' ]
+
     ext {
+        protobufVersion = "3.12.0"
         grpcVersion = "1.45.0"
+
+        configureProtobuf = {
+            project.protobuf {
+                protoc {
+                    artifact = "com.google.protobuf:protoc:${protobufVersion}"
+                }
+                plugins {
+                    grpc {
+                        artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+                    }
+                }
+                generateProtoTasks {
+                    if (isAndroid) {
+                        all().each { task ->
+                            task.builtins {
+                                java { option 'lite' }
+                            }
+                            task.plugins {
+                                grpc { option 'lite' }
+                            }
+                        }
+                    } else {
+                        all()*.plugins {
+                            grpc {}
+                        }
+                    }
+                }
+            }
+            project.sourceSets {
+                main {
+                    java {
+                        srcDirs 'build/generated/source/proto/main/grpc'
+                        srcDirs 'build/generated/source/proto/main/java'
+                    }
+                }
+            }
+
+            // Grpc dependencies
+            project.dependencies {
+                if (isAndroid) {
+                    implementation "io.grpc:grpc-okhttp:${grpcVersion}"
+                    implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
+                } else {
+                    runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
+                    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+                }
+
+                implementation "io.grpc:grpc-stub:${grpcVersion}"
+                compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
+
+                protobuf files("${project.rootDir}/protobuf")
+            }
+        }
     }
 }
 

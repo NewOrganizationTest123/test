@@ -30,29 +30,10 @@ android {
         viewBinding true
     }
 }
-protobuf {
-    protoc { artifact = 'com.google.protobuf:protoc:3.12.0' }
-    plugins {
-        grpc { artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
-        }
-    }
-    generateProtoTasks {
-        all().each { task ->
-            task.builtins {
-                java { option 'lite' }
-            }
-            task.plugins {
-                grpc {
-                    option 'lite'
-                }
-            }
-        }
-    }
-}
+
+configureProtobuf()
 
 dependencies {
-    //classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.14"
-
     implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
@@ -61,12 +42,4 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-
-    // Grpc dependencies
-    implementation "io.grpc:grpc-okhttp:${grpcVersion}"
-    implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
-    implementation "io.grpc:grpc-stub:${grpcVersion}"
-    implementation 'org.apache.tomcat:annotations-api:6.0.53'
-
-    protobuf files("${project.rootDir}/protobuf")
 }
