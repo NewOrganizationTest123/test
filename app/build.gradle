@@ -67,4 +67,6 @@ dependencies {
     implementation 'io.grpc:grpc-protobuf-lite:1.45.0'
     implementation 'io.grpc:grpc-stub:1.45.0'
     implementation 'org.apache.tomcat:annotations-api:6.0.53'
+
+    protobuf files("${project.rootDir}/protobuf")
 }
