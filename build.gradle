@@ -20,7 +20,10 @@ plugins {
 }
 
 subprojects {
-    def isAndroid = project.name in ['app']
+    def isAndroid = project.name in [ 'wizard-app' ]
+
+    group = "com.github.wizard"
+    version = "0.0.1-SNAPSHOT"
 
     ext {
         protobufVersion = "3.12.0"

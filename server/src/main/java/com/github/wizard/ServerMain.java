@@ -1,4 +1,4 @@
-package com.example.wizzardserver;
+package com.github.wizard;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -7,10 +7,11 @@ import java.util.concurrent.TimeUnit;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
-import server.GameStarterGrpc;
-import server.JoinRequest;
-import server.StartReply;
-import server.StartRequest;
+
+import com.github.wizard.api.GameStarterGrpc;
+import com.github.wizard.api.JoinRequest;
+import com.github.wizard.api.StartReply;
+import com.github.wizard.api.StartRequest;
 
 
 public class ServerMain {

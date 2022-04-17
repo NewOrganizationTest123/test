@@ -3,9 +3,6 @@ plugins {
     id 'com.google.protobuf'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
-
 configureProtobuf()
 
 dependencies {

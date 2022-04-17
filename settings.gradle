@@ -14,6 +14,10 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "My Application"
-include ':app'
-include ':wizzardserver'
+rootProject.name = "wizard"
+
+include ':wizard-app'
+include ':wizard-server'
+
+project(":wizard-app").projectDir = "$rootDir/app" as File
+project(":wizard-server").projectDir = "$rootDir/server" as File
