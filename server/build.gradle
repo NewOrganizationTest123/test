@@ -1,9 +1,14 @@
 plugins {
     id 'java'
+    id 'application'
     id 'com.google.protobuf'
 }
 
 configureProtobuf()
+
+application {
+    mainClass = 'com.github.wizard.ServerMain'
+}
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
