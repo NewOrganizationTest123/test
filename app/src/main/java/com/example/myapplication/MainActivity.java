@@ -47,6 +47,18 @@ public class MainActivity extends AppCompatActivity {
         startGame.setOnClickListener(this::startNewGame);
         joinGame.setOnClickListener(this::joinGame);
 
+        Intent intent = getIntent();
+        String intent_message = intent.getStringExtra(MainMenuActivity.EXTRA_MESSAGE);
+
+        if(intent_message.equals("new game")){
+            gameId.setVisibility(View.GONE);
+            joinGame.setVisibility(View.GONE);
+        }
+        else{
+            startGame.setVisibility(View.GONE);
+        }
+
+
     }
 
     public void startNewGame(View view) {
