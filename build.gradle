@@ -6,8 +6,6 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.1.2"
-        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.14"
-
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -16,15 +14,81 @@ buildscript {
 plugins {
     id 'com.android.application' version '7.1.2' apply false
     id 'com.android.library' version '7.1.2' apply false
+    id "com.google.protobuf" version "0.8.18" apply false
     id "org.sonarqube" version "3.3"
 }
 
+subprojects {
+    def isAndroid = project.name in [ 'wizard-app' ]
+
+    group = "com.github.wizard"
+    version = "0.0.1-SNAPSHOT"
+
+    ext {
+        protobufVersion = "3.20.0"
+        grpcVersion = "1.45.0"
+
+        configureProtobuf = {
+            project.protobuf {
+                protoc {
+                    artifact = "com.google.protobuf:protoc:${protobufVersion}"
+                }
+                plugins {
+                    grpc {
+                        artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+                    }
+                }
+                generateProtoTasks {
+                    if (isAndroid) {
+                        all().each { task ->
+                            task.builtins {
+                                java { option 'lite' }
+                            }
+                            task.plugins {
+                                grpc { option 'lite' }
+                            }
+                        }
+                    } else {
+                        all()*.plugins {
+                            grpc {}
+                        }
+                    }
+                }
+            }
+            project.sourceSets {
+                main {
+                    java {
+                        srcDirs 'build/generated/source/proto/main/grpc'
+                        srcDirs 'build/generated/source/proto/main/java'
+                    }
+                }
+            }
+
+            // Grpc dependencies
+            project.dependencies {
+                if (isAndroid) {
+                    implementation "io.grpc:grpc-okhttp:${grpcVersion}"
+                    implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
+                } else {
+                    runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
+                    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+                }
+
+                implementation "io.grpc:grpc-stub:${grpcVersion}"
+                compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
+
+                protobuf files("${project.rootDir}/protobuf")
+            }
+        }
+    }
+}
+
 sonarqube {
-  properties {
-    property "sonar.projectKey", "NewOrganizationTest123_test"
-    property "sonar.organization", "neworganizationtest123"
-    property "sonar.host.url", "https://sonarcloud.io"
-  }
+    properties {
+        property "sonar.projectKey", "NewOrganizationTest123_test"
+        property "sonar.organization", "neworganizationtest123"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }
 
 

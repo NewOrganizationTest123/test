@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.github.wizard;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,14 +20,15 @@ import java.util.concurrent.TimeUnit;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import server.GameStarterGrpc;
-import server.JoinRequest;
-import server.StartReply;
-import server.StartRequest;
+
+import com.github.wizard.api.GameStarterGrpc;
+import com.github.wizard.api.JoinRequest;
+import com.github.wizard.api.StartReply;
+import com.github.wizard.api.StartRequest;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String GAME_ID_KEY = "com.example.myapplication.GAME_ID_KEY";
-    public static final String TAG = "wizzard";
+    public static final String GAME_ID_KEY = "com.github.wizard.GAME_ID_KEY";
+    public static final String TAG = "wizard";
     public static final String SERVER_ADDRESS = "10.0.2.2";//this is the address for localhost on the host of the emulator. todo use real server address
     public static final String SERVER_PORT = "50051";// todo use real port
 

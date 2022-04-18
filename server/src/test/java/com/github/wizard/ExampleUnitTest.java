@@ -1,4 +1,4 @@
-package com.example.wizzardserver;
+package com.github.wizard;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

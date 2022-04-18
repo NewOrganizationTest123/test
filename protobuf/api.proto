@@ -1,0 +1,23 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "com.github.wizard.api";
+
+package api;
+
+service GameStarter{
+  rpc startGame(StartRequest)returns(StartReply) {}
+  rpc joinGame(JoinRequest) returns(StartReply) {}
+}
+
+message StartRequest{
+  string name = 1;
+}
+
+message StartReply{
+  string gameid = 1;
+}
+
+message JoinRequest{
+  string name = 1;
+  string gameid = 2;
+}
