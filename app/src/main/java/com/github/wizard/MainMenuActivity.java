@@ -1,6 +1,7 @@
 package com.github.wizard;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -19,6 +20,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
         Button start_game_button = findViewById(R.id.start_game_button);
         Button join_game_button = findViewById(R.id.join_game_button);
+        Button instructions_button = findViewById(R.id.anleitung_button);
 
         start_game_button.setOnClickListener(e->{
             Intent intent = new Intent(this, MainActivity.class);
@@ -33,6 +35,12 @@ public class MainMenuActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_MESSAGE, message);
             startActivity(intent);
         });
+
+        instructions_button.setOnClickListener(e->{
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.brettspiele-report.de/images/wizard/Spielanleitung_Wizard.pdf"));
+            startActivity(intent);
+        });
+
 
     }
 
