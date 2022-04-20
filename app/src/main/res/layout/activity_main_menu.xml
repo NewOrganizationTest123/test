@@ -11,31 +11,41 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="Start New Game"
+        android:text="@string/neues_spiel_starten"
         app:layout_constraintBottom_toTopOf="@+id/join_game_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:backgroundTint="@color/blue"/>
+        android:backgroundTint="#3F88B4"
+        android:textSize="16sp"
+        app:cornerRadius="8dp"/>
+
 
     <Button
         android:id="@+id/join_game_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="Join Existing Game"
+        android:text="@string/spiel_beitreten"
         app:layout_constraintBottom_toTopOf="@+id/anleitung_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:backgroundTint="@color/red"/>
+        android:backgroundTint="#C33E35"
+        android:textSize="16sp"
+        app:cornerRadius="8dp" />
 
     <Button
         android:id="@+id/anleitung_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="64dp"
-        android:backgroundTint="@color/yellow"
-        android:text="Read Instructions"
+        android:text="@string/anleitung"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="#DAA133"
+        android:textSize="16sp"
+        app:cornerRadius="8dp" />
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
