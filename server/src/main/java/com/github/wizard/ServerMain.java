@@ -1,5 +1,13 @@
 package com.github.wizard;
 
+import com.github.wizard.api.GamePlayGrpc;
+import com.github.wizard.api.GameStarterGrpc;
+import com.github.wizard.api.JoinRequest;
+import com.github.wizard.api.Player;
+import com.github.wizard.api.ReadyToJoin;
+import com.github.wizard.api.StartReply;
+import com.github.wizard.api.StartRequest;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -7,12 +15,6 @@ import java.util.concurrent.TimeUnit;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
-
-import com.github.wizard.api.GameStarterGrpc;
-import com.github.wizard.api.JoinRequest;
-import com.github.wizard.api.ReadyToJoin;
-import com.github.wizard.api.StartReply;
-import com.github.wizard.api.StartRequest;
 
 
 public class ServerMain {
@@ -32,6 +34,7 @@ public class ServerMain {
         int port = 50051;
         server = ServerBuilder.forPort(port)
                 .addService(new GameStarterImpl())
+                .addService(new GamePlayImpl())
                 .build()
                 .start();
 
@@ -66,6 +69,7 @@ public class ServerMain {
             System.out.println("start request received by " + request.getName());
             Game newGame = new Game(++gameCounter);
             games.put(newGame.gameId, newGame);
+            newGame.addPlayer(new com.github.wizard.Player(request.getName()));
 
             StartReply reply = StartReply.newBuilder().setGameid(newGame.gameId + "").build();
             responseObserver.onNext(reply);
@@ -76,11 +80,13 @@ public class ServerMain {
         public void joinGame(JoinRequest request, StreamObserver<StartReply> responseObserver) {
             System.out.println("join request received for gameid " + request.getGameid());
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
-            if (newGame == null || newGame.getPlayerArrayList().size() >= MAX_PLAYERS) {
+            if (newGame == null || newGame.getPlayerArrayList().size() > MAX_PLAYERS || newGame.ready) {
                 System.out.println("error for game with id " + request.getGameid() + ": this game does not exist");
                 responseObserver.onNext(null);
                 responseObserver.onCompleted();
+                return;
             }
+            newGame.addPlayer(new com.github.wizard.Player(request.getName()));
             StartReply reply = StartReply.newBuilder().setGameid(newGame.gameId + "").build();
             responseObserver.onNext(reply);
             responseObserver.onCompleted();
@@ -95,7 +101,7 @@ public class ServerMain {
         public void checkJoinRequest(JoinRequest request, StreamObserver<ReadyToJoin> responseObserver) {
             System.out.println("checkGame");
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
-            if (newGame == null || newGame.getPlayerArrayList().size() >= MAX_PLAYERS) {
+            if (newGame == null || newGame.getPlayerArrayList().size() > MAX_PLAYERS || newGame.ready) {
                 ReadyToJoin reply = ReadyToJoin.newBuilder().setReady(false).build();
                 responseObserver.onNext(reply);
                 responseObserver.onCompleted();
@@ -106,5 +112,53 @@ public class ServerMain {
             }
         }
 
+    }
+
+    static class GamePlayImpl extends GamePlayGrpc.GamePlayImplBase {
+
+        /**
+         * @param request
+         * @param responseObserver
+         */
+        @Override
+        public void getPlayers(JoinRequest request, StreamObserver<Player> responseObserver) {
+            System.out.println("getPlayers");
+            Game newGame = games.get(Integer.valueOf(request.getGameid()));
+            if (newGame != null && newGame.getPlayerArrayList().size() < MAX_PLAYERS) {
+                for (com.github.wizard.Player player : newGame.getPlayerArrayList()) {
+                    Player grpcPlayer = Player.newBuilder().setName(player.name).build();
+                    responseObserver.onNext(grpcPlayer);
+                }
+
+            } else {
+                System.out.println("players requested for invalid game: gameid=" + request.getGameid());
+                Player grpcPlayer = Player.newBuilder().setName("").build();
+                responseObserver.onNext(grpcPlayer);
+            }
+            responseObserver.onCompleted();
+
+        }
+
+        /**
+         * @param request
+         * @param responseObserver
+         */
+        @Override
+        public void setAsReady(JoinRequest request, StreamObserver<ReadyToJoin> responseObserver) {
+            System.out.println("setAsReady");
+            Game newGame = games.get(Integer.valueOf(request.getGameid()));
+            if (newGame != null && newGame.getPlayerArrayList().size() < MAX_PLAYERS) {
+                newGame.ready = true;
+                ReadyToJoin reply = ReadyToJoin.newBuilder().setReady(true).build();
+                responseObserver.onNext(reply);
+                responseObserver.onCompleted();
+
+            } else {
+                System.out.println("invalid game");
+                ReadyToJoin reply = ReadyToJoin.newBuilder().setReady(false).build();
+                responseObserver.onNext(reply);
+                responseObserver.onCompleted();
+            }
+        }
     }
 }

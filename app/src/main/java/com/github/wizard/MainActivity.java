@@ -11,14 +11,23 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.github.wizard.api.GamePlayGrpc;
+import com.github.wizard.api.GameStarterGrpc;
+import com.github.wizard.api.JoinRequest;
+import com.github.wizard.api.Player;
+import com.github.wizard.api.StartReply;
+import com.github.wizard.api.StartRequest;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,11 +37,6 @@ import java.util.concurrent.TimeoutException;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-
-import com.github.wizard.api.GameStarterGrpc;
-import com.github.wizard.api.JoinRequest;
-import com.github.wizard.api.StartReply;
-import com.github.wizard.api.StartRequest;
 
 public class MainActivity extends AppCompatActivity {
     public static final String GAME_ID_KEY = "com.github.wizard.GAME_ID_KEY";
@@ -45,7 +49,12 @@ public class MainActivity extends AppCompatActivity {
     private Button startGame;
     private EditText gameId;
     private Button joinGame;
+    private static ManagedChannel channel;
     private ExecutorService executorService;
+    private static GameStarterGrpc.GameStarterBlockingStub gameStarterBlockingStub;
+    private static GamePlayGrpc.GamePlayBlockingStub gamePlayBlockingStub;
+    private static int gameIdInt;
+    private Button next;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +64,10 @@ public class MainActivity extends AppCompatActivity {
         gameId = findViewById(R.id.editTextNumber);
         joinGame = findViewById(R.id.button3);
         startGame = findViewById(R.id.button);
+        next = findViewById(R.id.next);
         startGame.setOnClickListener(this::startNewGame);
         joinGame.setOnClickListener(this::joinGame);
+        next.setOnClickListener((View view) -> new GrpcTaskGamePlay(new activateGAme(), new WeakReference<>(this)).execute());
         gameId.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
@@ -94,10 +105,6 @@ public class MainActivity extends AppCompatActivity {
         });
         executorService = Executors.newSingleThreadExecutor();
 
-
-
-
-
     Intent intent = getIntent();
         String intent_message = intent.getStringExtra(MainMenuActivity.EXTRA_MESSAGE);
 
@@ -108,8 +115,6 @@ public class MainActivity extends AppCompatActivity {
         else{
             startGame.setVisibility(View.GONE);
         }
-
-
     }
 
     public void startNewGame(View view) {
@@ -129,9 +134,27 @@ public class MainActivity extends AppCompatActivity {
                 );
     }
 
+    @Override
+    protected void onStop() {
+        try {
+            channel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        super.onStop();
+    }
+
+    private interface GrpcRunnable {
+        /**
+         * Perform a grpcRunnable and return all the logs.
+         */
+        String run(WeakReference<Activity> activityReference) throws Exception;
+
+        void doWhenDone(WeakReference<Activity> activityReference);
+    }
+
     private static class GrpcTask extends AsyncTask<String, Void, String> {
         private final WeakReference<Activity> activityReference;
-        private ManagedChannel channel;
         private final boolean startNewGame;
 
 
@@ -149,16 +172,17 @@ public class MainActivity extends AppCompatActivity {
 
             int port = TextUtils.isEmpty(portStr) ? 0 : Integer.parseInt(portStr);
             try {
-                channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
-                GameStarterGrpc.GameStarterBlockingStub stub = GameStarterGrpc.newBlockingStub(channel);
+                if (channel == null || channel.isShutdown())
+                    channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
+                if (gameStarterBlockingStub == null)
+                    gameStarterBlockingStub = GameStarterGrpc.newBlockingStub(channel);
                 if (startNewGame) {
-
                     StartRequest request = StartRequest.newBuilder().setName(name).build();
-                    StartReply reply = stub.startGame(request);
+                    StartReply reply = gameStarterBlockingStub.startGame(request);
                     return reply.getGameid();
                 } else {
                     JoinRequest request = JoinRequest.newBuilder().setGameid(gameid).setName(name).build();
-                    StartReply reply = stub.joinGame(request);
+                    StartReply reply = gameStarterBlockingStub.joinGame(request);
                     return reply.getGameid();
                 }
 
@@ -174,19 +198,142 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String gameId) {
-            try {
-                channel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            Activity activity = activityReference.get();
+            if (activity == null) {
+                return;
             }
+
+            if (!startNewGame) {//directly join game when joining game
+                Intent intent = new Intent(activity, GamePlayActivity.class);
+                intent.putExtra(GAME_ID_KEY, gameId);
+                activity.startActivity(intent);
+            } else {
+                gameIdInt = Integer.parseInt(gameId);
+                activity.runOnUiThread(() -> {
+                    TextView gameIdTextView = activity.findViewById(R.id.gameid);
+                    gameIdTextView.setVisibility(View.VISIBLE);
+                    gameIdTextView.setText("Your game Id is: " + gameId);
+                    Button startGame = activity.findViewById(R.id.button);
+                    startGame.setVisibility(View.GONE);
+                    (activity.findViewById(R.id.editTextTextPersonName)).setVisibility(View.GONE);
+
+                    new GrpcTaskGamePlay(new getPlayers(), activityReference).execute();
+                    Button refresh = activity.findViewById(R.id.refresh_playerList);
+                    refresh.setVisibility(View.VISIBLE);
+                    refresh.setOnClickListener((View view) -> new GrpcTaskGamePlay(new getPlayers(), activityReference).execute());
+
+                });
+
+
+            }
+        }
+    }
+
+    private static class getPlayers implements GrpcRunnable {
+        @Override
+        public String run(WeakReference<Activity> activityReference) {
+            StringBuilder logs = new StringBuilder();
+            Activity activity = activityReference.get();
+            if (activity == null) {
+                return "Failure to get activity";
+            }
+            TextView playersTextView = activity.findViewById(R.id.players);
+            activity.runOnUiThread(() -> {
+                activity.findViewById(R.id.refresh_playerList).setEnabled(false);
+                playersTextView.setVisibility(View.VISIBLE);
+                playersTextView.setText("Players: \n");
+            });
+
+            JoinRequest request = JoinRequest.newBuilder().setGameid(gameIdInt + "").setName("").build();
+            Iterator<Player> players = gamePlayBlockingStub.getPlayers(request);
+
+            while (players.hasNext()) {
+                Player player = players.next();
+                activity.runOnUiThread(() -> playersTextView.append(player.getName() + "\n"));
+                logs.append(player.getName()).append("\n");
+            }
+
+            return logs + "\ngame is ready to launch!";
+        }
+
+        @Override
+        public void doWhenDone(WeakReference<Activity> activityReference) {
+            Activity activity = activityReference.get();
+            if (activity == null) {
+                return;
+            }
+            activity.runOnUiThread(() -> {
+                activity.findViewById(R.id.next).setVisibility(View.VISIBLE);
+                activity.findViewById(R.id.refresh_playerList).setEnabled(true);
+            });
+
+        }
+    }
+
+    private static class GrpcTaskGamePlay extends AsyncTask<Void, Void, String> {
+        private final GrpcRunnable grpcRunnable;
+
+        private final WeakReference<Activity> activityReference;
+
+        GrpcTaskGamePlay(GrpcRunnable grpcRunnable, WeakReference<Activity> activity) {
+            this.grpcRunnable = grpcRunnable;
+            this.activityReference = activity;
+        }
+
+        @Override
+        protected String doInBackground(Void... nothing) {
+            try {
+                if (channel == null || channel.isShutdown())
+                    channel = ManagedChannelBuilder.forAddress(SERVER_ADDRESS, SERVER_TIMEOUT_SECONDS).usePlaintext().build();
+                if (gamePlayBlockingStub == null)
+                    gamePlayBlockingStub = GamePlayGrpc.newBlockingStub(channel);
+                String logs = grpcRunnable.run(activityReference);
+
+
+                return "Success!\n" + logs;
+            } catch (Exception e) {
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                pw.flush();
+                return "Failed... :\n" + sw;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("GrpcTaskResult", result);
+            grpcRunnable.doWhenDone(activityReference);
+        }
+    }
+
+    private static class activateGAme implements GrpcRunnable {
+
+
+        /**
+         * Perform a grpcRunnable and return all the logs.
+         *
+         * @param activityReference
+         */
+        @Override
+        public String run(WeakReference<Activity> activityReference) throws Exception {
+            JoinRequest request = JoinRequest.newBuilder().setGameid(gameIdInt + "").setName("").build();
+            if (gamePlayBlockingStub.setAsReady(request).getReady())
+                return "Success";
+            return "Failure";
+        }
+
+        @Override
+        public void doWhenDone(WeakReference<Activity> activityReference) {
             Activity activity = activityReference.get();
             if (activity == null) {
                 return;
             }
 
             Intent intent = new Intent(activity, GamePlayActivity.class);
-            intent.putExtra(GAME_ID_KEY, gameId);
+            intent.putExtra(GAME_ID_KEY, gameIdInt);
             activity.startActivity(intent);
+
         }
     }
 }

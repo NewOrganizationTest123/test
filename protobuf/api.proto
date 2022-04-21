@@ -1,27 +1,38 @@
-syntax = "proto3";
-option java_multiple_files = true;
-option java_package = "com.github.wizard.api";
+syntax="proto3";
+        option java_multiple_files=true;
+        option java_package="com.github.wizard.api";
 
-package api;
+        package api;
 
-service GameStarter{
-  rpc startGame(StartRequest)returns(StartReply) {}
-  rpc joinGame(JoinRequest) returns(StartReply) {}
-        rpc checkJoinRequest(JoinRequest) returns(ReadyToJoin){}
-}
+        service GameStarter{
+        rpc startGame(StartRequest)returns(StartReply){}
+        rpc joinGame(JoinRequest)returns(StartReply){}
+        rpc checkJoinRequest(JoinRequest)returns(ReadyToJoin){}
+        }
 
-message StartRequest{
-  string name = 1;
-}
+        service GamePlay{
+        rpc getPlayers(JoinRequest)returns(stream Player){}
+        rpc setAsReady(JoinRequest)returns(ReadyToJoin){}
+        }
 
-message StartReply{
-  string gameid = 1;
-}
 
-message JoinRequest{
-  string name = 1;
-  string gameid = 2;
-}
+        message StartRequest{
+        string name=1;
+        }
+
+        message StartReply{
+        string gameid=1;
+        }
+
+        message JoinRequest{
+        string name=1;
+        string gameid=2;
+        }
         message ReadyToJoin{
         bool ready=1;
+        }
+
+
+        message Player{
+        string name=1;
         }

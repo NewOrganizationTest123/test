@@ -15,4 +15,6 @@
     <string name="neues_spiel_starten">neues Spiel Starten</string>
     <string name="spiel_beitreten">Spiel beitreten</string>
     <string name="anleitung">Anleitung</string>
+    <string name="refresh_player_list">refresh player list</string>
+    <string name="start_game">next</string>
 </resources>
