@@ -3,9 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Martin Fritz/Documents/GitHub/Wizard/app/src/main/res/layout/activity_game_play.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/Martin Fritz/Documents/GitHub/Wizard/app/src/main/res/layout/activity_game_play.xml" value="0.2" />
+        <entry key="..\:/Users/Martin Fritz/Documents/GitHub/Wizard/app/src/main/res/layout/activity_listplayer.xml" value="0.358695652173913" />
         <entry key="..\:/Users/Martin Fritz/Documents/GitHub/Wizard/app/src/main/res/layout/activity_main.xml" value="0.358695652173913" />
         <entry key="..\:/Users/Martin Fritz/Documents/GitHub/Wizard/app/src/main/res/layout/activity_main_menu.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/Martin Fritz/Documents/GitHub/Wizard/app/src/main/res/layout/activity_points.xml" value="0.1" />
       </map>
     </option>
   </component>

@@ -4,15 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background = "@drawable/gameboard_background">
 
-    <TextView
-        android:id="@+id/textView2"
+
+<TextView
+        android:id="@+id/tVZauberlehrling"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="196dp"
         android:text="@string/hallo_zauberlehrling"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/white"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -21,20 +24,28 @@
         android:id="@+id/editTextTextPersonName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="30dp"
+        android:background="@color/white"
+        android:backgroundTint="#FFFFFF"
+
         android:ems="10"
-        android:hint="@string/wer_bist_du"
+        android:hint="@string/gib_deinen_namen_ein"
 
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/tVZauberlehrling" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/neues_spiel_starten"
+        android:layout_marginTop="50dp"
+        android:backgroundTint="#7CA64D"
+        android:textSize="16sp"
+        app:cornerRadius="8dp"
+
+        android:text="@string/spiel_starten"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
@@ -44,7 +55,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="80dp"
+        android:background="@color/white"
+
         android:ems="10"
         android:hint="@string/game_id"
         android:inputType="number"
@@ -55,7 +68,10 @@
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="#7CA64D"
         android:text="@string/spiel_beitreten"
+        android:textSize="16sp"
+        app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/editTextNumber"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/editTextNumber"
