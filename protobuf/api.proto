@@ -7,6 +7,7 @@ package api;
 service GameStarter{
   rpc startGame(StartRequest)returns(StartReply) {}
   rpc joinGame(JoinRequest) returns(StartReply) {}
+        rpc checkJoinRequest(JoinRequest) returns(ReadyToJoin){}
 }
 
 message StartRequest{
@@ -21,3 +22,6 @@ message JoinRequest{
   string name = 1;
   string gameid = 2;
 }
+        message ReadyToJoin{
+        bool ready=1;
+        }

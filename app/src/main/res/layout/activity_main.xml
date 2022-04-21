@@ -59,6 +59,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/editTextNumber"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/editTextNumber"
-        app:layout_constraintTop_toTopOf="@+id/editTextNumber" />
+        app:layout_constraintTop_toTopOf="@+id/editTextNumber"
+        android:enabled="false" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

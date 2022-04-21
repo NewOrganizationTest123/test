@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,7 +19,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -31,11 +39,13 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "wizard";
     public static final String SERVER_ADDRESS = "10.0.2.2";//this is the address for localhost on the host of the emulator. todo use real server address
     public static final String SERVER_PORT = "50051";// todo use real port
+    public static final int SERVER_TIMEOUT_SECONDS = 10;
 
     private EditText name;
     private Button startGame;
     private EditText gameId;
     private Button joinGame;
+    private ExecutorService executorService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +57,48 @@ public class MainActivity extends AppCompatActivity {
         startGame = findViewById(R.id.button);
         startGame.setOnClickListener(this::startNewGame);
         joinGame.setOnClickListener(this::joinGame);
+        gameId.addTextChangedListener(new TextWatcher() {
 
-        Intent intent = getIntent();
+            public void afterTextChanged(Editable s) {
+
+
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                Future<Boolean> booleanFuture = executorService.submit(() -> {
+                    if (gameId.getText() != null && gameId.getText().length() != 0) {
+                        ManagedChannel channel = ManagedChannelBuilder.forAddress(SERVER_ADDRESS, Integer.parseInt(SERVER_PORT)).usePlaintext().build();
+                        GameStarterGrpc.GameStarterBlockingStub stub = GameStarterGrpc.newBlockingStub(channel);
+                        JoinRequest request = JoinRequest.newBuilder().setGameid(gameId.getText().toString()).setName("").build();
+                        return stub.checkJoinRequest(request).getReady();
+                    } else
+                        return false;
+                });
+                try {
+                    joinGame.setEnabled(booleanFuture.get(SERVER_TIMEOUT_SECONDS, TimeUnit.SECONDS));//using server timeout
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (TimeoutException e) {
+                    Toast.makeText(MainActivity.this, "connection lost", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+
+
+            }
+        });
+        executorService = Executors.newSingleThreadExecutor();
+
+
+
+
+
+    Intent intent = getIntent();
         String intent_message = intent.getStringExtra(MainMenuActivity.EXTRA_MESSAGE);
 
         if(intent_message.equals("new game")){

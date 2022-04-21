@@ -10,6 +10,7 @@ import io.grpc.stub.StreamObserver;
 
 import com.github.wizard.api.GameStarterGrpc;
 import com.github.wizard.api.JoinRequest;
+import com.github.wizard.api.ReadyToJoin;
 import com.github.wizard.api.StartReply;
 import com.github.wizard.api.StartRequest;
 
@@ -18,6 +19,7 @@ public class ServerMain {
     public static HashMap<Integer, Game> games = new HashMap<>();
     public static int gameCounter = 0;
     private Server server;
+    public final static int MAX_PLAYERS=6;
 
     public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println("Welcome user!");
@@ -74,7 +76,7 @@ public class ServerMain {
         public void joinGame(JoinRequest request, StreamObserver<StartReply> responseObserver) {
             System.out.println("join request received for gameid " + request.getGameid());
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
-            if (newGame == null) {
+            if (newGame == null || newGame.getPlayerArrayList().size() >= MAX_PLAYERS) {
                 System.out.println("error for game with id " + request.getGameid() + ": this game does not exist");
                 responseObserver.onNext(null);
                 responseObserver.onCompleted();
@@ -83,6 +85,26 @@ public class ServerMain {
             responseObserver.onNext(reply);
             responseObserver.onCompleted();
         }
-    }
 
+
+        /**
+         * @param request          a valid game request
+         * @param responseObserver ReadyToJoin ready() when joining is possible
+         */
+        @Override
+        public void checkJoinRequest(JoinRequest request, StreamObserver<ReadyToJoin> responseObserver) {
+            System.out.println("checkGame");
+            Game newGame = games.get(Integer.valueOf(request.getGameid()));
+            if (newGame == null || newGame.getPlayerArrayList().size() >= MAX_PLAYERS) {
+                ReadyToJoin reply = ReadyToJoin.newBuilder().setReady(false).build();
+                responseObserver.onNext(reply);
+                responseObserver.onCompleted();
+            } else {
+                ReadyToJoin reply = ReadyToJoin.newBuilder().setReady(true).build();
+                responseObserver.onNext(reply);
+                responseObserver.onCompleted();
+            }
+        }
+
+    }
 }
