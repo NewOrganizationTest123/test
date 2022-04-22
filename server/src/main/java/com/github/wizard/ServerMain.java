@@ -1,10 +1,13 @@
 package com.github.wizard;
 
+import com.github.wizard.api.GameActionsGrpc;
+import com.github.wizard.api.GameMove;
 import com.github.wizard.api.GamePlayGrpc;
 import com.github.wizard.api.GameStarterGrpc;
 import com.github.wizard.api.JoinRequest;
 import com.github.wizard.api.Player;
 import com.github.wizard.api.ReadyToJoin;
+import com.github.wizard.api.Response;
 import com.github.wizard.api.StartReply;
 import com.github.wizard.api.StartRequest;
 
@@ -21,7 +24,8 @@ public class ServerMain {
     public static HashMap<Integer, Game> games = new HashMap<>();
     public static int gameCounter = 0;
     private Server server;
-    public final static int MAX_PLAYERS=6;
+    public final static int MAX_PLAYERS = 6;
+    public static final Card[] cards = {new Card(Color.RED, -1), new Card(Color.RED, Integer.MAX_VALUE), new Card(Color.RED, 5), new Card(Color.RED, 10), new Card(Color.RED, 12)};
 
     public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println("Welcome user!");
@@ -35,6 +39,7 @@ public class ServerMain {
         server = ServerBuilder.forPort(port)
                 .addService(new GameStarterImpl())
                 .addService(new GamePlayImpl())
+                .addService(new GameActiontyIml())
                 .build()
                 .start();
 
@@ -69,9 +74,7 @@ public class ServerMain {
             System.out.println("start request received by " + request.getName());
             Game newGame = new Game(++gameCounter);
             games.put(newGame.gameId, newGame);
-            newGame.addPlayer(new com.github.wizard.Player(request.getName()));
-
-            StartReply reply = StartReply.newBuilder().setGameid(newGame.gameId + "").build();
+            StartReply reply = StartReply.newBuilder().setGameid(newGame.gameId + "").setPlayerid(newGame.addPlayer(new com.github.wizard.Player(request.getName())) + "").build();
             responseObserver.onNext(reply);
             responseObserver.onCompleted();
         }
@@ -80,14 +83,13 @@ public class ServerMain {
         public void joinGame(JoinRequest request, StreamObserver<StartReply> responseObserver) {
             System.out.println("join request received for gameid " + request.getGameid());
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
-            if (newGame == null || newGame.getPlayerArrayList().size() > MAX_PLAYERS || newGame.ready) {
+            if (newGame == null || newGame.getNrPlayers() > MAX_PLAYERS || newGame.ready) {
                 System.out.println("error for game with id " + request.getGameid() + ": this game does not exist");
                 responseObserver.onNext(null);
                 responseObserver.onCompleted();
                 return;
             }
-            newGame.addPlayer(new com.github.wizard.Player(request.getName()));
-            StartReply reply = StartReply.newBuilder().setGameid(newGame.gameId + "").build();
+            StartReply reply = StartReply.newBuilder().setGameid(newGame.gameId + "").setPlayerid(newGame.addPlayer(new com.github.wizard.Player(request.getName())) + "").build();
             responseObserver.onNext(reply);
             responseObserver.onCompleted();
         }
@@ -101,7 +103,7 @@ public class ServerMain {
         public void checkJoinRequest(JoinRequest request, StreamObserver<ReadyToJoin> responseObserver) {
             System.out.println("checkGame");
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
-            if (newGame == null || newGame.getPlayerArrayList().size() > MAX_PLAYERS || newGame.ready) {
+            if (newGame == null || newGame.getNrPlayers() > MAX_PLAYERS || newGame.ready) {
                 ReadyToJoin reply = ReadyToJoin.newBuilder().setReady(false).build();
                 responseObserver.onNext(reply);
                 responseObserver.onCompleted();
@@ -124,8 +126,11 @@ public class ServerMain {
         public void getPlayers(JoinRequest request, StreamObserver<Player> responseObserver) {
             System.out.println("getPlayers");
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
-            if (newGame != null && newGame.getPlayerArrayList().size() < MAX_PLAYERS) {
+            if (newGame != null && newGame.getNrPlayers() < MAX_PLAYERS) {
                 for (com.github.wizard.Player player : newGame.getPlayerArrayList()) {
+                    if (player == null)
+                        break;
+                    System.out.println("player: " + player.name);
                     Player grpcPlayer = Player.newBuilder().setName(player.name).build();
                     responseObserver.onNext(grpcPlayer);
                 }
@@ -147,7 +152,7 @@ public class ServerMain {
         public void setAsReady(JoinRequest request, StreamObserver<ReadyToJoin> responseObserver) {
             System.out.println("setAsReady");
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
-            if (newGame != null && newGame.getPlayerArrayList().size() < MAX_PLAYERS) {
+            if (newGame != null && newGame.getNrPlayers() < MAX_PLAYERS) {
                 newGame.ready = true;
                 ReadyToJoin reply = ReadyToJoin.newBuilder().setReady(true).build();
                 responseObserver.onNext(reply);
@@ -159,6 +164,65 @@ public class ServerMain {
                 responseObserver.onNext(reply);
                 responseObserver.onCompleted();
             }
+        }
+    }
+
+    static class GameActiontyIml extends GameActionsGrpc.GameActionsImplBase {
+
+        /**
+         * @param responseObserver
+         */
+        @Override
+        public StreamObserver<GameMove> gameStream(StreamObserver<Response> responseObserver) {
+            System.out.println("gameStream");
+            return new StreamObserver<GameMove>() {
+                Game newGame;
+                com.github.wizard.Player player;
+
+                @Override
+                public void onNext(GameMove gameMove) {
+                    if (newGame == null) {
+                        System.out.println("player subscribed");
+                        newGame = games.get(Integer.valueOf(gameMove.getGameid()));
+                        player = newGame.getPlayerArrayList()[Integer.parseInt(gameMove.getPlayerid())];
+                        player.responseObserver = responseObserver;//subscribe me for updates if I am new or connection was lost
+                    }
+                    //do whatever the gameAction was
+                    System.out.println("gameMove: " + gameMove.getType());
+                    switch (gameMove.getType()) {
+                        case "0"://player subscribed
+                            System.out.println("request to subscribe new player");
+                            // TODO: 22.04.2022 check
+                            if (newGame.allPlayersSubscribed()) {//see if we are the last, then start handing out cards
+                                System.out.println("we are starting the game");
+                                newGame.startNewRound();
+                            }
+                            break;
+                        case "1": // submit estimates
+                            newGame.getCurrentRound().estimates[player.playerId] = Integer.parseInt(gameMove.getData());
+                            break;
+                        case "2"://2 is play card
+                            newGame.playCard(player.getCard(Integer.parseInt(gameMove.getData())), player);//retrieve card he/she wanted to play and play it
+                            break;
+                        default:
+                            throw new IllegalArgumentException("This game Action is not yet implemented");
+                    }
+
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                    System.out.println("gamePlay cancelled");
+                    t.printStackTrace();
+                    //todo try to recover or kill game session if not possible
+                }
+
+                @Override
+                public void onCompleted() {
+                    //client will terminate subscription
+                    responseObserver.onCompleted();
+                }
+            };
         }
     }
 }

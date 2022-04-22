@@ -40,6 +40,7 @@ import io.grpc.ManagedChannelBuilder;
 
 public class MainActivity extends AppCompatActivity {
     public static final String GAME_ID_KEY = "com.github.wizard.GAME_ID_KEY";
+    public static final String PLAYER_ID_KEY = "com.github.wizard.PALYER_ID_KEY";
     public static final String TAG = "wizard";
     public static final String SERVER_ADDRESS = "10.0.2.2";//this is the address for localhost on the host of the emulator. todo use real server address
     public static final String SERVER_PORT = "50051";// todo use real port
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private static GameStarterGrpc.GameStarterBlockingStub gameStarterBlockingStub;
     private static GamePlayGrpc.GamePlayBlockingStub gamePlayBlockingStub;
     private static int gameIdInt;
+    private static int playerId;
     private Button next;
 
     @Override
@@ -144,14 +146,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    private interface GrpcRunnable {
-        /**
-         * Perform a grpcRunnable and return all the logs.
-         */
-        String run(WeakReference<Activity> activityReference) throws Exception;
 
-        void doWhenDone(WeakReference<Activity> activityReference);
-    }
 
     private static class GrpcTask extends AsyncTask<String, Void, String> {
         private final WeakReference<Activity> activityReference;
@@ -183,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     JoinRequest request = JoinRequest.newBuilder().setGameid(gameid).setName(name).build();
                     StartReply reply = gameStarterBlockingStub.joinGame(request);
+                    playerId = Integer.parseInt(reply.getPlayerid());
                     return reply.getGameid();
                 }
 
@@ -206,9 +202,11 @@ public class MainActivity extends AppCompatActivity {
             if (!startNewGame) {//directly join game when joining game
                 Intent intent = new Intent(activity, GamePlayActivity.class);
                 intent.putExtra(GAME_ID_KEY, gameId);
+                intent.putExtra(PLAYER_ID_KEY, playerId + "");
                 activity.startActivity(intent);
             } else {
                 gameIdInt = Integer.parseInt(gameId);
+                playerId = playerId;
                 activity.runOnUiThread(() -> {
                     TextView gameIdTextView = activity.findViewById(R.id.gameid);
                     gameIdTextView.setVisibility(View.VISIBLE);
@@ -331,7 +329,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             Intent intent = new Intent(activity, GamePlayActivity.class);
-            intent.putExtra(GAME_ID_KEY, gameIdInt);
+            intent.putExtra(GAME_ID_KEY, gameIdInt + "");
+            intent.putExtra(PLAYER_ID_KEY, playerId + "");
             activity.startActivity(intent);
 
         }
