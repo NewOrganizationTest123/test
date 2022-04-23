@@ -17,4 +17,9 @@
     <string name="anleitung">Anleitung</string>
     <string name="refresh_player_list">refresh player list</string>
     <string name="start_game">next</string>
+    <string name="punkte">0</string>
+    <string name="runde">0</string>
+    <string name="spiel_starten">Spiel Starten</string>
+    <string name="gib_deinen_namen_ein">Gib deinen Namen ein</string>
+    <string name="aktuelle_spieler">Aktuelle Spieler</string>
 </resources>
