@@ -9,16 +9,12 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <string name="game_id">Game ID</string>
-    <string name="gib_deinen_namen_ein">Gib deinen Namen ein!</string>
+    <string name="wer_bist_du">wer bist du?</string>
+    <string name="game_id">game id</string>
     <string name="hallo_zauberlehrling">Hallo Zauberlehrling</string>
     <string name="neues_spiel_starten">neues Spiel Starten</string>
     <string name="spiel_beitreten">Spiel beitreten</string>
     <string name="anleitung">Anleitung</string>
-    <string name="aktuelle_spieler">aktuelle Spieler:</string>
-    <string name="spiel_starten">Spiel Starten</string>
-    <string name="punkte">Punkte</string>
-    <string name="runde">RUNDE:</string>
-
-
+    <string name="refresh_player_list">refresh player list</string>
+    <string name="start_game">next</string>
 </resources>
