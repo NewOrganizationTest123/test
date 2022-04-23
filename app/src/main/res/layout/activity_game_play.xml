@@ -14,8 +14,8 @@
         android:backgroundTint="#00FFFFFF"
         android:text="@string/punkte"
         android:textSize="20sp"
-        tools:layout_editor_absoluteX="275dp"
-        tools:layout_editor_absoluteY="31dp" />
+        tools:layout_editor_absoluteX="230dp"
+        tools:layout_editor_absoluteY="28dp" />
 
     <TextView
         android:id="@+id/tVRound"
@@ -78,7 +78,10 @@
         android:id="@+id/trumpf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="172dp"
+        android:layout_marginTop="76dp"
         android:text="Trumpf is"
+        android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -102,6 +105,7 @@
         android:id="@+id/stiche_made"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
         android:text="You have already made 0 Stiche"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/stiche_estimated" />
@@ -130,6 +134,8 @@
         android:id="@+id/round"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
         android:text="This is round 0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/trumpf" />
