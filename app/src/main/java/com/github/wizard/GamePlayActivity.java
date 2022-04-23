@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import com.github.wizard.api.Response;
 
 import java.lang.ref.WeakReference;
 import java.text.MessageFormat;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -25,6 +27,10 @@ import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 
 public class GamePlayActivity extends AppCompatActivity {
+
+    ImageView card_01, card_02, card_03, card_04, card_05, card_06;
+    Random r;
+
     public static String gameId;
     public static String playerId;
     private static BlockingQueue<GameMove> serverWaitingQueue = new LinkedBlockingQueue<>();
@@ -54,6 +60,14 @@ public class GamePlayActivity extends AppCompatActivity {
         new GameActionRunner(new GameActionRunnable(), new WeakReference<>(this), channel).execute();//fire up the streaming service
         findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
+
+        card_01 = (ImageView) findViewById(R.id.card_01);
+        card_02 = (ImageView) findViewById(R.id.card_02);
+        card_03 = (ImageView) findViewById(R.id.card_03);
+        card_04 = (ImageView) findViewById(R.id.card_04);
+        card_05 = (ImageView) findViewById(R.id.card_05);
+        card_06 = (ImageView) findViewById(R.id.card_06);
+
     }
 
     private void playCard(View view) {
