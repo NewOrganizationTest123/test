@@ -1,0 +1,71 @@
+syntax="proto3";
+        option java_multiple_files=true;
+        option java_package="com.github.wizard.api";
+
+        package api;
+
+        service GameStarter{
+        rpc startGame(StartRequest)returns(StartReply){}
+        rpc joinGame(JoinRequest)returns(StartReply){}
+        rpc checkJoinRequest(JoinRequest)returns(ReadyToJoin){}
+        }
+
+        service GamePlay{
+        rpc getPlayers(JoinRequest)returns(stream Player){}
+        rpc setAsReady(JoinRequest)returns(ReadyToJoin){}
+        }
+        service GameActions {
+        rpc gameStream(stream GameMove) returns (stream Response) {}
+        rpc test(JoinRequest)returns(StartReply){}
+        }
+
+        message StartRequest{
+        string name=1;
+        }
+
+        message StartReply{
+        string gameid=1;
+        string playerid=2;
+        }
+
+        message JoinRequest{
+        string name=1;
+        string gameid=2;
+        }
+        message ReadyToJoin{
+        bool ready=1;
+        }
+
+        message Player{
+        string name=1;
+        }
+/**
+ * 0: general ok-response
+ * 1: player who made stich and value of it
+ * 2: request to play card
+ * 3: request to update the game field
+ * 4: show em what is trumpf
+ * 5: request to sumit your estimate
+ * 6: results for the current round and updated round nr like points/roundNr
+ */
+        message Response {
+            string type=1;
+        string data = 2;
+        }
+
+        /**
+        type:
+         -1: end
+        0: suscribe for updates about gameboard
+        1: submit estimate for upcomming round
+        2: play out card
+         */
+        message GameMove{
+            string gameid=1;
+            string playerid=2;
+            string type=3;
+            string data=4;
+        }
+
+
+

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.github.wizard;
 
 import org.junit.Test;
 
