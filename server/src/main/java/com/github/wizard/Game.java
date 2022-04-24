@@ -38,13 +38,12 @@ public class Game {
      * @return the playerid of whoever was added
      */
     public int addPlayer(Player player) {
-        if(nrPlayers<playerArrayList.length) {
+        if (nrPlayers < playerArrayList.length) {
             playerArrayList[nrPlayers] = player;
             player.playerId = nrPlayers;
             player.game = this;
             return nrPlayers++;
-        }
-        else{
+        } else {
             return nrPlayers;
         }
     }
@@ -222,16 +221,12 @@ public class Game {
         }
     }
 
-    /**
-    needed for tests
-     */
+    /** needed for tests */
     public ArrayList<Card> getCardsStack() {
         return cardsStack;
     }
 
-    /**
-     needed for tests
-     */
+    /** needed for tests */
     public void setRounds(ArrayList<GameRound> rounds) {
         this.rounds = rounds;
     }
