@@ -174,4 +174,11 @@ public class Player implements GameUpdate {
     public ArrayList<Card> getCards() {
         return cards;
     }
+
+    /**
+    needed for test cases
+     */
+    public int getPoints() {
+        return points;
+    }
 }
