@@ -9,7 +9,7 @@ public class Game {
     public final int gameId;
     public boolean ready = false;
     private byte nrPlayers = 0;
-    private Player[] playerArrayList = new Player[ServerMain.MAX_PLAYERS];
+    private Player[] playerArrayList = new Player[Server.MAX_PLAYERS];
     private ArrayList<GameRound> rounds = new ArrayList<>();
     private ArrayList<Card> cardsStack = new ArrayList<>();
 
@@ -23,7 +23,7 @@ public class Game {
 
     /** creates a new card stack, consisting of all available cards */
     private void initializeCardStack() {
-        for (Card c : ServerMain.cards) {
+        for (Card c : Server.cards) {
             cardsStack.add(c);
         }
     }

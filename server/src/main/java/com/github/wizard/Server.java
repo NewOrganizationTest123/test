@@ -10,17 +10,17 @@ import com.github.wizard.api.ReadyToJoin;
 import com.github.wizard.api.Response;
 import com.github.wizard.api.StartReply;
 import com.github.wizard.api.StartRequest;
-import io.grpc.Server;
+
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-public class ServerMain {
+public class Server {
     public static HashMap<Integer, Game> games = new HashMap<>();
     public static int gameCounter = 0;
-    private Server server;
+    private io.grpc.Server server;
     public static final int MAX_PLAYERS = 6;
     public static final Card[] cards = {
         new Card(Color.RED, -1),
@@ -32,7 +32,7 @@ public class ServerMain {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println("Welcome user!");
-        final ServerMain server = new ServerMain();
+        final Server server = new Server();
         server.start();
         server.blockUntilShutdown();
     }
@@ -56,7 +56,7 @@ public class ServerMain {
                                             "*** shutting down gRPC server since JVM is shutting"
                                                     + " down");
                                     try {
-                                        ServerMain.this.stop();
+                                        Server.this.stop();
                                     } catch (InterruptedException e) {
                                         e.printStackTrace(System.err);
                                     }

@@ -1,8 +1,8 @@
 package com.github.wizard;
 
 public class Stich {
-    Card[] cards = new Card[ServerMain.MAX_PLAYERS];
-    Player[] players = new Player[ServerMain.MAX_PLAYERS];
+    Card[] cards = new Card[Server.MAX_PLAYERS];
+    Player[] players = new Player[Server.MAX_PLAYERS];
     int cardsCounter = 0;
     Color trumpf;
 

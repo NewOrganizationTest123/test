@@ -7,7 +7,7 @@ plugins {
 configureProtobuf()
 
 application {
-    mainClass = 'com.github.wizard.ServerMain'
+    mainClass = 'com.github.wizard.Server'
 }
 
 dependencies {
