@@ -202,14 +202,13 @@ public class Server implements Callable<Integer> {
                 newGame.ready = true;
                 ReadyToJoin reply = ReadyToJoin.newBuilder().setReady(true).build();
                 responseObserver.onNext(reply);
-                responseObserver.onCompleted();
 
             } else {
                 Logger.error("invalid game");
                 ReadyToJoin reply = ReadyToJoin.newBuilder().setReady(false).build();
                 responseObserver.onNext(reply);
-                responseObserver.onCompleted();
             }
+            responseObserver.onCompleted();
         }
     }
 
