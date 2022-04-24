@@ -9,14 +9,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
 
 @ExtendWith(MockitoExtension.class)
 public class GameTests {
@@ -29,7 +27,7 @@ public class GameTests {
     Player mocked_player2;
 
     @BeforeEach
-    public void init(){
+    public void init() {
         game = new Game(1);
         player1 = new Player("player_1_name");
         player2 = new Player("player_2_name");
@@ -42,7 +40,7 @@ public class GameTests {
         game_withMockedPlayers.addPlayer(mocked_player1);
         game_withMockedPlayers.addPlayer(mocked_player2);
 
-        //when(mocked_player1.)
+        // when(mocked_player1.)
     }
 
     @Test
@@ -55,7 +53,7 @@ public class GameTests {
     }
 
     @Test
-    public void addToManyPlayerTest(){
+    public void addToManyPlayerTest() {
         Player player3 = new Player("player_3_name");
         game.addPlayer(player3);
         assertEquals(3, game.getNrPlayers());
@@ -78,43 +76,47 @@ public class GameTests {
     }
 
     @Test
-    public void testStartNewRound(){
+    public void testStartNewRound() {
         game.initializeCardStack();
         int number_of_cards_on_stack = game.getCardsStack().size();
         game_withMockedPlayers.startNewRound();
 
-        assertNotEquals("no more than 4 colors available", game_withMockedPlayers.getCurrentRound().trumpf);
-        assertEquals(number_of_cards_on_stack-game_withMockedPlayers.getRoundNr()*game.getNrPlayers(), game_withMockedPlayers.getCardsStack().size());
+        assertNotEquals(
+                "no more than 4 colors available", game_withMockedPlayers.getCurrentRound().trumpf);
+        assertEquals(
+                number_of_cards_on_stack
+                        - game_withMockedPlayers.getRoundNr() * game.getNrPlayers(),
+                game_withMockedPlayers.getCardsStack().size());
     }
 
     @Test
-    public void testAllPlayersSuscribed_True(){
+    public void testAllPlayersSuscribed_True() {
         when(mocked_player1.isSubscribed()).thenReturn(true);
         when(mocked_player2.isSubscribed()).thenReturn(true);
         assertTrue(game_withMockedPlayers.allPlayersSubscribed());
     }
 
     @Test
-    public void testAllPlayersSuscribed_False(){
+    public void testAllPlayersSuscribed_False() {
         when(mocked_player1.isSubscribed()).thenReturn(true);
         when(mocked_player2.isSubscribed()).thenReturn(false);
         assertFalse(game_withMockedPlayers.allPlayersSubscribed());
     }
 
     @Test
-    public void playCardTest_lastCard(){
+    public void playCardTest_lastCard() {
         GameRound gameRoundMock = mock(GameRound.class);
         Stich stichMocked = mock(Stich.class);
-        gameRoundMock.cardsInTheMiddle=stichMocked;
-        gameRoundMock.stiche=new int[Server.MAX_PLAYERS];
-        gameRoundMock.stiche[0]=0;
-        gameRoundMock.stiche[1]=0;
-        gameRoundMock.valuesOfStiche=new int[Server.MAX_PLAYERS];
-        gameRoundMock.valuesOfStiche[0]=0;
-        gameRoundMock.valuesOfStiche[1]=0;
-        gameRoundMock.estimates=new int[Server.MAX_PLAYERS];
-        gameRoundMock.estimates[0]=0;
-        gameRoundMock.estimates[1]=1;
+        gameRoundMock.cardsInTheMiddle = stichMocked;
+        gameRoundMock.stiche = new int[Server.MAX_PLAYERS];
+        gameRoundMock.stiche[0] = 0;
+        gameRoundMock.stiche[1] = 0;
+        gameRoundMock.valuesOfStiche = new int[Server.MAX_PLAYERS];
+        gameRoundMock.valuesOfStiche[0] = 0;
+        gameRoundMock.valuesOfStiche[1] = 0;
+        gameRoundMock.estimates = new int[Server.MAX_PLAYERS];
+        gameRoundMock.estimates[0] = 0;
+        gameRoundMock.estimates[1] = 1;
 
         game_withMockedPlayers.startNewRound();
         ArrayList round_list = new ArrayList();
@@ -124,7 +126,8 @@ public class GameTests {
         when(stichMocked.getWinningPlayer()).thenReturn(mocked_player1);
         when(stichMocked.getValue()).thenReturn(12);
         when(mocked_player1.carsLeft()).thenReturn(0);
-        when(gameRoundMock.PlayCard(any(Card.class), any(Byte.class), any(Player.class))).thenReturn(true);
+        when(gameRoundMock.PlayCard(any(Card.class), any(Byte.class), any(Player.class)))
+                .thenReturn(true);
 
         game_withMockedPlayers.playCard(mock(Card.class), mocked_player1);
 
@@ -141,17 +144,10 @@ public class GameTests {
         round_list.add(gameRoundMock);
         game_withMockedPlayers.setRounds(round_list);
 
-        when(gameRoundMock.PlayCard(any(Card.class), any(Byte.class), any(Player.class))).thenReturn(false);
+        when(gameRoundMock.PlayCard(any(Card.class), any(Byte.class), any(Player.class)))
+                .thenReturn(false);
         game_withMockedPlayers.playCard(mock(Card.class), mocked_player1);
 
         verify(mocked_player2).CardPlayRequest();
     }
-
-
-
-
-
-
-
-
-    }
+}
