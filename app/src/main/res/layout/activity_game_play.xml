@@ -153,7 +153,7 @@
        app:layout_constraintTop_toTopOf="@+id/cards_on_table">
 
        <ImageView
-           android:id="@+id/card_01"
+           android:id="@+id/card1"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:layout_weight="1"
@@ -162,7 +162,7 @@
            android:layout_margin="10dp" />
 
        <ImageView
-           android:id="@+id/card_02"
+           android:id="@+id/card2"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:layout_weight="1"
@@ -171,7 +171,7 @@
            android:layout_margin="10dp" />
 
        <ImageView
-           android:id="@+id/card_03"
+           android:id="@+id/card3"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:layout_weight="1"
@@ -180,7 +180,7 @@
            android:layout_margin="10dp" />
 
        <ImageView
-           android:id="@+id/card_04"
+           android:id="@+id/card4"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:layout_weight="1"
@@ -189,7 +189,7 @@
            android:layout_margin="10dp" />
 
        <ImageView
-           android:id="@+id/card_05"
+           android:id="@+id/card5"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:layout_weight="1"
@@ -198,7 +198,7 @@
            android:layout_margin="10dp" />
 
        <ImageView
-           android:id="@+id/card_06"
+           android:id="@+id/card6"
            android:layout_width="0dp"
            android:layout_height="wrap_content"
            android:layout_weight="1"

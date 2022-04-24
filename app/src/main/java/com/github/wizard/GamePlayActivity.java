@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GamePlayActivity extends AppCompatActivity {
 
-    ImageView card_01, card_02, card_03, card_04, card_05, card_06;
+    ImageView card1, card2, card3, card4, card5, card6;
     Random r;
 
     public static String gameId;
@@ -62,12 +62,14 @@ public class GamePlayActivity extends AppCompatActivity {
         findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
 
-        /*card_01 = (ImageView) findViewById(R.id.card_01);
-        card_02 = (ImageView) findViewById(R.id.card_02);
-        card_03 = (ImageView) findViewById(R.id.card_03);
-        card_04 = (ImageView) findViewById(R.id.card_04);
-        card_05 = (ImageView) findViewById(R.id.card_05);
-        card_06 = (ImageView) findViewById(R.id.card_06);*/
+        /*
+        card1 = (ImageView) findViewById(R.id.card1);
+        card2 = (ImageView) findViewById(R.id.card2);
+        card3 = (ImageView) findViewById(R.id.card3);
+        card4 = (ImageView) findViewById(R.id.card4);
+        card5 = (ImageView) findViewById(R.id.card5);
+        card6 = (ImageView) findViewById(R.id.card6);
+        */
 
     }
 
