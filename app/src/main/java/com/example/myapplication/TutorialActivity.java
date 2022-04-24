@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class TutorialActivity extends AppCompatActivity implements View.OnClickListener {
+public class TutorialActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,8 +18,6 @@ public class TutorialActivity extends AppCompatActivity implements View.OnClickL
 
         TextView title = (TextView) findViewById(R.id.titlewindow);
         TextView tv = (TextView) findViewById(R.id.tutorialtext);
-        Button btn = (Button) findViewById(R.id.backbtn);
-        btn.setOnClickListener(this);
 
         title.setText("Spielregeln und Vorbereitungen\n");
         StringBuilder sb = new StringBuilder();
@@ -47,10 +45,5 @@ public class TutorialActivity extends AppCompatActivity implements View.OnClickL
 
         sb.append(text);
         tv.setText(sb.toString());
-    }
-
-    @Override
-    public void onClick(View view) {
-        startActivity(new Intent(TutorialActivity.this, MenuActivity.class));
     }
 }
