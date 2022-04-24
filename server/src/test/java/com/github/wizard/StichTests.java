@@ -1,4 +1,5 @@
 package com.github.wizard;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +13,7 @@ public class StichTests {
     Player player2;
 
     @BeforeEach
-    public void init(){
+    public void init() {
         stich = new Stich(Color.RED);
         player1 = new Player("player1");
         player2 = new Player("player2");
@@ -21,7 +22,7 @@ public class StichTests {
     }
 
     @Test
-    public void testPlayCard(){
+    public void testPlayCard() {
         assertEquals(null, stich.cards[0]);
         assertEquals(null, stich.players[0]);
 
@@ -32,13 +33,10 @@ public class StichTests {
     }
 
     @Test
-    public void testGetWinningPlayer(){
+    public void testGetWinningPlayer() {
         stich.playCArd(card1, player1);
         stich.playCArd(card2, player2);
         stich.getWinningPlayer();
         assertEquals(player1, stich.getWinningPlayer());
     }
-
-
-
 }

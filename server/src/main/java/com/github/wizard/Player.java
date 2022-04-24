@@ -175,9 +175,7 @@ public class Player implements GameUpdate {
         return cards;
     }
 
-    /**
-    needed for test cases
-     */
+    /** needed for test cases */
     public int getPoints() {
         return points;
     }
