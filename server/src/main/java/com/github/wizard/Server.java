@@ -83,6 +83,7 @@ public class Server implements Callable<Integer> {
                                         Server.this.stop();
                                     } catch (InterruptedException e) {
                                         Logger.trace(e);
+                                        Thread.currentThread().interrupt();
                                     }
                                     Logger.error("*** server shut down");
                                 }));

@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
+                            Thread.currentThread().interrupt();
                         } catch (TimeoutException e) {
                             Toast.makeText(MainActivity.this, "connection lost", Toast.LENGTH_SHORT)
                                     .show();
