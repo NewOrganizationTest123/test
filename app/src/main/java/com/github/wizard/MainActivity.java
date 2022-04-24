@@ -13,16 +13,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.github.wizard.api.GamePlayGrpc;
 import com.github.wizard.api.GameStarterGrpc;
 import com.github.wizard.api.JoinRequest;
 import com.github.wizard.api.Player;
 import com.github.wizard.api.StartReply;
 import com.github.wizard.api.StartRequest;
-
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.ref.WeakReference;
@@ -35,15 +34,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-
 public class MainActivity extends AppCompatActivity {
     public static final String GAME_ID_KEY = "com.github.wizard.GAME_ID_KEY";
     public static final String PLAYER_ID_KEY = "com.github.wizard.PALYER_ID_KEY";
     public static final String TAG = "wizard";
-    public static final String SERVER_ADDRESS = "10.0.2.2";//this is the address for localhost on the host of the emulator. todo use real server address
-    public static final String SERVER_PORT = "50051";// todo use real port
+    public static final String SERVER_ADDRESS =
+            "10.0.2.2"; // this is the address for localhost on the host of the emulator. todo use
+    // real server address
+    public static final String SERVER_PORT = "50051"; // todo use real port
     public static final int SERVER_TIMEOUT_SECONDS = 10;
 
     private EditText name;
@@ -69,62 +67,75 @@ public class MainActivity extends AppCompatActivity {
         next = findViewById(R.id.next);
         startGame.setOnClickListener(this::startNewGame);
         joinGame.setOnClickListener(this::joinGame);
-        next.setOnClickListener((View view) -> new GrpcTaskGamePlay(new activateGAme(), new WeakReference<>(this)).execute());
-        gameId.addTextChangedListener(new TextWatcher() {
+        next.setOnClickListener(
+                (View view) ->
+                        new GrpcTaskGamePlay(new activateGAme(), new WeakReference<>(this))
+                                .execute());
+        gameId.addTextChangedListener(
+                new TextWatcher() {
 
-            public void afterTextChanged(Editable s) {
+                    public void afterTextChanged(Editable s) {}
 
+                    public void beforeTextChanged(
+                            CharSequence s, int start, int count, int after) {}
 
-            }
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                Future<Boolean> booleanFuture = executorService.submit(() -> {
-                    if (gameId.getText() != null && gameId.getText().length() != 0) {
-                        ManagedChannel channel = ManagedChannelBuilder.forAddress(SERVER_ADDRESS, Integer.parseInt(SERVER_PORT)).usePlaintext().build();
-                        GameStarterGrpc.GameStarterBlockingStub stub = GameStarterGrpc.newBlockingStub(channel);
-                        JoinRequest request = JoinRequest.newBuilder().setGameid(gameId.getText().toString()).setName("").build();
-                        return stub.checkJoinRequest(request).getReady();
-                    } else
-                        return false;
+                        Future<Boolean> booleanFuture =
+                                executorService.submit(
+                                        () -> {
+                                            if (gameId.getText() != null
+                                                    && gameId.getText().length() != 0) {
+                                                ManagedChannel channel =
+                                                        ManagedChannelBuilder.forAddress(
+                                                                        SERVER_ADDRESS,
+                                                                        Integer.parseInt(
+                                                                                SERVER_PORT))
+                                                                .usePlaintext()
+                                                                .build();
+                                                GameStarterGrpc.GameStarterBlockingStub stub =
+                                                        GameStarterGrpc.newBlockingStub(channel);
+                                                JoinRequest request =
+                                                        JoinRequest.newBuilder()
+                                                                .setGameid(
+                                                                        gameId.getText().toString())
+                                                                .setName("")
+                                                                .build();
+                                                return stub.checkJoinRequest(request).getReady();
+                                            } else return false;
+                                        });
+                        try {
+                            joinGame.setEnabled(
+                                    booleanFuture.get(
+                                            SERVER_TIMEOUT_SECONDS,
+                                            TimeUnit.SECONDS)); // using server timeout
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (TimeoutException e) {
+                            Toast.makeText(MainActivity.this, "connection lost", Toast.LENGTH_SHORT)
+                                    .show();
+                            e.printStackTrace();
+                        }
+                    }
                 });
-                try {
-                    joinGame.setEnabled(booleanFuture.get(SERVER_TIMEOUT_SECONDS, TimeUnit.SECONDS));//using server timeout
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (TimeoutException e) {
-                    Toast.makeText(MainActivity.this, "connection lost", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-
-
-            }
-        });
         executorService = Executors.newSingleThreadExecutor();
 
-    Intent intent = getIntent();
+        Intent intent = getIntent();
         String intent_message = intent.getStringExtra(MainMenuActivity.EXTRA_MESSAGE);
 
-        if(intent_message.equals("new game")){
+        if (intent_message.equals("new game")) {
             gameId.setVisibility(View.GONE);
             joinGame.setVisibility(View.GONE);
-        }
-        else{
+        } else {
             startGame.setVisibility(View.GONE);
         }
     }
 
     public void startNewGame(View view) {
         new GrpcTask(this, true)
-                .execute(
-                        SERVER_ADDRESS,
-                        name.getText().toString(),
-                        SERVER_PORT, "-1");
+                .execute(SERVER_ADDRESS, name.getText().toString(), SERVER_PORT, "-1");
     }
 
     public void joinGame(View view) {
@@ -132,8 +143,8 @@ public class MainActivity extends AppCompatActivity {
                 .execute(
                         SERVER_ADDRESS,
                         name.getText().toString(),
-                        SERVER_PORT, gameId.getText().toString()
-                );
+                        SERVER_PORT,
+                        gameId.getText().toString());
     }
 
     @Override
@@ -146,12 +157,9 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
     }
 
-
-
     private static class GrpcTask extends AsyncTask<String, Void, String> {
         private final WeakReference<Activity> activityReference;
         private final boolean startNewGame;
-
 
         private GrpcTask(Activity activity, boolean startNewGame) {
             this.activityReference = new WeakReference<>(activity);
@@ -176,7 +184,8 @@ public class MainActivity extends AppCompatActivity {
                     StartReply reply = gameStarterBlockingStub.startGame(request);
                     return reply.getGameid();
                 } else {
-                    JoinRequest request = JoinRequest.newBuilder().setGameid(gameid).setName(name).build();
+                    JoinRequest request =
+                            JoinRequest.newBuilder().setGameid(gameid).setName(name).build();
                     StartReply reply = gameStarterBlockingStub.joinGame(request);
                     playerId = Integer.parseInt(reply.getPlayerid());
                     return reply.getGameid();
@@ -199,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            if (!startNewGame) {//directly join game when joining game
+            if (!startNewGame) { // directly join game when joining game
                 Intent intent = new Intent(activity, GamePlayActivity.class);
                 intent.putExtra(GAME_ID_KEY, gameId);
                 intent.putExtra(PLAYER_ID_KEY, playerId + "");
@@ -207,22 +216,25 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 gameIdInt = Integer.parseInt(gameId);
                 playerId = playerId;
-                activity.runOnUiThread(() -> {
-                    TextView gameIdTextView = activity.findViewById(R.id.gameid);
-                    gameIdTextView.setVisibility(View.VISIBLE);
-                    gameIdTextView.setText("Your game Id is: " + gameId);
-                    Button startGame = activity.findViewById(R.id.button);
-                    startGame.setVisibility(View.GONE);
-                    (activity.findViewById(R.id.editTextTextPersonName)).setVisibility(View.GONE);
+                activity.runOnUiThread(
+                        () -> {
+                            TextView gameIdTextView = activity.findViewById(R.id.gameid);
+                            gameIdTextView.setVisibility(View.VISIBLE);
+                            gameIdTextView.setText("Your game Id is: " + gameId);
+                            Button startGame = activity.findViewById(R.id.button);
+                            startGame.setVisibility(View.GONE);
+                            (activity.findViewById(R.id.editTextTextPersonName))
+                                    .setVisibility(View.GONE);
 
-                    new GrpcTaskGamePlay(new getPlayers(), activityReference).execute();
-                    Button refresh = activity.findViewById(R.id.refresh_playerList);
-                    refresh.setVisibility(View.VISIBLE);
-                    refresh.setOnClickListener((View view) -> new GrpcTaskGamePlay(new getPlayers(), activityReference).execute());
-
-                });
-
-
+                            new GrpcTaskGamePlay(new getPlayers(), activityReference).execute();
+                            Button refresh = activity.findViewById(R.id.refresh_playerList);
+                            refresh.setVisibility(View.VISIBLE);
+                            refresh.setOnClickListener(
+                                    (View view) ->
+                                            new GrpcTaskGamePlay(
+                                                            new getPlayers(), activityReference)
+                                                    .execute());
+                        });
             }
         }
     }
@@ -236,13 +248,15 @@ public class MainActivity extends AppCompatActivity {
                 return "Failure to get activity";
             }
             TextView playersTextView = activity.findViewById(R.id.players);
-            activity.runOnUiThread(() -> {
-                activity.findViewById(R.id.refresh_playerList).setEnabled(false);
-                playersTextView.setVisibility(View.VISIBLE);
-                playersTextView.setText("Players: \n");
-            });
+            activity.runOnUiThread(
+                    () -> {
+                        activity.findViewById(R.id.refresh_playerList).setEnabled(false);
+                        playersTextView.setVisibility(View.VISIBLE);
+                        playersTextView.setText("Players: \n");
+                    });
 
-            JoinRequest request = JoinRequest.newBuilder().setGameid(gameIdInt + "").setName("").build();
+            JoinRequest request =
+                    JoinRequest.newBuilder().setGameid(gameIdInt + "").setName("").build();
             Iterator<Player> players = gamePlayBlockingStub.getPlayers(request);
 
             while (players.hasNext()) {
@@ -260,11 +274,11 @@ public class MainActivity extends AppCompatActivity {
             if (activity == null) {
                 return;
             }
-            activity.runOnUiThread(() -> {
-                activity.findViewById(R.id.next).setVisibility(View.VISIBLE);
-                activity.findViewById(R.id.refresh_playerList).setEnabled(true);
-            });
-
+            activity.runOnUiThread(
+                    () -> {
+                        activity.findViewById(R.id.next).setVisibility(View.VISIBLE);
+                        activity.findViewById(R.id.refresh_playerList).setEnabled(true);
+                    });
         }
     }
 
@@ -282,11 +296,13 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(Void... nothing) {
             try {
                 if (channel == null || channel.isShutdown())
-                    channel = ManagedChannelBuilder.forAddress(SERVER_ADDRESS, SERVER_TIMEOUT_SECONDS).usePlaintext().build();
+                    channel =
+                            ManagedChannelBuilder.forAddress(SERVER_ADDRESS, SERVER_TIMEOUT_SECONDS)
+                                    .usePlaintext()
+                                    .build();
                 if (gamePlayBlockingStub == null)
                     gamePlayBlockingStub = GamePlayGrpc.newBlockingStub(channel);
                 String logs = grpcRunnable.run(activityReference);
-
 
                 return "Success!\n" + logs;
             } catch (Exception e) {
@@ -307,7 +323,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static class activateGAme implements GrpcRunnable {
 
-
         /**
          * Perform a grpcRunnable and return all the logs.
          *
@@ -315,9 +330,9 @@ public class MainActivity extends AppCompatActivity {
          */
         @Override
         public String run(WeakReference<Activity> activityReference) throws Exception {
-            JoinRequest request = JoinRequest.newBuilder().setGameid(gameIdInt + "").setName("").build();
-            if (gamePlayBlockingStub.setAsReady(request).getReady())
-                return "Success";
+            JoinRequest request =
+                    JoinRequest.newBuilder().setGameid(gameIdInt + "").setName("").build();
+            if (gamePlayBlockingStub.setAsReady(request).getReady()) return "Success";
             return "Failure";
         }
 
@@ -332,7 +347,6 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(GAME_ID_KEY, gameIdInt + "");
             intent.putExtra(PLAYER_ID_KEY, playerId + "");
             activity.startActivity(intent);
-
         }
     }
 }

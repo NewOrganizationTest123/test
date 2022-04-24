@@ -6,7 +6,8 @@ public interface GameUpdate {
     public void CardPlayRequest();
 
     /**
-     * The client should then display a popup displaying who made the stich and how much it was worth
+     * The client should then display a popup displaying who made the stich and how much it was
+     * worth
      *
      * @param player
      * @param value

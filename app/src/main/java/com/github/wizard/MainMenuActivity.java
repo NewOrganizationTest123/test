@@ -3,11 +3,7 @@ package com.github.wizard;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainMenuActivity extends AppCompatActivity {
@@ -22,27 +18,30 @@ public class MainMenuActivity extends AppCompatActivity {
         Button join_game_button = findViewById(R.id.join_game_button);
         Button instructions_button = findViewById(R.id.anleitung_button);
 
-        start_game_button.setOnClickListener(e->{
-            Intent intent = new Intent(this, MainActivity.class);
-            String message = "new game";
-            intent.putExtra("com.example.wizard.MESSAGE", message);
-            startActivity(intent);
-        });
+        start_game_button.setOnClickListener(
+                e -> {
+                    Intent intent = new Intent(this, MainActivity.class);
+                    String message = "new game";
+                    intent.putExtra("com.example.wizard.MESSAGE", message);
+                    startActivity(intent);
+                });
 
-        join_game_button.setOnClickListener(e->{
-            Intent intent = new Intent(this, MainActivity.class);
-            String message = "join game";
-            intent.putExtra(EXTRA_MESSAGE, message);
-            startActivity(intent);
-        });
+        join_game_button.setOnClickListener(
+                e -> {
+                    Intent intent = new Intent(this, MainActivity.class);
+                    String message = "join game";
+                    intent.putExtra(EXTRA_MESSAGE, message);
+                    startActivity(intent);
+                });
 
-        instructions_button.setOnClickListener(e->{
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.brettspiele-report.de/images/wizard/Spielanleitung_Wizard.pdf"));
-            startActivity(intent);
-        });
-
-
+        instructions_button.setOnClickListener(
+                e -> {
+                    Intent intent =
+                            new Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(
+                                            "https://www.brettspiele-report.de/images/wizard/Spielanleitung_Wizard.pdf"));
+                    startActivity(intent);
+                });
     }
-
-
 }

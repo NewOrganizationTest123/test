@@ -23,5 +23,4 @@ public class GameRound {
         cardsInTheMiddle.playCArd(card, player);
         return cardsInTheMiddle.cardsCounter == cardsToPlay;
     }
-
 }

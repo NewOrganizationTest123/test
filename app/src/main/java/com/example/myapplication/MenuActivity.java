@@ -1,13 +1,10 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -30,18 +27,17 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.spielbutton:
-                startActivity(new Intent(MenuActivity.this,SpielnameActivity.class));
+                startActivity(new Intent(MenuActivity.this, SpielnameActivity.class));
                 break;
             case R.id.einstellungbutton:
-                startActivity(new Intent(MenuActivity.this,EinstellungenActivity.class));
+                startActivity(new Intent(MenuActivity.this, EinstellungenActivity.class));
                 break;
             case R.id.anleitungbutton:
-                startActivity(new Intent(MenuActivity.this,AnleitungActivity.class));
+                startActivity(new Intent(MenuActivity.this, AnleitungActivity.class));
                 break;
         }
-
     }
 
     @Override

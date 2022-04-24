@@ -2,15 +2,12 @@ package com.github.wizard;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-
 import com.github.wizard.api.GameActionsGrpc;
-
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.ref.WeakReference;
-
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 
 public class GameActionRunner extends AsyncTask<Void, Void, String> {
     private final GrpcRunnableNew grpcRunnable;
@@ -19,7 +16,10 @@ public class GameActionRunner extends AsyncTask<Void, Void, String> {
     private GameActionsGrpc.GameActionsBlockingStub gamePlayBlockingStub;
     private GameActionsGrpc.GameActionsStub gamePlayStub;
 
-    GameActionRunner(GrpcRunnableNew grpcRunnable, WeakReference<Activity> activity, ManagedChannel channel) {
+    GameActionRunner(
+            GrpcRunnableNew grpcRunnable,
+            WeakReference<Activity> activity,
+            ManagedChannel channel) {
         this.grpcRunnable = grpcRunnable;
         this.activityReference = activity;
         this.channel = channel;
@@ -34,14 +34,22 @@ public class GameActionRunner extends AsyncTask<Void, Void, String> {
         boolean reconnect = false;
         try {
             if (channel == null || channel.isShutdown()) {
-                channel = ManagedChannelBuilder.forAddress(MainActivity.SERVER_ADDRESS, Integer.parseInt(MainActivity.SERVER_PORT)).usePlaintext().build();
+                channel =
+                        ManagedChannelBuilder.forAddress(
+                                        MainActivity.SERVER_ADDRESS,
+                                        Integer.parseInt(MainActivity.SERVER_PORT))
+                                .usePlaintext()
+                                .build();
                 reconnect = true;
             }
             if (gamePlayBlockingStub == null || reconnect)
                 gamePlayBlockingStub = GameActionsGrpc.newBlockingStub(channel);
-            if (gamePlayStub == null || reconnect)
-                gamePlayStub = GameActionsGrpc.newStub(channel);
-            String logs = grpcRunnable.run(gamePlayBlockingStub, gamePlayStub, activityReference);//ron whatever we had to run
+            if (gamePlayStub == null || reconnect) gamePlayStub = GameActionsGrpc.newStub(channel);
+            String logs =
+                    grpcRunnable.run(
+                            gamePlayBlockingStub,
+                            gamePlayStub,
+                            activityReference); // ron whatever we had to run
             return "Success!\n" + logs;
         } catch (Exception e) {
             StringWriter sw = new StringWriter();

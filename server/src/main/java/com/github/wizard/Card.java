@@ -7,16 +7,15 @@ enum Color {
     YELLOW
 }
 
-
 public class Card {
     public Color color;
-    //+inf:=Zauberer
+    // +inf:=Zauberer
     public int value;
 
     public Card(Color color, int value) {
         this.color = color;
         this.value = value;
-    }//-1:=Narr
+    } // -1:=Narr
 
     @Override
     public String toString() {
