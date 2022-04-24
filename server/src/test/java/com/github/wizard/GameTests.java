@@ -3,6 +3,7 @@ package com.github.wizard;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -81,8 +82,7 @@ public class GameTests {
         int number_of_cards_on_stack = game.getCardsStack().size();
         game_withMockedPlayers.startNewRound();
 
-        assertNotEquals(
-                "no more than 4 colors available", game_withMockedPlayers.getCurrentRound().trumpf);
+        assertNotNull(game_withMockedPlayers.getCurrentRound().trumpf);
         assertEquals(
                 number_of_cards_on_stack
                         - game_withMockedPlayers.getRoundNr() * game.getNrPlayers(),
