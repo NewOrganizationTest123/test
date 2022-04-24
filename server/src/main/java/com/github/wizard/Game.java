@@ -10,7 +10,9 @@ public class Game {
     public final int gameId;
     public boolean ready = false;
     private byte nrPlayers = 0;
-    private Player[] playerArrayList = new Player[Server.MAX_PLAYERS];
+
+    private ArrayList<Player> playerArrayList = new ArrayList<>(Server.MAX_PLAYERS);
+
     private ArrayList<GameRound> rounds = new ArrayList<>();
     private ArrayList<Card> cardsStack = new ArrayList<>();
 
@@ -20,7 +22,7 @@ public class Game {
         this.gameId = i;
     }
 
-    public Player[] getPlayerArrayList() {
+    public ArrayList<Player> getPlayerArrayList() {
         return playerArrayList;
     }
 
@@ -38,14 +40,15 @@ public class Game {
      * @return the playerid of whoever was added
      */
     public int addPlayer(Player player) {
-        if (nrPlayers < playerArrayList.length) {
-            playerArrayList[nrPlayers] = player;
-            player.playerId = nrPlayers;
-            player.game = this;
-            return nrPlayers++;
-        } else {
-            return nrPlayers;
-        }
+        if (nrPlayers >= Server.MAX_PLAYERS) return nrPlayers;
+
+        playerArrayList.add(player);
+        player.playerId = nrPlayers;
+        player.game = this;
+        nrPlayers++;
+
+        // TODO: throw error when playerlist is full
+        return player.playerId;
     }
 
     public void startNewRound() {
@@ -90,7 +93,7 @@ public class Game {
                                 cardIndex)); // remove it from stack so nobody gets the same card
                 // again
             }
-            playerArrayList[i].giveMeCards(cardsForPlayerX); // hand em to over to the player
+            playerArrayList.get(i).giveMeCards(cardsForPlayerX); // hand em to over to the player
         }
     }
 
@@ -109,8 +112,6 @@ public class Game {
      */
     public boolean allPlayersSubscribed() {
         for (Player player : playerArrayList) {
-            if (player == null) // if there are less than 6 people we will have some empty seats
-            break;
             if (!player.isSubscribed()) return false;
         }
         return true;
@@ -146,7 +147,7 @@ public class Game {
             }
         } else {
             // ask next player to play card
-            playerArrayList[(player.playerId + 1) % nrPlayers].CardPlayRequest();
+            playerArrayList.get((player.playerId + 1) % nrPlayers).CardPlayRequest();
             Logger.info("asking player {} to play", (player.playerId + 1) % nrPlayers);
             updateGAmeBoard();
         }
@@ -155,7 +156,6 @@ public class Game {
     /** calculates the points for each player in respect to his/her estimate */
     private void countPointsForThisRound() {
         for (Player p : playerArrayList) {
-            if (p == null) break;
             if (getCurrentRound().estimates[p.playerId]
                     == getCurrentRound()
                             .stiche[p.playerId]) // the player correctly estimated his stiche
@@ -176,25 +176,17 @@ public class Game {
 
     /** will ask all players to notify about their points and current round nr */
     private void notifyAboutPointsAndRound() {
-        for (Player p : playerArrayList) {
-            if (p == null) // if there are less than 6 people we will have some empty seats
-            break;
-            p.OnRoundFinished(getRoundNr());
-        }
+        int roundNumber = getRoundNr();
+        playerArrayList.forEach(p -> p.OnRoundFinished(roundNumber));
     }
 
     private void updateGAmeBoard() {
-        for (Player p : playerArrayList) {
-            if (p == null) // if there are less than 6 people we will have some empty seats
-            break;
-            p.OnGameBoardUpdate(getCurrentRound());
-        }
+        GameRound currentRound = getCurrentRound();
+        playerArrayList.forEach(p -> p.OnGameBoardUpdate(currentRound));
     }
 
     private void finnishStich(Player winningPlayer, int value) {
         for (Player p : playerArrayList) {
-            if (p == null) // if there are less than 6 people we will have some empty seats
-            break;
             p.OnStichMade(winningPlayer, value);
             getCurrentRound().stiche[winningPlayer.playerId]++;
             getCurrentRound().valuesOfStiche[winningPlayer.playerId] +=
@@ -206,8 +198,6 @@ public class Game {
     /** politely asks every player for his/her estimates for the upcoming round */
     private void getAllEstimates() {
         for (Player player : playerArrayList) {
-            if (player == null) // if there are less than 6 people we will have some empty seats
-            break;
             player.GetEstimate();
         }
     }
@@ -215,8 +205,6 @@ public class Game {
     /** politely asks every player for his/her estimates for the upcoming round */
     private void tellAllTrumpfSelected() {
         for (Player player : playerArrayList) {
-            if (player == null) // if there are less than 6 people we will have some empty seats
-            break;
             player.OnTrumpfSelected(getCurrentRound().trumpf);
         }
     }

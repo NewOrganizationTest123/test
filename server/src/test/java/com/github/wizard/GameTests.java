@@ -49,7 +49,7 @@ public class GameTests {
         Player player3 = new Player("player_3_name");
         game.addPlayer(player3);
         assertEquals(3, game.getNrPlayers());
-        assertEquals(player3, game.getPlayerArrayList()[2]);
+        assertEquals(player3, game.getPlayerArrayList().get(2));
     }
 
     @Test
