@@ -18,7 +18,9 @@ dependencies {
 }
 
 compileJava {
-    options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
+    options.compilerArgs += [
+        "-Aproject=${project.group}/${project.name}"
+    ]
 }
 
 test {

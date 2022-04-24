@@ -10,14 +10,16 @@ import com.github.wizard.api.ReadyToJoin;
 import com.github.wizard.api.Response;
 import com.github.wizard.api.StartReply;
 import com.github.wizard.api.StartRequest;
-
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import picocli.CommandLine;
+import picocli.CommandLine.Option;
 
-public class Server {
+public class Server implements Callable<Integer> {
     public static HashMap<Integer, Game> games = new HashMap<>();
     public static int gameCounter = 0;
     private io.grpc.Server server;
@@ -30,15 +32,25 @@ public class Server {
         new Card(Color.RED, 12)
     };
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        System.out.println("Welcome user!");
-        final Server server = new Server();
-        server.start();
-        server.blockUntilShutdown();
+    @Option(
+            names = {"-p", "--port"},
+            defaultValue = "50051",
+            description = "The port for the server to listen on (default = ${DEFAULT-VALUE})")
+    private int port;
+
+    public static void main(String[] args) {
+        int exitCode = new CommandLine(new Server()).execute(args);
+        System.exit(exitCode);
+    }
+
+    @Override
+    public Integer call() throws Exception {
+        start();
+        blockUntilShutdown();
+        return 0;
     }
 
     private void start() throws IOException {
-        int port = 50051;
         server =
                 ServerBuilder.forPort(port)
                         .addService(new GameStarterImpl())
