@@ -1,6 +1,7 @@
 package com.github.wizard;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,8 +24,8 @@ public class StichTests {
 
     @Test
     public void testPlayCard() {
-        assertEquals(null, stich.cards[0]);
-        assertEquals(null, stich.players[0]);
+        assertNull(stich.cards[0]);
+        assertNull(stich.players[0]);
 
         stich.playCArd(card1, player1);
 

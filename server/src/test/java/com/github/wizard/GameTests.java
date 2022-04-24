@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -90,14 +89,14 @@ public class GameTests {
     }
 
     @Test
-    public void testAllPlayersSuscribed_True() {
+    public void testAllPlayersSubscribed_True() {
         when(mocked_player1.isSubscribed()).thenReturn(true);
         when(mocked_player2.isSubscribed()).thenReturn(true);
         assertTrue(game_withMockedPlayers.allPlayersSubscribed());
     }
 
     @Test
-    public void testAllPlayersSuscribed_False() {
+    public void testAllPlayersSubscribed_False() {
         when(mocked_player1.isSubscribed()).thenReturn(true);
         when(mocked_player2.isSubscribed()).thenReturn(false);
         assertFalse(game_withMockedPlayers.allPlayersSubscribed());
@@ -119,7 +118,7 @@ public class GameTests {
         gameRoundMock.estimates[1] = 1;
 
         game_withMockedPlayers.startNewRound();
-        ArrayList round_list = new ArrayList();
+        ArrayList<GameRound> round_list = new ArrayList<>();
         round_list.add(gameRoundMock);
         game_withMockedPlayers.setRounds(round_list);
 
@@ -140,7 +139,7 @@ public class GameTests {
     public void playCardTest_NotlastCard() {
         GameRound gameRoundMock = mock(GameRound.class);
         game_withMockedPlayers.startNewRound();
-        ArrayList round_list = new ArrayList();
+        ArrayList<GameRound> round_list = new ArrayList<>();
         round_list.add(gameRoundMock);
         game_withMockedPlayers.setRounds(round_list);
 
