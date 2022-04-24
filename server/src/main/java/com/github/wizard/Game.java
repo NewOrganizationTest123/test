@@ -158,19 +158,20 @@ public class Game {
         for (Player p : playerArrayList) {
             if (getCurrentRound().estimates[p.playerId]
                     == getCurrentRound()
-                            .stiche[p.playerId]) // the player correctly estimated his stiche
-            p.addPoints(
+                            .stiche[p.playerId]) { // the player correctly estimated his stiche
+                p.addPoints(
                         20
                                 + getCurrentRound().stiche[p.playerId]
                                         * 10); // 20 points for correct estimate+10 points for each
-            // stich
-            else // he/she did not correctly estimate
-            p.subsractPoints(
+                // stich
+            } else { // he/she did not correctly estimate
+                p.subsractPoints(
                         abs(
                                         getCurrentRound().estimates[p.playerId]
                                                 - getCurrentRound().stiche[p.playerId])
                                 * 10); // he/she will lose 10 points for every stich above or below
-            // his/her estimate
+                // his/her estimate
+            }
         }
     }
 

@@ -3,15 +3,17 @@ package com.github.wizard;
 import com.github.wizard.api.Response;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
+import java.util.Collections;
+
 import org.tinylog.Logger;
 
 public class Player implements GameUpdate {
     String name;
     byte playerId;
     Game game;
-    boolean iHaveCHeatedFlag = false; // set to true if I have cheated
+    boolean iHaveCHeatedFlag = false; // TODO: implement cheating, set to true if I have cheated
     StreamObserver<Response> responseObserver;
-    private ArrayList<Card> cards = new ArrayList<>();
+    private final ArrayList<Card> cards = new ArrayList<>();
     private int points;
 
     public Player(String name) {
@@ -35,14 +37,16 @@ public class Player implements GameUpdate {
     }
 
     public void giveMeCards(Card[] cards) {
-        if (cards.length != game.getRoundNr()) // in round 1 u get 1 card and 2 in round 2 and so on
-        throw new IndexOutOfBoundsException(
+        if (cards.length
+                != game.getRoundNr()) { // in round 1 u get 1 card and 2 in round 2 and so on
+            throw new IndexOutOfBoundsException(
                     "You gave me too many or to few cards. Current round is "
                             + game.getRoundNr()
                             + " and you gave me "
                             + cards.length
                             + " cards");
-        for (Card c : cards) this.cards.add(c);
+        }
+        Collections.addAll(this.cards, cards);
         StringBuilder cardsString =
                 new StringBuilder(); // concatenate the cards on hand firs as following example:
         // |1-RED|2-BLUE.....
@@ -73,7 +77,7 @@ public class Player implements GameUpdate {
                 if (c == null)
                     break; // if not all cards are on the table yet or there are less than 6 people
                 // playing
-                cardsString.append(c.toString()).append("/");
+                cardsString.append(c).append("/");
             }
 
             Logger.info("sending out cards: {}", cardsString);
