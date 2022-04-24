@@ -268,6 +268,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                                                         Toast.LENGTH_SHORT)
                                                                 .show();
                                                     });
+                                            break;
                                         default:
                                             throw new IllegalArgumentException(
                                                     "type not implemented");
