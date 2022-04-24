@@ -14,6 +14,8 @@ public class Game {
     private ArrayList<GameRound> rounds = new ArrayList<>();
     private ArrayList<Card> cardsStack = new ArrayList<>();
 
+    private static final Random random = new Random();
+
     public Game(int i) {
         this.gameId = i;
     }
@@ -43,7 +45,6 @@ public class Game {
     }
 
     public void startNewRound() {
-        Random random = new Random();
         switch (random.nextInt(4)) { // choose Trumpf randomly
             case 0:
                 rounds.add(new GameRound(Color.RED));
@@ -69,7 +70,6 @@ public class Game {
 
     /** will hand out random cards to all players, according to the round */
     private void handoutCards() {
-        Random random = new Random();
         for (int i = 0;
                 i < getNrPlayers();
                 i++) { // every player gets nrOfRound random cards, no card can exist twice
