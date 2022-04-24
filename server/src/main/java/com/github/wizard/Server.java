@@ -23,8 +23,8 @@ import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
 public class Server implements Callable<Integer> {
-    public static HashMap<Integer, Game> games = new HashMap<>();
-    public static int gameCounter = 0;
+    public HashMap<Integer, Game> games = new HashMap<>();
+    public int gameCounter = 0;
     private io.grpc.Server server;
     public static final int MAX_PLAYERS = 6;
     public static final Card[] cards = {
@@ -101,7 +101,7 @@ public class Server implements Callable<Integer> {
         }
     }
 
-    static class GameStarterImpl extends GameStarterGrpc.GameStarterImplBase {
+    class GameStarterImpl extends GameStarterGrpc.GameStarterImplBase {
 
         @Override
         public void startGame(StartRequest request, StreamObserver<StartReply> responseObserver) {
@@ -164,7 +164,7 @@ public class Server implements Callable<Integer> {
         }
     }
 
-    static class GamePlayImpl extends GamePlayGrpc.GamePlayImplBase {
+    class GamePlayImpl extends GamePlayGrpc.GamePlayImplBase {
 
         /**
          * @param request
@@ -213,7 +213,7 @@ public class Server implements Callable<Integer> {
         }
     }
 
-    static class GameActiontyIml extends GameActionsGrpc.GameActionsImplBase {
+    class GameActiontyIml extends GameActionsGrpc.GameActionsImplBase {
 
         /** @param responseObserver */
         @Override

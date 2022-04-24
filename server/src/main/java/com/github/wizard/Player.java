@@ -4,7 +4,6 @@ import com.github.wizard.api.Response;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
 import java.util.Collections;
-
 import org.tinylog.Logger;
 
 public class Player implements GameUpdate {
