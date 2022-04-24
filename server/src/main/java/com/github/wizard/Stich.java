@@ -27,8 +27,9 @@ public class Stich {
             if (cards[i].color != firstColor
                     || cards[i].value == Integer.MAX_VALUE
                     || cards[i].value
-                            == -1) // cards of different color, wizzards and narren do not count
-            continue;
+                            == -1) { // cards of different color, wizzards and narren do not count
+                continue;
+            }
             sum += cards[i].value;
         }
         return sum;
@@ -40,9 +41,11 @@ public class Stich {
         for (int i = 1; i < cardsCounter; i++) {
             if (cards[i].color != firstColor
                     && cards[i].value
-                            != Integer.MAX_VALUE) // cards of different color that are not a wizzard
-                // wil loose automatically
+                            != Integer
+                                    .MAX_VALUE) { // cards of different color that are not a wizzard
+                // will loose automatically
                 continue;
+            }
             // if it is the same color and no wizzard it can only be higher or lower
             if (cards[i].value > cards[highestValueIndex].value) // it is bigger
             highestValueIndex = i;
