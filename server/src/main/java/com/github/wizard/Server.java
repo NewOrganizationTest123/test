@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import org.tinylog.Level;
 import org.tinylog.Logger;
+import org.tinylog.configuration.Configuration;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
@@ -39,6 +41,12 @@ public class Server implements Callable<Integer> {
             description = "The port for the server to listen on (default = ${DEFAULT-VALUE})")
     private int port;
 
+    @Option(
+            names = {"-l", "--log-level"},
+            defaultValue = "TRACE",
+            description = "The logging level (default = ${DEFAULT-VALUE})")
+    private Level level;
+
     public static void main(String[] args) {
         int exitCode = new CommandLine(new Server()).execute(args);
         System.exit(exitCode);
@@ -46,6 +54,8 @@ public class Server implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+        Configuration.set("level", level.toString());
+
         start();
         blockUntilShutdown();
         return 0;
