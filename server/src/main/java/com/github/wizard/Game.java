@@ -25,7 +25,7 @@ public class Game {
     }
 
     /** creates a new card stack, consisting of all available cards */
-    private void initializeCardStack() {
+    protected void initializeCardStack() {
         for (Card c : Server.cards) {
             cardsStack.add(c);
         }
@@ -38,10 +38,15 @@ public class Game {
      * @return the playerid of whoever was added
      */
     public int addPlayer(Player player) {
-        playerArrayList[nrPlayers] = player;
-        player.playerId = nrPlayers;
-        player.game = this;
-        return nrPlayers++;
+        if(nrPlayers<playerArrayList.length) {
+            playerArrayList[nrPlayers] = player;
+            player.playerId = nrPlayers;
+            player.game = this;
+            return nrPlayers++;
+        }
+        else{
+            return nrPlayers;
+        }
     }
 
     public void startNewRound() {
@@ -215,5 +220,19 @@ public class Game {
             break;
             player.OnTrumpfSelected(getCurrentRound().trumpf);
         }
+    }
+
+    /**
+    needed for tests
+     */
+    public ArrayList<Card> getCardsStack() {
+        return cardsStack;
+    }
+
+    /**
+     needed for tests
+     */
+    public void setRounds(ArrayList<GameRound> rounds) {
+        this.rounds = rounds;
     }
 }

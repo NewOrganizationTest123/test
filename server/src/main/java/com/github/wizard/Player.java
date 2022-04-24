@@ -170,4 +170,8 @@ public class Player implements GameUpdate {
         }
         throw new IllegalArgumentException("I wanted to play a card I did not have!");
     }
+
+    public ArrayList<Card> getCards() {
+        return cards;
+    }
 }
