@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 activity.startActivity(intent);
             } else {
                 gameIdInt = Integer.parseInt(gameId);
-                playerId = playerId;
+
                 activity.runOnUiThread(
                         () -> {
                             TextView gameIdTextView = activity.findViewById(R.id.gameid);
