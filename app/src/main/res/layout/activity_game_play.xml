@@ -4,48 +4,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GamePlayActivity"
-    android:background = "@drawable/gameboard_background">
+    tools:context=".GamePlayActivity">
+ <!-- android:background = "@drawable/gameboard_background">-->
 
-    <Button
-        android:id="@+id/btnPoints"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#00FFFFFF"
-        android:text="@string/punkte"
-        android:textSize="20sp"
-        tools:layout_editor_absoluteX="230dp"
-        tools:layout_editor_absoluteY="28dp" />
+ <!--  <Button
+       android:id="@+id/btnPoints"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:backgroundTint="#00FFFFFF"
+       android:text="@string/punkte"
+       android:textSize="20sp"
+       tools:layout_editor_absoluteX="230dp"
+       tools:layout_editor_absoluteY="28dp" />
 
-    <TextView
-        android:id="@+id/tVRound"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/runde"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        tools:layout_editor_absoluteX="26dp"
-        tools:layout_editor_absoluteY="38dp" />
+   <TextView
+       android:id="@+id/tVRound"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="@string/runde"
+       android:textColor="@color/white"
+       android:textSize="20sp"
+       tools:layout_editor_absoluteX="26dp"
+       tools:layout_editor_absoluteY="38dp" />
 
-    <TextView
-        android:id="@+id/tVRundenzahl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        tools:layout_editor_absoluteX="56dp"
-        tools:layout_editor_absoluteY="65dp" />
+   <TextView
+       android:id="@+id/tVRundenzahl"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="1"
+       android:textColor="@color/white"
+       android:textSize="20sp"
+       tools:layout_editor_absoluteX="56dp"
+       tools:layout_editor_absoluteY="65dp" />-->
+ <!--
+ todo martinfri144 chenge back the absolute positioning to avoid problems with different screen layouts!
+ -->
 
-    <Button
-        android:id="@+id/button_play_card"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="play card"
-        app:layout_constraintBottom_toTopOf="@+id/button_estimate"
-        app:layout_constraintEnd_toEndOf="parent" />
+ <Button
+     android:id="@+id/button_play_card"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:text="play card"
+     app:layout_constraintBottom_toTopOf="@+id/button_estimate"
+     app:layout_constraintEnd_toEndOf="parent" />
 
-    <EditText
+ <EditText
         android:id="@+id/editTextN_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -130,76 +133,78 @@
         app:layout_constraintEnd_toStartOf="@+id/button_estimate"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/round"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:text="This is round 0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trumpf" />
+ <TextView
+     android:id="@+id/round"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:layout_marginStart="24dp"
+     android:layout_marginTop="8dp"
+     android:text="This is round 0"
+     app:layout_constraintStart_toStartOf="parent"
+     app:layout_constraintTop_toBottomOf="@+id/trumpf" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="550dp"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="@+id/cards_on_table">
+ <!--
 
-        <ImageView
-            android:id="@+id/card_01"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:src="@drawable/bl_01"
-            android:layout_margin="10dp" />
+  <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:layout_marginTop="550dp"
+       android:orientation="horizontal"
+       app:layout_constraintTop_toTopOf="@+id/cards_on_table">
 
-        <ImageView
-            android:id="@+id/card_02"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:src="@drawable/bl_01"
-            android:layout_margin="10dp" />
+       <ImageView
+           android:id="@+id/card_01"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:layout_weight="1"
+           android:scaleType="centerInside"
+           android:src="@drawable/bl_01"
+           android:layout_margin="10dp" />
 
-        <ImageView
-            android:id="@+id/card_03"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:src="@drawable/bl_01"
-            android:layout_margin="10dp" />
+       <ImageView
+           android:id="@+id/card_02"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:layout_weight="1"
+           android:scaleType="centerInside"
+           android:src="@drawable/bl_01"
+           android:layout_margin="10dp" />
 
-        <ImageView
-            android:id="@+id/card_04"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:src="@drawable/bl_01"
-            android:layout_margin="10dp" />
+       <ImageView
+           android:id="@+id/card_03"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:layout_weight="1"
+           android:scaleType="centerInside"
+           android:src="@drawable/bl_01"
+           android:layout_margin="10dp" />
 
-        <ImageView
-            android:id="@+id/card_05"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:src="@drawable/bl_01"
-            android:layout_margin="10dp" />
+       <ImageView
+           android:id="@+id/card_04"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:layout_weight="1"
+           android:scaleType="centerInside"
+           android:src="@drawable/bl_01"
+           android:layout_margin="10dp" />
 
-        <ImageView
-            android:id="@+id/card_06"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:src="@drawable/bl_01"
-            android:layout_margin="10dp"/>
+       <ImageView
+           android:id="@+id/card_05"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:layout_weight="1"
+           android:scaleType="centerInside"
+           android:src="@drawable/bl_01"
+           android:layout_margin="10dp" />
 
-    </LinearLayout>
+       <ImageView
+           android:id="@+id/card_06"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:layout_weight="1"
+           android:scaleType="centerInside"
+           android:src="@drawable/bl_01"
+           android:layout_margin="10dp"/>
+
+   </LinearLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>
