@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 
 import java.util.ArrayList;
 import java.util.Random;
+import org.tinylog.Logger;
 
 public class Game {
     public final int gameId;
@@ -142,7 +143,7 @@ public class Game {
         } else {
             // ask next player to play card
             playerArrayList[(player.playerId + 1) % nrPlayers].CardPlayRequest();
-            System.out.println("asiking player " + (player.playerId + 1) % nrPlayers + " to play");
+            Logger.info("asking player {} to play", (player.playerId + 1) % nrPlayers);
             updateGAmeBoard();
         }
     }

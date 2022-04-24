@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import org.tinylog.Logger;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
@@ -59,20 +60,21 @@ public class Server implements Callable<Integer> {
                         .build()
                         .start();
 
-        System.out.println("Server ready. Port:  " + port);
+        Logger.info("Server ready. Port: {}", port);
+
         Runtime.getRuntime()
                 .addShutdownHook(
                         new Thread(
                                 () -> {
-                                    System.err.println(
+                                    Logger.error(
                                             "*** shutting down gRPC server since JVM is shutting"
                                                     + " down");
                                     try {
                                         Server.this.stop();
                                     } catch (InterruptedException e) {
-                                        e.printStackTrace(System.err);
+                                        Logger.trace(e);
                                     }
-                                    System.err.println("*** server shut down");
+                                    Logger.error("*** server shut down");
                                 }));
     }
 
@@ -92,7 +94,7 @@ public class Server implements Callable<Integer> {
 
         @Override
         public void startGame(StartRequest request, StreamObserver<StartReply> responseObserver) {
-            System.out.println("start request received by " + request.getName());
+            Logger.info("start request received by {}", request.getName());
             Game newGame = new Game(++gameCounter);
             games.put(newGame.gameId, newGame);
             StartReply reply =
@@ -109,13 +111,11 @@ public class Server implements Callable<Integer> {
 
         @Override
         public void joinGame(JoinRequest request, StreamObserver<StartReply> responseObserver) {
-            System.out.println("join request received for gameid " + request.getGameid());
+            Logger.info("join request received for game id {}", request.getGameid());
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
             if (newGame == null || newGame.getNrPlayers() > MAX_PLAYERS || newGame.ready) {
-                System.out.println(
-                        "error for game with id "
-                                + request.getGameid()
-                                + ": this game does not exist");
+                Logger.info(
+                        "error for game with id {}: this game does not exist", request.getGameid());
                 responseObserver.onNext(null);
                 responseObserver.onCompleted();
                 return;
@@ -139,7 +139,7 @@ public class Server implements Callable<Integer> {
         @Override
         public void checkJoinRequest(
                 JoinRequest request, StreamObserver<ReadyToJoin> responseObserver) {
-            System.out.println("checkGame");
+            Logger.debug("checkJoinRequest called");
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
             if (newGame == null || newGame.getNrPlayers() > MAX_PLAYERS || newGame.ready) {
                 ReadyToJoin reply = ReadyToJoin.newBuilder().setReady(false).build();
@@ -161,19 +161,18 @@ public class Server implements Callable<Integer> {
          */
         @Override
         public void getPlayers(JoinRequest request, StreamObserver<Player> responseObserver) {
-            System.out.println("getPlayers");
+            Logger.debug("getPlayers called");
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
             if (newGame != null && newGame.getNrPlayers() < MAX_PLAYERS) {
                 for (com.github.wizard.Player player : newGame.getPlayerArrayList()) {
                     if (player == null) break;
-                    System.out.println("player: " + player.name);
+                    Logger.info("player: {}", player.name);
                     Player grpcPlayer = Player.newBuilder().setName(player.name).build();
                     responseObserver.onNext(grpcPlayer);
                 }
 
             } else {
-                System.out.println(
-                        "players requested for invalid game: gameid=" + request.getGameid());
+                Logger.error("players requested for invalid game id: {}", request.getGameid());
                 Player grpcPlayer = Player.newBuilder().setName("").build();
                 responseObserver.onNext(grpcPlayer);
             }
@@ -186,7 +185,7 @@ public class Server implements Callable<Integer> {
          */
         @Override
         public void setAsReady(JoinRequest request, StreamObserver<ReadyToJoin> responseObserver) {
-            System.out.println("setAsReady");
+            Logger.debug("setAsReady called");
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
             if (newGame != null && newGame.getNrPlayers() < MAX_PLAYERS) {
                 newGame.ready = true;
@@ -195,7 +194,7 @@ public class Server implements Callable<Integer> {
                 responseObserver.onCompleted();
 
             } else {
-                System.out.println("invalid game");
+                Logger.error("invalid game");
                 ReadyToJoin reply = ReadyToJoin.newBuilder().setReady(false).build();
                 responseObserver.onNext(reply);
                 responseObserver.onCompleted();
@@ -208,15 +207,15 @@ public class Server implements Callable<Integer> {
         /** @param responseObserver */
         @Override
         public StreamObserver<GameMove> gameStream(StreamObserver<Response> responseObserver) {
-            System.out.println("gameStream");
-            return new StreamObserver<GameMove>() {
+            Logger.debug("gameStream called");
+            return new StreamObserver<>() {
                 Game newGame;
                 com.github.wizard.Player player;
 
                 @Override
                 public void onNext(GameMove gameMove) {
                     if (newGame == null) {
-                        System.out.println("player subscribed");
+                        Logger.info("player subscribed");
                         newGame = games.get(Integer.valueOf(gameMove.getGameid()));
                         player =
                                 newGame.getPlayerArrayList()[
@@ -226,15 +225,15 @@ public class Server implements Callable<Integer> {
                         // connection was lost
                     }
                     // do whatever the gameAction was
-                    System.out.println("gameMove: " + gameMove.getType());
+                    Logger.info("gameMove: {}", gameMove.getType());
                     switch (gameMove.getType()) {
                         case "0": // player subscribed
-                            System.out.println("request to subscribe new player");
+                            Logger.info("request to subscribe new player");
                             // TODO: 22.04.2022 check
                             if (newGame
                                     .allPlayersSubscribed()) { // see if we are the last, then start
                                 // handing out cards
-                                System.out.println("we are starting the game");
+                                Logger.info("game starting");
                                 newGame.startNewRound();
                             }
                             break;
@@ -255,8 +254,8 @@ public class Server implements Callable<Integer> {
 
                 @Override
                 public void onError(Throwable t) {
-                    System.out.println("gamePlay cancelled");
-                    t.printStackTrace();
+                    Logger.error("gamePlay cancelled");
+                    Logger.trace(t);
                     // todo try to recover or kill game session if not possible
                 }
 

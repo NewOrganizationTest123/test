@@ -3,6 +3,7 @@ package com.github.wizard;
 import com.github.wizard.api.Response;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
+import org.tinylog.Logger;
 
 public class Player implements GameUpdate {
     String name;
@@ -46,8 +47,8 @@ public class Player implements GameUpdate {
                 new StringBuilder(); // concatenate the cards on hand firs as following example:
         // |1-RED|2-BLUE.....
         for (Card c : cards) cardsString.append("|").append(c.toString());
-        System.out.println(
-                this.name + " has received the following cards: " + cardsString.toString());
+
+        Logger.info("{} has received the following cards: {}", this.name, cardsString.toString());
     }
 
     /** @return true if subscription is still valid */
@@ -57,8 +58,9 @@ public class Player implements GameUpdate {
 
     @Override
     public void OnGameBoardUpdate(GameRound round) {
-        System.out.println(
-                "OnGameBoardUpdate"); // sent back the cards that are in the middle so the player
+        Logger.debug(
+                "OnGameBoardUpdate called"); // sent back the cards that are in the middle so the
+        // player
         // can decide which card to play
         if (responseObserver != null) { // nothing to do if nobody has subscribed for updates
             StringBuilder cardsString =
@@ -73,7 +75,9 @@ public class Player implements GameUpdate {
                 // playing
                 cardsString.append(c.toString()).append("/");
             }
-            System.out.println("sending out cards: " + cardsString);
+
+            Logger.info("sending out cards: {}", cardsString);
+
             responseObserver.onNext(
                     Response.newBuilder()
                             .setType("3")
@@ -84,7 +88,8 @@ public class Player implements GameUpdate {
 
     @Override
     public void CardPlayRequest() {
-        System.out.println("I am sending card play request");
+        Logger.debug("CardPlayRequest called");
+
         if (responseObserver != null) { // nothing to do if nobody has subscribed for updates
             responseObserver.onNext(
                     Response.newBuilder()
@@ -103,9 +108,9 @@ public class Player implements GameUpdate {
      */
     @Override
     public void OnStichMade(Player player, int value) {
-        System.out.println("I am notifying my player who made the stich");
+        Logger.debug("OnStichMade called");
         if (responseObserver != null) { // nothing to do if nobody has subscribed for updates
-            System.out.println(player.name);
+            Logger.debug("player name: {}", player.name);
             responseObserver.onNext(
                     Response.newBuilder()
                             .setType("1")
@@ -125,7 +130,7 @@ public class Player implements GameUpdate {
      */
     @Override
     public void OnTrumpfSelected(Color c) {
-        System.out.println("I am notifying my player who is trumpf");
+        Logger.debug("OnTrumpSelected called");
         if (responseObserver != null) { // nothing to do if nobody has subscribed for updates
             responseObserver.onNext(
                     Response.newBuilder()
@@ -143,7 +148,7 @@ public class Player implements GameUpdate {
 
     @Override
     public void OnRoundFinished(int round) {
-        System.out.println("I am sending out onRoundFinished");
+        Logger.debug("OnRoundFinished called");
         responseObserver.onNext(
                 Response.newBuilder()
                         .setType("6")
