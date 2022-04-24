@@ -12,10 +12,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.github.wizard.api.GameActionsGrpc;
 import com.github.wizard.api.GameMove;
 import com.github.wizard.api.Response;
+
+import org.checkerframework.checker.units.qual.A;
+
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import java.lang.ref.WeakReference;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -24,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GamePlayActivity extends AppCompatActivity {
 
-    ImageView card1, card2, card3, card4, card5, card6;
+    ArrayList<ImageView> cards = new ArrayList<>(6);
     Random r;
 
     public static String gameId;
@@ -61,14 +65,14 @@ public class GamePlayActivity extends AppCompatActivity {
                 .execute(); // fire up the streaming service
         findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
-
+        
         /*
-        card1 = (ImageView) findViewById(R.id.card1);
-        card2 = (ImageView) findViewById(R.id.card2);
-        card3 = (ImageView) findViewById(R.id.card3);
-        card4 = (ImageView) findViewById(R.id.card4);
-        card5 = (ImageView) findViewById(R.id.card5);
-        card6 = (ImageView) findViewById(R.id.card6);
+        cards.add(findViewById(R.id.card1));
+        cards.add(findViewById(R.id.card2));
+        cards.add(findViewById(R.id.card3));
+        cards.add(findViewById(R.id.card4));
+        cards.add(findViewById(R.id.card5));
+        cards.add(findViewById(R.id.card6));
         */
 
     }
