@@ -3,9 +3,7 @@ package com.github.wizard;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.github.wizard.api.Response;
@@ -94,128 +92,5 @@ public class PlayerTests {
         player.updatePoints();
 
         assertEquals(-20, player.getPoints());
-    }
-
-    @Test
-    public void cardPlayRequest() {
-        player.responseObserver = responseObserverMock;
-
-        player.CardPlayRequest();
-
-        verify(responseObserverMock)
-                .onNext(
-                        argThat(
-                                response -> {
-                                    assertEquals("2", response.getType());
-                                    assertEquals("Please play a card", response.getData());
-
-                                    return true;
-                                }));
-    }
-
-    @Test
-    public void onGameBoardUpdate() {
-        List<Card> cards =
-                List.of(
-                        new Card(Color.YELLOW, 10),
-                        new Card(null, Integer.MAX_VALUE),
-                        new Card(null, -1),
-                        new Card(Color.RED, 1),
-                        new Card(Color.BLUE, 3),
-                        new Card(Color.GREEN, 13));
-
-        player.responseObserver = responseObserverMock;
-        Game.Round roundMock = mock(Game.Round.class);
-        Stich stichMock = mock(Stich.class);
-
-        when(game.getRoundNr()).thenReturn(6);
-        when(game.getCurrentRound()).thenReturn(roundMock);
-        when(roundMock.getCardsInTheMiddle()).thenReturn(stichMock);
-        when(stichMock.getCards()).thenReturn(cards);
-
-        player.giveMeCards(cards);
-
-        player.OnGameBoardUpdate();
-
-        verify(responseObserverMock)
-                .onNext(
-                        argThat(
-                                response -> {
-                                    assertEquals("3", response.getType());
-                                    assertEquals(
-                                            "/YELLOW(10)/Wizard/Jester/RED(1)/BLUE(3)/GREEN(13)//YELLOW(10)/Wizard/Jester/RED(1)/BLUE(3)/GREEN(13)/",
-                                            response.getData());
-
-                                    return true;
-                                }));
-    }
-
-    @Test
-    public void onStichMade() {
-        player.responseObserver = responseObserverMock;
-
-        player.OnStichMade(new Player("player"), 13);
-
-        verify(responseObserverMock)
-                .onNext(
-                        argThat(
-                                response -> {
-                                    assertEquals("1", response.getType());
-                                    assertEquals(
-                                            "Player player has made this stich with value 13",
-                                            response.getData());
-
-                                    return true;
-                                }));
-    }
-
-    @Test
-    public void onTrumpfSelected() {
-
-        player.responseObserver = responseObserverMock;
-
-        player.OnTrumpfSelected(Color.RED);
-
-        verify(responseObserverMock)
-                .onNext(
-                        argThat(
-                                response -> {
-                                    assertEquals("4", response.getType());
-                                    assertEquals("RED", response.getData());
-
-                                    return true;
-                                }));
-    }
-
-    @Test
-    public void getEstimate() {
-        player.responseObserver = responseObserverMock;
-
-        player.GetEstimate();
-
-        verify(responseObserverMock)
-                .onNext(
-                        argThat(
-                                response -> {
-                                    assertEquals("5", response.getType());
-                                    return true;
-                                }));
-    }
-
-    @Test
-    public void onRoundFinished() {
-        player.responseObserver = responseObserverMock;
-
-        player.OnRoundFinished(3);
-
-        verify(responseObserverMock)
-                .onNext(
-                        argThat(
-                                response -> {
-                                    assertEquals("6", response.getType());
-                                    assertEquals("0/3", response.getData());
-
-                                    return true;
-                                }));
     }
 }

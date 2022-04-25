@@ -85,8 +85,6 @@ public class GameTests {
 
         verify(mocked_player1).giveMeCards(argThat(cards -> cards.size() == 1));
         verify(mocked_player2).giveMeCards(argThat(cards -> cards.size() == 1));
-
-        verify(mocked_player1).OnGameBoardUpdate();
     }
 
     @Test
@@ -126,6 +124,9 @@ public class GameTests {
         verify(stichMocked).getWinningPlayer();
         verify(stichMocked).getValue();
         verify(mocked_player1).cardsLeft();
+
+        verify(mocked_player2).update(Updater.newOnStichMadeResponse(new Player(null), 12));
+        verify(mocked_player2).update(Updater.newOnGameBoardUpdate(null, null));
     }
 
     @Test
@@ -135,6 +136,7 @@ public class GameTests {
 
         round.playCard(mock(Card.class), mocked_player1);
 
-        verify(mocked_player2).CardPlayRequest();
+        verify(mocked_player2).update(Updater.newCardPlayRequestResponse());
+        verify(mocked_player2).update(Updater.newOnGameBoardUpdate(null, null));
     }
 }
