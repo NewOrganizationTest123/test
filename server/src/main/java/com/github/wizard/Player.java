@@ -31,7 +31,7 @@ public class Player implements GameUpdate {
         this.points += value;
     }
 
-    public void subsractPoints(int value) {
+    public void subtractPoints(int value) {
         this.points -= value;
     }
 

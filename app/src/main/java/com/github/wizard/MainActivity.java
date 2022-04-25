@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
     public static final int SERVER_TIMEOUT_SECONDS = 10;
 
     private EditText name;
-    private Button startGame;
     private EditText gameId;
     private Button joinGame;
     private static ManagedChannel channel;
@@ -54,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private static GamePlayGrpc.GamePlayBlockingStub gamePlayBlockingStub;
     private static int gameIdInt;
     private static int playerId;
-    private Button next;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
         name = findViewById(R.id.editTextTextPersonName);
         gameId = findViewById(R.id.editTextNumber);
         joinGame = findViewById(R.id.button3);
-        startGame = findViewById(R.id.button);
-        next = findViewById(R.id.next);
+        Button startGame = findViewById(R.id.button);
+        Button next = findViewById(R.id.next);
         startGame.setOnClickListener(this::startNewGame);
         joinGame.setOnClickListener(this::joinGame);
         next.setOnClickListener(

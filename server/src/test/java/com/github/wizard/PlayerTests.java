@@ -39,7 +39,7 @@ public class PlayerTests {
     @Test
     public void testSubstractPoints() {
         assertEquals(0, player.getPoints());
-        player.subsractPoints(10);
+        player.subtractPoints(10);
         assertEquals(-10, player.getPoints());
     }
 

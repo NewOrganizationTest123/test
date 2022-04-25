@@ -1,9 +1,9 @@
 package com.github.wizard;
 
 public class GameRound {
-    public int estimates[] = new int[Server.MAX_PLAYERS];
-    public int stiche[] = new int[Server.MAX_PLAYERS];
-    public int valuesOfStiche[] = new int[Server.MAX_PLAYERS];
+    public int[] estimates = new int[Server.MAX_PLAYERS];
+    public int[] stiche = new int[Server.MAX_PLAYERS];
+    public int[] valuesOfStiche = new int[Server.MAX_PLAYERS];
     public Stich cardsInTheMiddle;
     public Color trumpf;
 

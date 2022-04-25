@@ -3,6 +3,7 @@ package com.github.wizard;
 import static java.lang.Math.abs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import org.tinylog.Logger;
 
@@ -11,10 +12,10 @@ public class Game {
     public boolean ready = false;
     private byte nrPlayers = 0;
 
-    private ArrayList<Player> playerArrayList = new ArrayList<>(Server.MAX_PLAYERS);
+    private final ArrayList<Player> playerArrayList = new ArrayList<>(Server.MAX_PLAYERS);
 
     private ArrayList<GameRound> rounds = new ArrayList<>();
-    private ArrayList<Card> cardsStack = new ArrayList<>();
+    private final ArrayList<Card> cardsStack = new ArrayList<>();
 
     private static final Random random = new Random();
 
@@ -28,9 +29,7 @@ public class Game {
 
     /** creates a new card stack, consisting of all available cards */
     protected void initializeCardStack() {
-        for (Card c : Server.cards) {
-            cardsStack.add(c);
-        }
+        cardsStack.addAll(Arrays.asList(Server.cards));
     }
 
     /**
@@ -165,7 +164,7 @@ public class Game {
                                         * 10); // 20 points for correct estimate+10 points for each
                 // stich
             } else { // he/she did not correctly estimate
-                p.subsractPoints(
+                p.subtractPoints(
                         abs(
                                         getCurrentRound().estimates[p.playerId]
                                                 - getCurrentRound().stiche[p.playerId])
