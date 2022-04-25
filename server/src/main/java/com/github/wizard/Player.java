@@ -15,6 +15,10 @@ public class Player implements GameUpdate {
     private final ArrayList<Card> cards = new ArrayList<>();
     private int points;
 
+    private int estimate = 0;
+    private int wonStiche = 0;
+    private int stichValue = 0;
+
     public Player(String name) {
         this.name = name;
     }
@@ -35,7 +39,34 @@ public class Player implements GameUpdate {
         this.points -= value;
     }
 
+    public void makeEstimate(int estimate) {
+        this.estimate = estimate;
+    }
+
+    public void winStich(int value) {
+        wonStiche++;
+        stichValue += value;
+    }
+
+    public void updatePoints() {
+        Logger.debug("estimate for player {}: {}", playerId, estimate);
+        Logger.debug("wonStiche for player {}: {}", playerId, wonStiche);
+        int roundPoints;
+        if (estimate == wonStiche) {
+            roundPoints = 20 + wonStiche * 10;
+        } else {
+            roundPoints = (wonStiche - estimate) * 10;
+        }
+        addPoints(roundPoints);
+        Logger.debug("roundPoints for player {}: {}", playerId, roundPoints);
+
+        estimate = 0;
+        wonStiche = 0;
+        stichValue = 0;
+    }
+
     public void giveMeCards(List<Card> newCards) {
+        Logger.debug("giving {} to player {}", newCards, playerId);
         if (newCards.size()
                 != game.getRoundNr()) { // in round 1 u get 1 card and 2 in round 2 and so on
             throw new IndexOutOfBoundsException(
@@ -155,6 +186,7 @@ public class Player implements GameUpdate {
     @Override
     public void OnRoundFinished(int round) {
         Logger.debug("OnRoundFinished called");
+        updatePoints();
         responseObserver.onNext(
                 Response.newBuilder()
                         .setType("6")
@@ -165,16 +197,15 @@ public class Player implements GameUpdate {
     /**
      * removes the card from the player's hand
      *
-     * @param c
+     * @param index
      */
-    public void playCard(Card c) {
-        for (int i = 0; i < cards.size(); i++) {
-            if (cards.get(i).equals(c)) {
-                cards.remove(cards.get(i));
-                return;
-            }
-        }
-        throw new IllegalArgumentException("I wanted to play a card I did not have!");
+    public void playCard(int index) {
+        Card card = cards.get(index);
+
+        if (!cards.remove(card))
+            throw new IllegalArgumentException("I wanted to play a card I did not have!");
+
+        game.playCard(card, this);
     }
 
     public ArrayList<Card> getCards() {

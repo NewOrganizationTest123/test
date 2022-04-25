@@ -56,7 +56,7 @@ public class PlayerTests {
         player.giveMeCards(cards);
         assertTrue(player.getCards().contains(card1));
         int number_of_cards = player.getCards().size();
-        player.playCard(card1);
+        player.playCard(0);
         assertEquals(number_of_cards - 1, player.getCards().size());
         assertFalse(player.getCards().contains(card1));
     }

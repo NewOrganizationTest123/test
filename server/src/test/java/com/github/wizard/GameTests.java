@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,30 +76,31 @@ public class GameTests {
     }
 
     @Test
-    public void testStartNewRound() {
-        game.initializeCardStack();
-        int number_of_cards_on_stack = game.getCardsStack().size();
-        game_withMockedPlayers.startNewRound();
+    public void testStartGame() {
+        game_withMockedPlayers.start();
+        Game.Round firstRound = game_withMockedPlayers.getCurrentRound();
 
-        assertNotNull(game_withMockedPlayers.getCurrentRound().getTrumpf());
-        assertEquals(
-                number_of_cards_on_stack
-                        - game_withMockedPlayers.getRoundNr() * game.getNrPlayers(),
-                game_withMockedPlayers.getCardsStack().size());
+        assertNotNull(firstRound.getTrumpf());
+        assertEquals(firstRound.number, 1);
+
+        verify(mocked_player1).giveMeCards(argThat(cards -> cards.size() == 1));
+        verify(mocked_player2).giveMeCards(argThat(cards -> cards.size() == 1));
+
+        verify(mocked_player1).OnGameBoardUpdate(firstRound);
     }
 
     @Test
     public void testAllPlayersSubscribed_True() {
         when(mocked_player1.isSubscribed()).thenReturn(true);
         when(mocked_player2.isSubscribed()).thenReturn(true);
-        assertTrue(game_withMockedPlayers.allPlayersSubscribed());
+        assertTrue(game_withMockedPlayers.getPlayers().areSubscribed());
     }
 
     @Test
     public void testAllPlayersSubscribed_False() {
         when(mocked_player1.isSubscribed()).thenReturn(true);
         when(mocked_player2.isSubscribed()).thenReturn(false);
-        assertFalse(game_withMockedPlayers.allPlayersSubscribed());
+        assertFalse(game_withMockedPlayers.getPlayers().areSubscribed());
     }
 
     @Mock Stich stichMocked;
@@ -107,28 +108,20 @@ public class GameTests {
     @Test
     public void playCardTest_lastCard() {
 
-        Game.Round round = game_withMockedPlayers.new Round(stichMocked);
+        player1.makeEstimate(0);
+        player2.makeEstimate(1);
 
-        round.wonStiche[0] = 0;
-        round.wonStiche[1] = 0;
+        player1.winStich(0);
+        player2.winStich(0);
 
-        round.valuesOfStiche[0] = 0;
-        round.valuesOfStiche[1] = 0;
-
-        round.estimates[0] = 0;
-        round.estimates[1] = 1;
-
-        game_withMockedPlayers.startNewRound();
-        ArrayList<Game.Round> round_list = new ArrayList<>();
-        round_list.add(round);
-        game_withMockedPlayers.setRounds(round_list);
+        Game.Round round = new Game.Round(game_withMockedPlayers, stichMocked, 1);
 
         when(stichMocked.getWinningPlayer()).thenReturn(mocked_player1);
         when(stichMocked.getCardsPlayed()).thenReturn(2);
         when(stichMocked.getValue()).thenReturn(12);
         when(mocked_player1.carsLeft()).thenReturn(0);
 
-        game_withMockedPlayers.playCard(mock(Card.class), mocked_player1);
+        round.playCard(mock(Card.class), mocked_player1);
 
         verify(stichMocked).getWinningPlayer();
         verify(stichMocked).getValue();
@@ -137,14 +130,10 @@ public class GameTests {
 
     @Test
     public void playCardTest_NotlastCard() {
-        Game.Round round = game_withMockedPlayers.new Round(stichMocked);
-        game_withMockedPlayers.startNewRound();
-        ArrayList<Game.Round> round_list = new ArrayList<>();
-        round_list.add(round);
-        game_withMockedPlayers.setRounds(round_list);
-
+        Game.Round round = new Game.Round(game_withMockedPlayers, stichMocked, 1);
         when(stichMocked.getCardsPlayed()).thenReturn(1);
-        game_withMockedPlayers.playCard(mock(Card.class), mocked_player1);
+
+        round.playCard(mock(Card.class), mocked_player1);
 
         verify(mocked_player2).CardPlayRequest();
     }

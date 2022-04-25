@@ -2,7 +2,9 @@ package com.github.wizard;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -37,6 +39,13 @@ public final class Card {
         }
 
         return color.name() + "(" + value + ")";
+    }
+
+    public static Queue<Card> getShuffledDeck() {
+        List<Card> deckCopy = new ArrayList<>(deck);
+        Collections.shuffle(deckCopy);
+
+        return new LinkedList<>(deckCopy);
     }
 
     private static List<Card> generateNumberedCards() {

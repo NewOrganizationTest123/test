@@ -226,27 +226,32 @@ public class Server implements Callable<Integer> {
                                 responseObserver; // subscribe me for updates if I am new or
                         // connection was lost
                     }
+
                     // do whatever the gameAction was
                     Logger.info("gameMove: {}", gameMove.getType());
                     switch (gameMove.getType()) {
                         case "0": // player subscribed
                             Logger.info("request to subscribe new player");
                             // TODO: 22.04.2022 check
-                            if (newGame
-                                    .allPlayersSubscribed()) { // see if we are the last, then start
+                            if (newGame.ready()) { // see if we are the last, then start
                                 // handing out cards
                                 Logger.info("game starting");
-                                newGame.startNewRound();
+                                newGame.start();
                             }
                             break;
                         case "1": // submit estimates
-                            newGame.getCurrentRound().estimates[player.playerId] =
-                                    Integer.parseInt(gameMove.getData());
+                            int estimate = Integer.parseInt(gameMove.getData());
+                            Logger.debug(
+                                    "submitting estimate {} for player {}",
+                                    estimate,
+                                    player.playerId);
+                            player.makeEstimate(Integer.parseInt(gameMove.getData()));
                             break;
                         case "2": // 2 is play card
-                            newGame.playCard(
-                                    player.getCard(Integer.parseInt(gameMove.getData())),
-                                    player); // retrieve card he/she wanted to play and play it
+                            int cardIndex = Integer.parseInt(gameMove.getData());
+                            Logger.debug(
+                                    "playing card {} for player {}", cardIndex, player.playerId);
+                            player.playCard(Integer.parseInt(gameMove.getData()));
                             break;
                         default:
                             throw new IllegalArgumentException(
