@@ -7,7 +7,7 @@ public class Game {
     public final int gameId;
     public boolean ready = false;
 
-    private final Players players = new Players();
+    private final Players players = new Players(this);
 
     private Round currentRound;
 
@@ -28,7 +28,7 @@ public class Game {
      * @return the playerid of whoever was added
      */
     public int addPlayer(Player player) {
-        players.add(player, this);
+        players.add(player);
         return player.playerId;
     }
 
