@@ -24,7 +24,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
 public class Server implements Callable<Integer> {
-    public Map<Integer, Game> games = new HashMap<>();
+    private final Map<Integer, Game> games = new HashMap<>();
     private int gameCounter = 0;
     private io.grpc.Server server;
     public static final int MAX_PLAYERS = 6;
