@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +15,7 @@ public class PlayerTests {
     Player player;
     Card card1;
     Card card2;
-    Card[] cards;
+    List<Card> cards = new ArrayList<>();
     Game game;
 
     @BeforeEach
@@ -21,9 +23,8 @@ public class PlayerTests {
         player = new Player("player_name");
         card1 = new Card(Color.RED, 7);
         card2 = new Card(Color.RED, 2);
-        cards = new Card[2];
-        cards[0] = card1;
-        cards[1] = card2;
+        cards.add(card1);
+        cards.add(card2);
         game = mock(Game.class);
         player.game = game;
         when(game.getRoundNr()).thenReturn(2);
