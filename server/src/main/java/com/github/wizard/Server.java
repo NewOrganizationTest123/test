@@ -169,7 +169,7 @@ public class Server implements Callable<Integer> {
             Logger.debug("getPlayers called");
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
             if (newGame != null && newGame.getNrPlayers() < MAX_PLAYERS) {
-                for (com.github.wizard.Player player : newGame.getPlayerArrayList()) {
+                for (com.github.wizard.Player player : newGame.getPlayers()) {
                     if (player == null) break;
                     Logger.info("player: {}", player.name);
                     Player grpcPlayer = Player.newBuilder().setName(player.name).build();
@@ -221,9 +221,7 @@ public class Server implements Callable<Integer> {
                     if (newGame == null) {
                         Logger.info("player subscribed");
                         newGame = games.get(Integer.valueOf(gameMove.getGameid()));
-                        player =
-                                newGame.getPlayerArrayList()
-                                        .get(Integer.parseInt(gameMove.getPlayerid()));
+                        player = newGame.getPlayers().get(Integer.parseInt(gameMove.getPlayerid()));
                         player.responseObserver =
                                 responseObserver; // subscribe me for updates if I am new or
                         // connection was lost

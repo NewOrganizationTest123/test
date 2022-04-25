@@ -75,7 +75,7 @@ public class Player implements GameUpdate {
             for (Card c : cards) cardsString.append("/").append(c.toString());
             cardsString.append(
                     "//"); // concatenating the cards on the table as follows: //3*YELLOW/4*GREEN...
-            for (Card c : game.getCurrentRound().cardsInTheMiddle.cards) {
+            for (Card c : game.getCurrentRound().getCardsInTheMiddle().cards) {
                 if (c == null)
                     break; // if not all cards are on the table yet or there are less than 6 people
                 // playing

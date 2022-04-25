@@ -10,6 +10,11 @@ public class Stich {
 
     Color trumpf;
 
+    public void reset() {
+        cards.clear();
+        players.clear();
+    }
+
     public Stich(Color trumpf) {
         this.trumpf = trumpf;
     }
