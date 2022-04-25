@@ -48,7 +48,7 @@ public class Game {
         currentRound.playCard(card, player);
     }
 
-    public boolean ready() {
+    public boolean allPlayersSubscribed() {
         return players.areSubscribed();
     }
 

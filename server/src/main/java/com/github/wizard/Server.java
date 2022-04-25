@@ -233,7 +233,7 @@ public class Server implements Callable<Integer> {
                         case "0": // player subscribed
                             Logger.info("request to subscribe new player");
                             // TODO: 22.04.2022 check
-                            if (newGame.ready()) { // see if we are the last, then start
+                            if (newGame.allPlayersSubscribed()) { // see if we are the last, then start
                                 // handing out cards
                                 Logger.info("game starting");
                                 newGame.start();
