@@ -2,10 +2,12 @@ package com.github.wizard.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.github.wizard.Updater;
 import com.github.wizard.api.Response;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
@@ -45,7 +47,7 @@ public class PlayerTests {
     }
 
     @Test
-    public void testSubstractPoints() {
+    public void testSubtractPoints() {
         assertEquals(0, player.getPoints());
         player.subtractPoints(10);
         assertEquals(-10, player.getPoints());
@@ -84,6 +86,16 @@ public class PlayerTests {
     }
 
     @Test
+    public void updatePointsWithoutPrediction() {
+        player.winStich(0);
+        player.winStich(1);
+
+        player.updatePoints();
+
+        assertEquals(0, player.getPoints());
+    }
+
+    @Test
     public void updatePointsIncorrectPrediction() {
         player.makeEstimate(4);
         player.winStich(0);
@@ -92,5 +104,42 @@ public class PlayerTests {
         player.updatePoints();
 
         assertEquals(-20, player.getPoints());
+    }
+
+    @Test
+    public void isNotSubscribed() {
+        player.setUpdater(null);
+
+        assertFalse(player.isSubscribed());
+    }
+
+    @Test
+    public void isSubscribed() {
+        player.setUpdater(mock(Updater.class));
+
+        assertTrue(player.isSubscribed());
+    }
+
+    @Test
+    public void giveInvalidCardAmount() {
+        List<Card> cardsMock = mock(ArrayList.class);
+        when(game.getRoundNr()).thenReturn(4);
+        when(cardsMock.size()).thenReturn(3);
+
+        assertThrows(
+                IndexOutOfBoundsException.class,
+                () -> player.giveMeCards(cardsMock),
+                "You gave me too many or to few cards. Current round is 4 and you gave me 3 cards");
+    }
+
+    @Test
+    public void playInvalidCard() {
+        when(game.getRoundNr()).thenReturn(1);
+        player.giveMeCards(List.of(new Card(Color.YELLOW, 1)));
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> player.playCard(1),
+                "I wanted to play a card I did not have");
     }
 }

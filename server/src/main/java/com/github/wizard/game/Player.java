@@ -63,7 +63,12 @@ public class Player {
         Logger.debug("estimate for player {}: {}", playerId, estimate);
         Logger.debug("wonStiche for player {}: {}", playerId, wonStiche);
 
-        if (estimate == -1) return;
+        if (estimate == -1) {
+            wonStiche = 0;
+            stichValue = 0;
+            return;
+        }
+
         int roundPoints;
         if (estimate == wonStiche) {
             roundPoints = 20 + wonStiche * 10;
@@ -112,12 +117,12 @@ public class Player {
      * @param index
      */
     public void playCard(int index) {
-        Card card = cards.get(index);
-
-        if (!cards.remove(card))
+        try {
+            Card card = cards.remove(index);
+            game.playCard(card, this);
+        } catch (IndexOutOfBoundsException i) {
             throw new IllegalArgumentException("I wanted to play a card I did not have!");
-
-        game.playCard(card, this);
+        }
     }
 
     public ArrayList<Card> getCards() {
