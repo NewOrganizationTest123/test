@@ -86,7 +86,7 @@ public class GameTests {
         verify(mocked_player1).giveMeCards(argThat(cards -> cards.size() == 1));
         verify(mocked_player2).giveMeCards(argThat(cards -> cards.size() == 1));
 
-        verify(mocked_player1).OnGameBoardUpdate(firstRound);
+        verify(mocked_player1).OnGameBoardUpdate();
     }
 
     @Test
@@ -119,13 +119,13 @@ public class GameTests {
         when(stichMocked.getWinningPlayer()).thenReturn(mocked_player1);
         when(stichMocked.getCardsPlayed()).thenReturn(2);
         when(stichMocked.getValue()).thenReturn(12);
-        when(mocked_player1.carsLeft()).thenReturn(0);
+        when(mocked_player1.cardsLeft()).thenReturn(0);
 
         round.playCard(mock(Card.class), mocked_player1);
 
         verify(stichMocked).getWinningPlayer();
         verify(stichMocked).getValue();
-        verify(mocked_player1).carsLeft();
+        verify(mocked_player1).cardsLeft();
     }
 
     @Test
