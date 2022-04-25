@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background = "@drawable/main_menu_background">
+
+    <Button
+        android:id="@+id/start_game_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="@string/neues_spiel_starten"
+        app:layout_constraintBottom_toTopOf="@+id/join_game_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="#3F88B4"
+        android:textSize="16sp"
+        app:cornerRadius="8dp"/>
+
+
+    <Button
+        android:id="@+id/join_game_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="@string/spiel_beitreten"
+        app:layout_constraintBottom_toTopOf="@+id/anleitung_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="#C33E35"
+        android:textSize="16sp"
+        app:cornerRadius="8dp" />
+
+    <Button
+        android:id="@+id/anleitung_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:text="@string/anleitung"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="#DAA133"
+        android:textSize="16sp"
+        app:cornerRadius="8dp" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
