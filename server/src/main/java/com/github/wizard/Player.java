@@ -1,18 +1,17 @@
 package com.github.wizard;
 
 import com.github.wizard.api.Response;
-import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.tinylog.Logger;
 
-public class Player implements GameUpdate {
+public class Player {
     String name;
     byte playerId;
     Game game;
     boolean iHaveCHeatedFlag = false; // TODO: implement cheating, set to true if I have cheated
-    StreamObserver<Response> responseObserver;
+
+    Updater updater;
     private final ArrayList<Card> cards = new ArrayList<>();
     private int points;
 
@@ -26,10 +25,6 @@ public class Player implements GameUpdate {
 
     public int cardsLeft() {
         return cards.size();
-    }
-
-    public Card getCard(int index) {
-        return cards.get(index);
     }
 
     public void addPoints(int value) {
@@ -93,102 +88,7 @@ public class Player implements GameUpdate {
 
     /** @return true if subscription is still valid */
     public boolean isSubscribed() {
-        return responseObserver != null;
-    }
-
-    @Override
-    public void OnGameBoardUpdate() {
-        Logger.debug(
-                "OnGameBoardUpdate called"); // sent back the cards that are in the middle so the
-        // player
-        // can decide which card to play
-        if (responseObserver != null) { // nothing to do if nobody has subscribed for updates.
-            String handCards = cards.stream().map(Card::toString).collect(Collectors.joining("/"));
-            String tableCards =
-                    game.getCurrentRound().getCardsInTheMiddle().getCards().stream()
-                            .map(Card::toString)
-                            .collect(Collectors.joining("/"));
-
-            String cardsString = String.format("/%s//%s/", handCards, tableCards);
-
-            Logger.info("sending out cards: {}", cardsString);
-
-            responseObserver.onNext(
-                    Response.newBuilder()
-                            .setType("3")
-                            .setData(cardsString)
-                            .build()); // 3 is request to update game board
-        }
-    }
-
-    @Override
-    public void CardPlayRequest() {
-        Logger.debug("CardPlayRequest called");
-
-        if (responseObserver != null) { // nothing to do if nobody has subscribed for updates
-            responseObserver.onNext(
-                    Response.newBuilder()
-                            .setType("2")
-                            .setData("Please play a card")
-                            .build()); // 2 is request to update game board
-        }
-    }
-
-    /**
-     * The client should then display a popup displaying who made the stich and how much it was
-     * worth
-     *
-     * @param player
-     * @param value
-     */
-    @Override
-    public void OnStichMade(Player player, int value) {
-        Logger.debug("OnStichMade called");
-        if (responseObserver != null) { // nothing to do if nobody has subscribed for updates
-            Logger.debug("player name: {}", player.name);
-            responseObserver.onNext(
-                    Response.newBuilder()
-                            .setType("1")
-                            .setData(
-                                    String.format(
-                                            "Player %s has made this stich with value %s",
-                                            player.name, value))
-                            .build()); // 1 is display who has won
-        }
-    }
-
-    /**
-     * notifies the players that color c was selected as trumpf
-     *
-     * @param c
-     */
-    @Override
-    public void OnTrumpfSelected(Color c) {
-        Logger.debug("OnTrumpSelected called");
-        if (responseObserver != null) { // nothing to do if nobody has subscribed for updates
-            responseObserver.onNext(
-                    Response.newBuilder()
-                            .setType("4")
-                            .setData(c.name())
-                            .build()); // 4 means show them the trumpf
-        }
-    }
-
-    @Override
-    public void GetEstimate() {
-        responseObserver.onNext(
-                Response.newBuilder().setType("5").build()); // 5 means ask him/her for estimate
-    }
-
-    @Override
-    public void OnRoundFinished(int round) {
-        Logger.debug("OnRoundFinished called");
-        updatePoints();
-        responseObserver.onNext(
-                Response.newBuilder()
-                        .setType("6")
-                        .setData(points + "/" + round)
-                        .build()); // 5 means tell him/her the points and round nr
+        return updater != null;
     }
 
     /**
@@ -212,5 +112,10 @@ public class Player implements GameUpdate {
     /** needed for test cases */
     public int getPoints() {
         return points;
+    }
+
+    public void update(Response response) {
+        Logger.debug(response);
+        updater.update(response);
     }
 }

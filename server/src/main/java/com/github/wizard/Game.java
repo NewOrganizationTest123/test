@@ -81,7 +81,7 @@ public class Game {
         public void start() {
             players.tellAllTrumpfSelected(getTrumpf());
             players.handoutCards(number, Card.getShuffledDeck());
-            players.updateGAmeBoard();
+            players.updateGAmeBoard(cardsInTheMiddle.getCards());
             players.getAllEstimates();
         }
 
@@ -106,25 +106,26 @@ public class Game {
             if (cardsInTheMiddle.getCardsPlayed() == players.size()) {
                 Player winner = cardsInTheMiddle.getWinningPlayer();
                 players.finishStich(winner, cardsInTheMiddle.getValue()); // notify other players
-                winner.CardPlayRequest(); // request to start next stich
+
+                winner.update(Updater.newCardPlayRequestResponse()); // request to start next stich
 
                 if (winner.cardsLeft() == 0) {
-                    // players.updatePoints();
                     players.notifyAboutPointsAndRound(number);
 
                     // TODO: quit game if it was the last round
                     game.currentRound = Round.create(game, number + 1);
                     game.proceed();
+                    return;
                 } else {
                     cardsInTheMiddle.reset();
                 }
             } else {
                 Player nextPlayer = players.getNextPlayer(player);
-                nextPlayer.CardPlayRequest();
+                nextPlayer.update(Updater.newCardPlayRequestResponse());
                 Logger.info("asking player {} to play", nextPlayer.playerId);
             }
 
-            players.updateGAmeBoard();
+            players.updateGAmeBoard(cardsInTheMiddle.getCards());
         }
     }
 }

@@ -222,8 +222,10 @@ public class Server implements Callable<Integer> {
                         Logger.info("player subscribed");
                         newGame = games.get(Integer.valueOf(gameMove.getGameid()));
                         player = newGame.getPlayers().get(Integer.parseInt(gameMove.getPlayerid()));
-                        player.responseObserver =
-                                responseObserver; // subscribe me for updates if I am new or
+                        player.updater =
+                                new Updater(
+                                        responseObserver); // subscribe me for updates if I am new
+                        // or
                         // connection was lost
                     }
 

@@ -29,26 +29,28 @@ public class Players extends ArrayList<Player> {
 
     /** will ask all players to notify about their points and current round nr */
     public void notifyAboutPointsAndRound(int roundNumber) {
-        forEach(p -> p.OnRoundFinished(roundNumber));
+        forEach(Player::updatePoints);
+        forEach(p -> p.update(Updater.newOnRoundFinishedResponse(p.getPoints(), roundNumber)));
     }
 
-    public void updateGAmeBoard() {
-        forEach(Player::OnGameBoardUpdate);
+    public void updateGAmeBoard(List<Card> tableCards) {
+        Game.Round round = game.getCurrentRound();
+        forEach(p -> p.update(Updater.newOnGameBoardUpdate(p.getCards(), tableCards)));
     }
 
     public void finishStich(Player winningPlayer, int value) {
         winningPlayer.winStich(value);
-        forEach(p -> p.OnStichMade(winningPlayer, value));
+        forEach(p -> p.update(Updater.newOnStichMadeResponse(winningPlayer, value)));
     }
 
     /** politely asks every player for his/her estimates for the upcoming round */
     public void getAllEstimates() {
-        forEach(Player::GetEstimate);
+        forEach(p -> p.update(Updater.newGetEstimateResponse()));
     }
 
     /** politely asks every player for his/her estimates for the upcoming round */
     public void tellAllTrumpfSelected(Color trumpf) {
-        forEach(p -> p.OnTrumpfSelected(trumpf));
+        forEach(p -> p.update(Updater.newOnTrumpfSelectedResponse(trumpf)));
     }
 
     public Player getNextPlayer(Player currentPlayer) {
