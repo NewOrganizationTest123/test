@@ -20,7 +20,8 @@ public class GameRound {
      * @return true if the stich is done
      */
     public boolean PlayCard(Card card, byte cardsToPlay, Player player) {
-        cardsInTheMiddle.playCArd(card, player);
-        return cardsInTheMiddle.cardsCounter == cardsToPlay;
+        cardsInTheMiddle.playCard(card, player);
+
+        return cardsInTheMiddle.getCardsPlayed() == cardsToPlay;
     }
 }

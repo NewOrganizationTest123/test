@@ -3,7 +3,10 @@ package com.github.wizard;
 import static java.lang.Math.abs;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.Random;
 import org.tinylog.Logger;
 
@@ -15,7 +18,7 @@ public class Game {
     private final ArrayList<Player> playerArrayList = new ArrayList<>(Server.MAX_PLAYERS);
 
     private ArrayList<GameRound> rounds = new ArrayList<>();
-    private final ArrayList<Card> cardsStack = new ArrayList<>();
+    private final Queue<Card> cardsStack = new LinkedList<>();
 
     private static final Random random = new Random();
 
@@ -29,7 +32,12 @@ public class Game {
 
     /** creates a new card stack, consisting of all available cards */
     protected void initializeCardStack() {
-        cardsStack.addAll(Arrays.asList(Server.cards));
+        cardsStack.clear();
+
+        List<Card> deckCopy = new ArrayList<>(Card.deck);
+        Collections.shuffle(deckCopy);
+
+        cardsStack.addAll(deckCopy);
     }
 
     /**
@@ -76,23 +84,14 @@ public class Game {
 
     /** will hand out random cards to all players, according to the round */
     private void handoutCards() {
-        for (int i = 0;
-                i < getNrPlayers();
-                i++) { // every player gets nrOfRound random cards, no card can exist twice
-            Card[] cardsForPlayerX =
-                    new Card[getRoundNr()]; // we will take the cards, place them in this array and
-            // then hand them over to the player when we are done
-            // picking his/her cards
-            for (int j = 0; j < cardsForPlayerX.length; j++) {
-                int cardIndex = random.nextInt(cardsStack.size()); // pick some random card
-                cardsForPlayerX[j] =
-                        cardsStack.get(cardIndex); // place them next to the stack on the desk
-                cardsStack.remove(
-                        cardsStack.get(
-                                cardIndex)); // remove it from stack so nobody gets the same card
-                // again
+        for (Player p : playerArrayList) {
+            List<Card> cards = new ArrayList<>(getRoundNr());
+
+            for (int i = 0; i < getRoundNr(); i++) {
+                cards.add(cardsStack.poll());
             }
-            playerArrayList.get(i).giveMeCards(cardsForPlayerX); // hand em to over to the player
+
+            p.giveMeCards(cards);
         }
     }
 
@@ -211,7 +210,7 @@ public class Game {
 
     /** needed for tests */
     public ArrayList<Card> getCardsStack() {
-        return cardsStack;
+        return new ArrayList<>(cardsStack);
     }
 
     /** needed for tests */

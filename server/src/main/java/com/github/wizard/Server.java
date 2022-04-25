@@ -28,13 +28,6 @@ public class Server implements Callable<Integer> {
     private int gameCounter = 0;
     private io.grpc.Server grpcServer;
     public static final int MAX_PLAYERS = 6;
-    public static final Card[] cards = {
-        new Card(Color.RED, -1),
-        new Card(Color.RED, Integer.MAX_VALUE),
-        new Card(Color.RED, 5),
-        new Card(Color.RED, 10),
-        new Card(Color.RED, 12)
-    };
 
     @Option(
             names = {"-p", "--port"},

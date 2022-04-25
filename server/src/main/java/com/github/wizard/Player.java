@@ -3,7 +3,7 @@ package com.github.wizard;
 import com.github.wizard.api.Response;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 import org.tinylog.Logger;
 
 public class Player implements GameUpdate {
@@ -35,17 +35,20 @@ public class Player implements GameUpdate {
         this.points -= value;
     }
 
-    public void giveMeCards(Card[] cards) {
-        if (cards.length
+    public void giveMeCards(List<Card> newCards) {
+        if (newCards.size()
                 != game.getRoundNr()) { // in round 1 u get 1 card and 2 in round 2 and so on
             throw new IndexOutOfBoundsException(
                     "You gave me too many or to few cards. Current round is "
                             + game.getRoundNr()
                             + " and you gave me "
-                            + cards.length
+                            + cards.size()
                             + " cards");
         }
-        Collections.addAll(this.cards, cards);
+
+        cards.clear();
+        cards.addAll(newCards);
+
         StringBuilder cardsString =
                 new StringBuilder(); // concatenate the cards on hand firs as following example:
         // |1-RED|2-BLUE.....
