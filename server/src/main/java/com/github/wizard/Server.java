@@ -10,6 +10,7 @@ import com.github.wizard.api.ReadyToJoin;
 import com.github.wizard.api.Response;
 import com.github.wizard.api.StartReply;
 import com.github.wizard.api.StartRequest;
+import com.github.wizard.game.Game;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
@@ -107,7 +108,8 @@ public class Server implements Callable<Integer> {
                             .setGameid(newGame.gameId + "")
                             .setPlayerid(
                                     newGame.addPlayer(
-                                                    new com.github.wizard.Player(request.getName()))
+                                                    new com.github.wizard.game.Player(
+                                                            request.getName()))
                                             + "")
                             .build();
             responseObserver.onNext(reply);
@@ -130,7 +132,8 @@ public class Server implements Callable<Integer> {
                             .setGameid(newGame.gameId + "")
                             .setPlayerid(
                                     newGame.addPlayer(
-                                                    new com.github.wizard.Player(request.getName()))
+                                                    new com.github.wizard.game.Player(
+                                                            request.getName()))
                                             + "")
                             .build();
             responseObserver.onNext(reply);
@@ -169,10 +172,10 @@ public class Server implements Callable<Integer> {
             Logger.debug("getPlayers called");
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
             if (newGame != null && newGame.getNrPlayers() < MAX_PLAYERS) {
-                for (com.github.wizard.Player player : newGame.getPlayers()) {
+                for (com.github.wizard.game.Player player : newGame.getPlayers()) {
                     if (player == null) break;
-                    Logger.info("player: {}", player.name);
-                    Player grpcPlayer = Player.newBuilder().setName(player.name).build();
+                    Logger.info("player: {}", player.getName());
+                    Player grpcPlayer = Player.newBuilder().setName(player.getName()).build();
                     responseObserver.onNext(grpcPlayer);
                 }
 
@@ -214,7 +217,7 @@ public class Server implements Callable<Integer> {
             Logger.debug("gameStream called");
             return new StreamObserver<>() {
                 Game newGame;
-                com.github.wizard.Player player;
+                com.github.wizard.game.Player player;
 
                 @Override
                 public void onNext(GameMove gameMove) {
@@ -222,9 +225,9 @@ public class Server implements Callable<Integer> {
                         Logger.info("player subscribed");
                         newGame = games.get(Integer.valueOf(gameMove.getGameid()));
                         player = newGame.getPlayers().get(Integer.parseInt(gameMove.getPlayerid()));
-                        player.updater =
+                        player.setUpdater(
                                 new Updater(
-                                        responseObserver); // subscribe me for updates if I am new
+                                        responseObserver)); // subscribe me for updates if I am new
                         // or
                         // connection was lost
                     }
@@ -247,13 +250,15 @@ public class Server implements Callable<Integer> {
                             Logger.debug(
                                     "submitting estimate {} for player {}",
                                     estimate,
-                                    player.playerId);
+                                    player.getPlayerId());
                             player.makeEstimate(Integer.parseInt(gameMove.getData()));
                             break;
                         case "2": // 2 is play card
                             int cardIndex = Integer.parseInt(gameMove.getData());
                             Logger.debug(
-                                    "playing card {} for player {}", cardIndex, player.playerId);
+                                    "playing card {} for player {}",
+                                    cardIndex,
+                                    player.getPlayerId());
                             player.playCard(Integer.parseInt(gameMove.getData()));
                             break;
                         default:

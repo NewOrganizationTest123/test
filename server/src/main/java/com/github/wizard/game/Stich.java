@@ -1,5 +1,6 @@
-package com.github.wizard;
+package com.github.wizard.game;
 
+import com.github.wizard.Server;
 import java.util.ArrayList;
 import java.util.List;
 

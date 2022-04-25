@@ -1,4 +1,4 @@
-package com.github.wizard;
+package com.github.wizard.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

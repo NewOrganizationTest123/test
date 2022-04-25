@@ -1,4 +1,4 @@
-package com.github.wizard;
+package com.github.wizard.game;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,13 +9,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-enum Color {
-    RED,
-    GREEN,
-    BLUE,
-    YELLOW,
-}
 
 public final class Card {
 

@@ -1,6 +1,9 @@
 package com.github.wizard;
 
 import com.github.wizard.api.Response;
+import com.github.wizard.game.Card;
+import com.github.wizard.game.Color;
+import com.github.wizard.game.Player;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +27,8 @@ public class Updater {
                 .setType("1")
                 .setData(
                         String.format(
-                                "Player %s has made this stich with value %s", player.name, value))
+                                "Player %s has made this stich with value %s",
+                                player.getName(), value))
                 .build();
     }
 

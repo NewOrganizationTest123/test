@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 
 import com.github.wizard.api.Response;
+import com.github.wizard.game.Card;
+import com.github.wizard.game.Color;
+import com.github.wizard.game.Player;
 import io.grpc.stub.StreamObserver;
 import java.util.List;
 import org.junit.jupiter.api.Test;

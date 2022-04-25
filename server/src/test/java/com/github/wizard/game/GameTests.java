@@ -1,4 +1,4 @@
-package com.github.wizard;
+package com.github.wizard.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.github.wizard.Updater;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -78,10 +79,10 @@ public class GameTests {
     @Test
     public void testStartGame() {
         game_withMockedPlayers.start();
-        Game.Round firstRound = game_withMockedPlayers.getCurrentRound();
+        Round firstRound = game_withMockedPlayers.getCurrentRound();
 
         assertNotNull(firstRound.getTrumpf());
-        assertEquals(firstRound.number, 1);
+        assertEquals(firstRound.getNumber(), 1);
 
         verify(mocked_player1).giveMeCards(argThat(cards -> cards.size() == 1));
         verify(mocked_player2).giveMeCards(argThat(cards -> cards.size() == 1));
@@ -112,7 +113,7 @@ public class GameTests {
         player1.winStich(0);
         player2.winStich(0);
 
-        Game.Round round = new Game.Round(game_withMockedPlayers, stichMocked, 1);
+        Round round = new Round(game_withMockedPlayers, stichMocked, 1);
 
         when(stichMocked.getWinningPlayer()).thenReturn(mocked_player1);
         when(stichMocked.getCardsPlayed()).thenReturn(2);
@@ -131,7 +132,7 @@ public class GameTests {
 
     @Test
     public void playCardTest_NotlastCard() {
-        Game.Round round = new Game.Round(game_withMockedPlayers, stichMocked, 1);
+        Round round = new Round(game_withMockedPlayers, stichMocked, 1);
         when(stichMocked.getCardsPlayed()).thenReturn(1);
 
         round.playCard(mock(Card.class), mocked_player1);
