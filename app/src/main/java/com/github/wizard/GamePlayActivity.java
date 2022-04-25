@@ -5,22 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.github.wizard.api.GameActionsGrpc;
 import com.github.wizard.api.GameMove;
 import com.github.wizard.api.Response;
-
-import org.checkerframework.checker.units.qual.A;
-
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import java.lang.ref.WeakReference;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -28,12 +22,12 @@ import java.util.concurrent.TimeUnit;
 
 public class GamePlayActivity extends AppCompatActivity {
 
-    ArrayList<ImageView> cards = new ArrayList<>(6);
-    Random r;
+    // ArrayList<ImageView> cards = new ArrayList<>(6);
+    // Random r;
 
     public static String gameId;
     public static String playerId;
-    private static BlockingQueue<GameMove> serverWaitingQueue = new LinkedBlockingQueue<>();
+    private static final BlockingQueue<GameMove> serverWaitingQueue = new LinkedBlockingQueue<>();
     private ManagedChannel channel;
 
     private static void appendLogs(StringBuffer logs, String msg, Object... params) {
@@ -65,7 +59,7 @@ public class GamePlayActivity extends AppCompatActivity {
                 .execute(); // fire up the streaming service
         findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
-        
+
         /*
         cards.add(findViewById(R.id.card1));
         cards.add(findViewById(R.id.card2));
@@ -82,7 +76,7 @@ public class GamePlayActivity extends AppCompatActivity {
         (findViewById(R.id.button_play_card)).setVisibility(View.GONE);
 
         // submit to server
-        EditText card = (EditText) findViewById(R.id.editTextN_card);
+        EditText card = findViewById(R.id.editTextN_card);
         serverWaitingQueue.add(newGameMove(2, card.getText().toString()));
     }
 
@@ -91,7 +85,7 @@ public class GamePlayActivity extends AppCompatActivity {
         (findViewById(R.id.button_estimate)).setVisibility(View.GONE);
 
         // submit to server
-        EditText card = (EditText) findViewById(R.id.editTextNumber_estimate);
+        EditText card = findViewById(R.id.editTextNumber_estimate);
         serverWaitingQueue.add(newGameMove(1, card.getText().toString()));
     }
 
@@ -142,143 +136,129 @@ public class GamePlayActivity extends AppCompatActivity {
                              * @param value the value passed to the stream
                              */
                             new StreamObserver<Response>() {
-                                @Override
-                                public void onNext(Response value) {
-                                    Activity activity = activityReference.get();
-                                    if (activity == null) {
-                                        return;
-                                    }
-                                    switch (value.getType()) {
-                                        case "0": // general ok
+
+                                private void showStich(Activity activity, Response response) {
+                                    Toast.makeText(
+                                                    activity.getApplication()
+                                                            .getApplicationContext(),
+                                                    response.getData(),
+                                                    Toast.LENGTH_SHORT)
+                                            .show();
+                                    // todo inrease counter if it was me
+                                }
+
+                                private void makeCardPlayRequest(
+                                        Activity activity, Response response) {
+                                    Toast.makeText(
+                                                    activity.getApplication()
+                                                            .getApplicationContext(),
+                                                    response.getData(),
+                                                    Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+
+                                private void updateGameField(Activity activity, Response response) {
+                                    ((TextView) activity.findViewById(R.id.cards_in_Hand))
+                                            .setText(response.getData().split("//")[0]);
+                                    ((TextView) activity.findViewById(R.id.cards_on_table))
+                                            .setText(
+                                                    response.getData().split("//").length > 1
+                                                            ? response.getData().split("//")[1]
+                                                            : "Nothing here" + " yet...");
+                                    Toast.makeText(
+                                                    activity.getApplication()
+                                                            .getApplicationContext(),
+                                                    "your have received your" + " cards",
+                                                    Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+
+                                private void showTrump(Activity activity, Response response) {
+                                    ((TextView) activity.findViewById(R.id.trumpf))
+                                            .setText("Trumpf is " + response.getData());
+                                    Toast.makeText(
+                                                    activity.getApplication()
+                                                            .getApplicationContext(),
+                                                    "trumpf is: " + response.getData(),
+                                                    Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+
+                                private void makeEstimate(Activity activity, Response response) {
+                                    (activity.findViewById(R.id.editTextNumber_estimate))
+                                            .setVisibility(View.VISIBLE);
+                                    (activity.findViewById(R.id.button_estimate))
+                                            .setVisibility(View.VISIBLE);
+                                }
+
+                                private void updateRoundNumberAndPoints(
+                                        Activity activity, Response response) {
+                                    ((TextView) activity.findViewById(R.id.points))
+                                            .setText(
+                                                    "You have "
+                                                            + response.getData().split("/")[0]
+                                                            + " points");
+                                    ((TextView) activity.findViewById(R.id.round))
+                                            .setText(
+                                                    "This is round "
+                                                            + response.getData().split("/")[1]);
+
+                                    Toast.makeText(
+                                                    activity.getApplication()
+                                                            .getApplicationContext(),
+                                                    "after round "
+                                                            + response.getData().split("/")[1]
+                                                            + " you have "
+                                                            + response.getData().split("/")[0]
+                                                            + " points!",
+                                                    Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+
+                                private void handleResponse(Activity activity, Response response) {
+                                    switch (response.getType()) {
+                                        case "0":
                                             break;
-                                        case "1": // show who has made the stich
+                                        case "1":
                                             activity.runOnUiThread(
-                                                    () -> {
-                                                        Toast.makeText(
-                                                                        activity.getApplication()
-                                                                                .getApplicationContext(),
-                                                                        value.getData(),
-                                                                        Toast.LENGTH_SHORT)
-                                                                .show();
-                                                        // todo inrease counter if it was me
-                                                    });
+                                                    () -> showStich(activity, response));
                                             break;
                                         case "2":
                                             activity.runOnUiThread(
-                                                    () -> {
-                                                        Toast.makeText(
-                                                                        activity.getApplication()
-                                                                                .getApplicationContext(),
-                                                                        value.getData(),
-                                                                        Toast.LENGTH_SHORT)
-                                                                .show();
-                                                    });
+                                                    () -> makeCardPlayRequest(activity, response));
                                             break;
-                                        case "3": // display cards
+                                        case "3":
                                             activity.runOnUiThread(
-                                                    () -> {
-                                                        ((TextView)
-                                                                        activity.findViewById(
-                                                                                R.id.cards_in_Hand))
-                                                                .setText(
-                                                                        value.getData()
-                                                                                .split("//")[0]);
-                                                        ((TextView)
-                                                                        activity.findViewById(
-                                                                                R.id.cards_on_table))
-                                                                .setText(
-                                                                        value.getData()
-                                                                                                .split(
-                                                                                                        "//")
-                                                                                                .length
-                                                                                        > 1
-                                                                                ? value.getData()
-                                                                                        .split(
-                                                                                                "//")[
-                                                                                        1]
-                                                                                : "Nothing here"
-                                                                                      + " yet...");
-                                                        Toast.makeText(
-                                                                        activity.getApplication()
-                                                                                .getApplicationContext(),
-                                                                        "your have received your"
-                                                                                + " cards",
-                                                                        Toast.LENGTH_SHORT)
-                                                                .show();
-                                                    });
+                                                    () -> updateGameField(activity, response));
                                             break;
-                                        case "4": // show em trump
+                                        case "4":
                                             activity.runOnUiThread(
-                                                    () -> {
-                                                        ((TextView)
-                                                                        activity.findViewById(
-                                                                                R.id.trumpf))
-                                                                .setText(
-                                                                        "Trumpf is "
-                                                                                + value.getData());
-                                                        Toast.makeText(
-                                                                        activity.getApplication()
-                                                                                .getApplicationContext(),
-                                                                        "trumpf is: "
-                                                                                + value.getData(),
-                                                                        Toast.LENGTH_SHORT)
-                                                                .show();
-                                                    });
+                                                    () -> showTrump(activity, response));
                                             break;
-                                        case "5": // ask user for his estimate
+                                        case "5":
                                             activity.runOnUiThread(
-                                                    () -> {
-                                                        ((TextView)
-                                                                        activity.findViewById(
-                                                                                R.id.editTextNumber_estimate))
-                                                                .setVisibility(View.VISIBLE);
-                                                        ((TextView)
-                                                                        activity.findViewById(
-                                                                                R.id.button_estimate))
-                                                                .setVisibility(View.VISIBLE);
-                                                    });
+                                                    () -> makeEstimate(activity, response));
                                             break;
-                                        case "6": // display points
+                                        case "6":
                                             activity.runOnUiThread(
-                                                    () -> {
-                                                        ((TextView)
-                                                                        activity.findViewById(
-                                                                                R.id.points))
-                                                                .setText(
-                                                                        "You have "
-                                                                                + value.getData()
-                                                                                        .split("/")[
-                                                                                        0]
-                                                                                + " points");
-                                                        ((TextView)
-                                                                        activity.findViewById(
-                                                                                R.id.round))
-                                                                .setText(
-                                                                        "This is round "
-                                                                                + value.getData()
-                                                                                        .split("/")[
-                                                                                        1]);
-
-                                                        Toast.makeText(
-                                                                        activity.getApplication()
-                                                                                .getApplicationContext(),
-                                                                        "after round "
-                                                                                + value.getData()
-                                                                                        .split("/")[
-                                                                                        1]
-                                                                                + " you have "
-                                                                                + value.getData()
-                                                                                        .split("/")[
-                                                                                        0]
-                                                                                + " points!",
-                                                                        Toast.LENGTH_SHORT)
-                                                                .show();
-                                                    });
+                                                    () ->
+                                                            updateRoundNumberAndPoints(
+                                                                    activity, response));
                                             break;
                                         default:
                                             throw new IllegalArgumentException(
                                                     "type not implemented");
                                     }
+                                }
+
+                                @Override
+                                public void onNext(Response response) {
+                                    Activity activity = activityReference.get();
+                                    if (activity == null) {
+                                        return;
+                                    }
+
+                                    handleResponse(activity, response);
                                 }
 
                                 @Override
