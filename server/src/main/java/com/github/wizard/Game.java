@@ -17,7 +17,7 @@ public class Game {
 
     private final ArrayList<Player> playerArrayList = new ArrayList<>(Server.MAX_PLAYERS);
 
-    private ArrayList<GameRound> rounds = new ArrayList<>();
+    private ArrayList<Round> rounds = new ArrayList<>();
     private final Queue<Card> cardsStack = new LinkedList<>();
 
     private static final Random random = new Random();
@@ -61,16 +61,16 @@ public class Game {
     public void startNewRound() {
         switch (random.nextInt(4)) { // choose Trumpf randomly
             case 0:
-                rounds.add(new GameRound(Color.RED));
+                rounds.add(new Round(Color.RED));
                 break;
             case 1:
-                rounds.add(new GameRound(Color.BLUE));
+                rounds.add(new Round(Color.BLUE));
                 break;
             case 2:
-                rounds.add(new GameRound(Color.GREEN));
+                rounds.add(new Round(Color.GREEN));
                 break;
             case 3:
-                rounds.add(new GameRound(Color.YELLOW));
+                rounds.add(new Round(Color.YELLOW));
                 break;
             default:
                 throw new IndexOutOfBoundsException("no more than 4 colors available");
@@ -95,7 +95,7 @@ public class Game {
         }
     }
 
-    public GameRound getCurrentRound() {
+    public Round getCurrentRound() {
         return rounds.get(rounds.size() - 1);
     }
 
@@ -180,7 +180,7 @@ public class Game {
     }
 
     private void updateGAmeBoard() {
-        GameRound currentRound = getCurrentRound();
+        Round currentRound = getCurrentRound();
         playerArrayList.forEach(p -> p.OnGameBoardUpdate(currentRound));
     }
 
@@ -214,7 +214,33 @@ public class Game {
     }
 
     /** needed for tests */
-    public void setRounds(ArrayList<GameRound> rounds) {
+    public void setRounds(ArrayList<Round> rounds) {
         this.rounds = rounds;
+    }
+
+    public class Round {
+        public int[] estimates = new int[Server.MAX_PLAYERS];
+        public int[] stiche = new int[Server.MAX_PLAYERS];
+        public int[] valuesOfStiche = new int[Server.MAX_PLAYERS];
+        public Stich cardsInTheMiddle;
+        public Color trumpf;
+
+        public Round(Color trumpf) {
+            this.trumpf = trumpf;
+            cardsInTheMiddle = new Stich(trumpf);
+        }
+
+        /**
+         * play the gicen card
+         *
+         * @param card
+         * @param cardsToPlay how many cards there should be to call the stich complete
+         * @return true if the stich is done
+         */
+        public boolean PlayCard(Card card, byte cardsToPlay, Player player) {
+            cardsInTheMiddle.playCard(card, player);
+
+            return cardsInTheMiddle.getCardsPlayed() == cardsToPlay;
+        }
     }
 }

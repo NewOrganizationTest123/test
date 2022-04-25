@@ -1,7 +1,7 @@
 package com.github.wizard;
 
 public interface GameUpdate {
-    public void OnGameBoardUpdate(GameRound round);
+    public void OnGameBoardUpdate(Game.Round round);
 
     public void CardPlayRequest();
 

@@ -63,7 +63,7 @@ public class Player implements GameUpdate {
     }
 
     @Override
-    public void OnGameBoardUpdate(GameRound round) {
+    public void OnGameBoardUpdate(Game.Round round) {
         Logger.debug(
                 "OnGameBoardUpdate called"); // sent back the cards that are in the middle so the
         // player
