@@ -25,7 +25,7 @@ import picocli.CommandLine.Option;
 
 public class Server implements Callable<Integer> {
     public Map<Integer, Game> games = new HashMap<>();
-    public int gameCounter = 0;
+    private int gameCounter = 0;
     private io.grpc.Server server;
     public static final int MAX_PLAYERS = 6;
     public static final Card[] cards = {
