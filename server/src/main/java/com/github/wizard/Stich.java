@@ -49,7 +49,7 @@ public class Stich {
                             return card.value;
                         })
                 .reduce(Integer::sum)
-                .get();
+                .orElse(-1);
     }
 
     public Player getWinningPlayer() { // todo do not ignore trumpf
