@@ -14,6 +14,7 @@ import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import org.tinylog.Level;
@@ -23,7 +24,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
 public class Server implements Callable<Integer> {
-    public HashMap<Integer, Game> games = new HashMap<>();
+    public Map<Integer, Game> games = new HashMap<>();
     public int gameCounter = 0;
     private io.grpc.Server server;
     public static final int MAX_PLAYERS = 6;
