@@ -26,7 +26,7 @@ import picocli.CommandLine.Option;
 public class Server implements Callable<Integer> {
     private final Map<Integer, Game> games = new HashMap<>();
     private int gameCounter = 0;
-    private io.grpc.Server server;
+    private io.grpc.Server grpcServer;
     public static final int MAX_PLAYERS = 6;
     public static final Card[] cards = {
         new Card(Color.RED, -1),
@@ -63,7 +63,7 @@ public class Server implements Callable<Integer> {
     }
 
     private void start() throws IOException {
-        server =
+        grpcServer =
                 ServerBuilder.forPort(port)
                         .addService(new GameStarterImpl())
                         .addService(new GamePlayImpl())
@@ -91,14 +91,14 @@ public class Server implements Callable<Integer> {
     }
 
     private void stop() throws InterruptedException {
-        if (server != null) {
-            server.shutdown().awaitTermination(30, TimeUnit.SECONDS);
+        if (grpcServer != null) {
+            grpcServer.shutdown().awaitTermination(30, TimeUnit.SECONDS);
         }
     }
 
     private void blockUntilShutdown() throws InterruptedException {
-        if (server != null) {
-            server.awaitTermination();
+        if (grpcServer != null) {
+            grpcServer.awaitTermination();
         }
     }
 
