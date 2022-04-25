@@ -5,13 +5,13 @@ import java.util.List;
 
 public class Stich {
 
-    public final List<Card> cards = new ArrayList<>(Server.MAX_PLAYERS);
+    private final List<Card> cards = new ArrayList<>(Server.MAX_PLAYERS);
     private final List<Player> players = new ArrayList<>(Server.MAX_PLAYERS);
 
     Color trumpf;
 
     public void reset() {
-        cards.clear();
+        getCards().clear();
         players.clear();
     }
 
@@ -20,15 +20,15 @@ public class Stich {
     }
 
     public void playCard(Card card, Player player) {
-        if (cards.size() >= Server.MAX_PLAYERS)
+        if (getCards().size() >= Server.MAX_PLAYERS)
             throw new IllegalArgumentException("cannot play more cards than there are players");
 
-        cards.add(card);
+        getCards().add(card);
         players.add(player);
     }
 
     public int getCardsPlayed() {
-        return cards.size();
+        return getCards().size();
     }
     /**
      * should return the value for a given Stich
@@ -36,9 +36,10 @@ public class Stich {
      * @return
      */
     public int getValue() {
-        Color firstColor = cards.get(0).color; // as only cards of similar color and wizzards count
+        Color firstColor =
+                getCards().get(0).color; // as only cards of similar color and wizzards count
 
-        return cards.stream()
+        return getCards().stream()
                 .map(
                         card -> {
                             if (card.color != firstColor
@@ -53,12 +54,13 @@ public class Stich {
     }
 
     public Player getWinningPlayer() { // todo do not ignore trumpf
-        Color firstColor = cards.get(0).color; // as only cards of similar color and wizzards count
+        Color firstColor =
+                getCards().get(0).color; // as only cards of similar color and wizzards count
 
         int highestValueIndex = 0;
 
-        for (int i = 0; i < cards.size(); i++) {
-            Card card = cards.get(i);
+        for (int i = 0; i < getCards().size(); i++) {
+            Card card = getCards().get(i);
 
             // First wizard wins
             if (card.value == Integer.MAX_VALUE) return players.get(i);
@@ -68,13 +70,18 @@ public class Stich {
 
             if (i >= 1) {
                 // new color is trumpf, old was not
-                if (card.color == trumpf && cards.get(highestValueIndex).color != trumpf)
+                if (card.color == trumpf && getCards().get(highestValueIndex).color != trumpf)
                     highestValueIndex = i;
                 else if (card.color == firstColor
-                        && card.value > cards.get(highestValueIndex).value) highestValueIndex = i;
+                        && card.value > getCards().get(highestValueIndex).value)
+                    highestValueIndex = i;
             }
         }
 
         return players.get(highestValueIndex);
+    }
+
+    public List<Card> getCards() {
+        return cards;
     }
 }

@@ -81,7 +81,7 @@ public class Game {
         public void start() {
             players.tellAllTrumpfSelected(getTrumpf());
             players.handoutCards(number, Card.getShuffledDeck());
-            players.updateGAmeBoard(this);
+            players.updateGAmeBoard();
             players.getAllEstimates();
         }
 
@@ -108,7 +108,7 @@ public class Game {
                 players.finishStich(winner, cardsInTheMiddle.getValue()); // notify other players
                 winner.CardPlayRequest(); // request to start next stich
 
-                if (winner.carsLeft() == 0) {
+                if (winner.cardsLeft() == 0) {
                     // players.updatePoints();
                     players.notifyAboutPointsAndRound(number);
 
@@ -124,7 +124,7 @@ public class Game {
                 Logger.info("asking player {} to play", nextPlayer.playerId);
             }
 
-            players.updateGAmeBoard(this);
+            players.updateGAmeBoard();
         }
     }
 }

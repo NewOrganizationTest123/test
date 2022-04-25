@@ -4,6 +4,7 @@ import com.github.wizard.api.Response;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.tinylog.Logger;
 
 public class Player implements GameUpdate {
@@ -15,7 +16,7 @@ public class Player implements GameUpdate {
     private final ArrayList<Card> cards = new ArrayList<>();
     private int points;
 
-    private int estimate = 0;
+    private int estimate = -1;
     private int wonStiche = 0;
     private int stichValue = 0;
 
@@ -23,7 +24,7 @@ public class Player implements GameUpdate {
         this.name = name;
     }
 
-    public int carsLeft() {
+    public int cardsLeft() {
         return cards.size();
     }
 
@@ -51,6 +52,8 @@ public class Player implements GameUpdate {
     public void updatePoints() {
         Logger.debug("estimate for player {}: {}", playerId, estimate);
         Logger.debug("wonStiche for player {}: {}", playerId, wonStiche);
+
+        if (estimate == -1) return;
         int roundPoints;
         if (estimate == wonStiche) {
             roundPoints = 20 + wonStiche * 10;
@@ -60,7 +63,7 @@ public class Player implements GameUpdate {
         addPoints(roundPoints);
         Logger.debug("roundPoints for player {}: {}", playerId, roundPoints);
 
-        estimate = 0;
+        estimate = -1;
         wonStiche = 0;
         stichValue = 0;
     }
@@ -73,7 +76,7 @@ public class Player implements GameUpdate {
                     "You gave me too many or to few cards. Current round is "
                             + game.getRoundNr()
                             + " and you gave me "
-                            + cards.size()
+                            + newCards.size()
                             + " cards");
         }
 
@@ -94,31 +97,26 @@ public class Player implements GameUpdate {
     }
 
     @Override
-    public void OnGameBoardUpdate(Game.Round round) {
+    public void OnGameBoardUpdate() {
         Logger.debug(
                 "OnGameBoardUpdate called"); // sent back the cards that are in the middle so the
         // player
         // can decide which card to play
-        if (responseObserver != null) { // nothing to do if nobody has subscribed for updates
-            StringBuilder cardsString =
-                    new StringBuilder(); // concatenate the cards on hand firs as following example:
-            // |1*RED|2*BLUE.....
-            for (Card c : cards) cardsString.append("/").append(c.toString());
-            cardsString.append(
-                    "//"); // concatenating the cards on the table as follows: //3*YELLOW/4*GREEN...
-            for (Card c : game.getCurrentRound().getCardsInTheMiddle().cards) {
-                if (c == null)
-                    break; // if not all cards are on the table yet or there are less than 6 people
-                // playing
-                cardsString.append(c).append("/");
-            }
+        if (responseObserver != null) { // nothing to do if nobody has subscribed for updates.
+            String handCards = cards.stream().map(Card::toString).collect(Collectors.joining("/"));
+            String tableCards =
+                    game.getCurrentRound().getCardsInTheMiddle().getCards().stream()
+                            .map(Card::toString)
+                            .collect(Collectors.joining("/"));
+
+            String cardsString = String.format("/%s//%s/", handCards, tableCards);
 
             Logger.info("sending out cards: {}", cardsString);
 
             responseObserver.onNext(
                     Response.newBuilder()
                             .setType("3")
-                            .setData(cardsString.toString())
+                            .setData(cardsString)
                             .build()); // 3 is request to update game board
         }
     }
@@ -152,10 +150,9 @@ public class Player implements GameUpdate {
                     Response.newBuilder()
                             .setType("1")
                             .setData(
-                                    "Player "
-                                            + player.name
-                                            + " has made this stich with value "
-                                            + value)
+                                    String.format(
+                                            "Player %s has made this stich with value %s",
+                                            player.name, value))
                             .build()); // 1 is display who has won
         }
     }

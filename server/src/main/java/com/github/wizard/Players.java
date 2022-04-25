@@ -3,7 +3,6 @@ package com.github.wizard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-
 import org.tinylog.Logger;
 
 public class Players extends ArrayList<Player> {
@@ -33,8 +32,8 @@ public class Players extends ArrayList<Player> {
         forEach(p -> p.OnRoundFinished(roundNumber));
     }
 
-    public void updateGAmeBoard(Game.Round round) {
-        forEach(p -> p.OnGameBoardUpdate(round));
+    public void updateGAmeBoard() {
+        forEach(Player::OnGameBoardUpdate);
     }
 
     public void finishStich(Player winningPlayer, int value) {
