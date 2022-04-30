@@ -1,8 +1,7 @@
 package com.github.wizard;
 
+import com.github.wizard.api.Card;
 import com.github.wizard.api.Response;
-import com.github.wizard.game.Card;
-import com.github.wizard.game.Color;
 import com.github.wizard.game.Player;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
@@ -34,8 +33,33 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
         if (hand == null) hand = new ArrayList<>();
         if (table == null) table = new ArrayList<>();
 
-        String handCards = hand.stream().map(Card::toString).collect(Collectors.joining("/"));
-        String tableCards = table.stream().map(Card::toString).collect(Collectors.joining("/"));
+        String handCards =
+                hand.stream()
+                        .map(
+                                card -> {
+                                    if (card.getValue() == Card.Value.WIZARD
+                                            || card.getValue() == Card.Value.JESTER) {
+                                        return card.getValue().name();
+                                    }
+                                    return String.format(
+                                            "%s(%s)",
+                                            card.getColor().name(), card.getValue().getNumber());
+                                })
+                        .collect(Collectors.joining("/"));
+
+        String tableCards =
+                hand.stream()
+                        .map(
+                                card -> {
+                                    if (card.getValue() == Card.Value.WIZARD
+                                            || card.getValue() == Card.Value.JESTER) {
+                                        return card.getValue().name();
+                                    }
+                                    return String.format(
+                                            "%s(%s)",
+                                            card.getColor().name(), card.getValue().getNumber());
+                                })
+                        .collect(Collectors.joining("/"));
 
         String cardsString = String.format("/%s//%s/", handCards, tableCards);
 
@@ -44,8 +68,8 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
         return Response.newBuilder().setType("3").setData(cardsString).build();
     }
 
-    public static Response newOnTrumpSelectedResponse(Color c) {
-        return Response.newBuilder().setType("4").setData(c.name()).build();
+    public static Response newOnTrumpSelectedResponse(Card c) {
+        return Response.newBuilder().setType("4").setData(c.getColor().name()).build();
     }
 
     public static Response newGetEstimateResponse() {

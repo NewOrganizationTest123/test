@@ -1,10 +1,13 @@
 package com.github.wizard.game;
 
+import com.github.wizard.api.Card;
+
 public class Game {
     public final int gameId;
     public boolean ready = false;
 
-    private final Player.Players players = new Player.Players(this);
+    public final Player.Players players = new Player.Players(this);
+    public final Deck deck = new Deck();
 
     private Round currentRound;
 
