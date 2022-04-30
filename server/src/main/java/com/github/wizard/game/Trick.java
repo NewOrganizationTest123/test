@@ -4,20 +4,20 @@ import com.github.wizard.Server;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Stich {
+public class Trick {
 
     private final List<Card> cards = new ArrayList<>(Server.MAX_PLAYERS);
     private final List<Player> players = new ArrayList<>(Server.MAX_PLAYERS);
 
-    Color trumpf;
+    Color trump;
 
     public void reset() {
         getCards().clear();
         players.clear();
     }
 
-    public Stich(Color trumpf) {
-        this.trumpf = trumpf;
+    public Trick(Color trump) {
+        this.trump = trump;
     }
 
     public void playCard(Card card, Player player) {
@@ -32,13 +32,13 @@ public class Stich {
         return getCards().size();
     }
     /**
-     * should return the value for a given Stich
+     * should return the value for a given Trick
      *
      * @return
      */
     public int getValue() {
         Color firstColor =
-                getCards().get(0).color(); // as only cards of similar color and wizzards count
+                getCards().get(0).color(); // as only cards of similar color and wizards count
 
         return getCards().stream()
                 .map(
@@ -54,9 +54,9 @@ public class Stich {
                 .orElse(-1);
     }
 
-    public Player getWinningPlayer() { // todo do not ignore trumpf
+    public Player getWinningPlayer() { // todo do not ignore trump
         Color firstColor =
-                getCards().get(0).color(); // as only cards of similar color and wizzards count
+                getCards().get(0).color(); // as only cards of similar color and wizards count
 
         int highestValueIndex = 0;
 
@@ -70,8 +70,8 @@ public class Stich {
             if (card.value() == -1) continue;
 
             if (i >= 1) {
-                // new color is trumpf, old was not
-                if (card.color() == trumpf && getCards().get(highestValueIndex).color() != trumpf)
+                // new color is trump, old was not
+                if (card.color() == trump && getCards().get(highestValueIndex).color() != trump)
                     highestValueIndex = i;
                 else if (card.color() == firstColor
                         && card.value() > getCards().get(highestValueIndex).value())

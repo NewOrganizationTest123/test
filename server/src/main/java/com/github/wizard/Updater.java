@@ -16,12 +16,12 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
         responseStreamObserver.onNext(response);
     }
 
-    public static Response newOnStichMadeResponse(Player player, int value) {
+    public static Response newOnTrickTakenResponse(Player player, int value) {
         return Response.newBuilder()
                 .setType("1")
                 .setData(
                         String.format(
-                                "Player %s has made this stich with value %s",
+                                "Player %s has made this trick with value %s",
                                 player.getName(), value))
                 .build();
     }
@@ -44,7 +44,7 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
         return Response.newBuilder().setType("3").setData(cardsString).build();
     }
 
-    public static Response newOnTrumpfSelectedResponse(Color c) {
+    public static Response newOnTrumpSelectedResponse(Color c) {
         return Response.newBuilder().setType("4").setData(c.name()).build();
     }
 
