@@ -3,19 +3,28 @@ package com.github.wizard.game;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import com.github.wizard.api.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class TrickTests {
     Trick redTrumpTrick;
 
-    Card wizard = new Card(null, Integer.MAX_VALUE);
-    Card red3 = new Card(Color.RED, 3);
-    Card red13 = new Card(Color.RED, 13);
-    Card yellow10 = new Card(Color.YELLOW, 10);
-    Card green2 = new Card(Color.GREEN, 2);
-    Card green5 = new Card(Color.GREEN, 5);
-    Card jester = new Card(null, -1);
+    Card wizard = Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.WIZARD).build();
+
+    Card red1 = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.ONE).build();
+
+    Card red3 = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.THREE).build();
+
+    Card red13 = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.THIRTEEN).build();
+
+    Card yellow10 = Card.newBuilder().setColor(Card.Color.YELLOW).setValue(Card.Value.TEN).build();
+
+    Card green2 = Card.newBuilder().setColor(Card.Color.GREEN).setValue(Card.Value.TWO).build();
+
+    Card green5 = Card.newBuilder().setColor(Card.Color.GREEN).setValue(Card.Value.FIVE).build();
+
+    Card jester = Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.JESTER).build();
 
     Player player1 = new Player("1");
     Player player2 = new Player("2");
@@ -23,7 +32,7 @@ public class TrickTests {
 
     @BeforeEach
     public void init() {
-        redTrumpTrick = new Trick(Color.RED);
+        redTrumpTrick = new Trick(red1);
     }
 
     @Test
