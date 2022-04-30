@@ -38,17 +38,17 @@ public class Stich {
      */
     public int getValue() {
         Color firstColor =
-                getCards().get(0).color; // as only cards of similar color and wizzards count
+                getCards().get(0).color(); // as only cards of similar color and wizzards count
 
         return getCards().stream()
                 .map(
                         card -> {
-                            if (card.color != firstColor
-                                    || card.value == Integer.MAX_VALUE
-                                    || card.value == -1) {
+                            if (card.color() != firstColor
+                                    || card.value() == Integer.MAX_VALUE
+                                    || card.value() == -1) {
                                 return 0;
                             }
-                            return card.value;
+                            return card.value();
                         })
                 .reduce(Integer::sum)
                 .orElse(-1);
@@ -56,7 +56,7 @@ public class Stich {
 
     public Player getWinningPlayer() { // todo do not ignore trumpf
         Color firstColor =
-                getCards().get(0).color; // as only cards of similar color and wizzards count
+                getCards().get(0).color(); // as only cards of similar color and wizzards count
 
         int highestValueIndex = 0;
 
@@ -64,17 +64,17 @@ public class Stich {
             Card card = getCards().get(i);
 
             // First wizard wins
-            if (card.value == Integer.MAX_VALUE) return players.get(i);
+            if (card.value() == Integer.MAX_VALUE) return players.get(i);
 
             // Jester is always ignored
-            if (card.value == -1) continue;
+            if (card.value() == -1) continue;
 
             if (i >= 1) {
                 // new color is trumpf, old was not
-                if (card.color == trumpf && getCards().get(highestValueIndex).color != trumpf)
+                if (card.color() == trumpf && getCards().get(highestValueIndex).color() != trumpf)
                     highestValueIndex = i;
-                else if (card.color == firstColor
-                        && card.value > getCards().get(highestValueIndex).value)
+                else if (card.color() == firstColor
+                        && card.value() > getCards().get(highestValueIndex).value())
                     highestValueIndex = i;
             }
         }

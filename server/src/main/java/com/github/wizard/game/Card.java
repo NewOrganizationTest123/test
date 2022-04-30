@@ -10,18 +10,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public final class Card {
+public record Card(Color color, int value) {
 
     public static final List<Card> deck = Collections.unmodifiableList(generateDeck());
 
-    public final Color color;
-    // +inf:=Zauberer
-    public final int value;
-
-    public Card(Color color, int value) {
-        this.color = color;
-        this.value = value;
-    } // -1:=Narr
+    // -1:=Narr
 
     @Override
     public String toString() {
