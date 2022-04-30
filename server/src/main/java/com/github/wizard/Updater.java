@@ -10,13 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.tinylog.Logger;
 
-public class Updater {
-
-    private final StreamObserver<Response> responseStreamObserver;
-
-    public Updater(StreamObserver<Response> responseStreamObserver) {
-        this.responseStreamObserver = responseStreamObserver;
-    }
+public record Updater(StreamObserver<Response> responseStreamObserver) {
 
     public void update(Response response) {
         responseStreamObserver.onNext(response);
