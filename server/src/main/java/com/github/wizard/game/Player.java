@@ -2,10 +2,10 @@ package com.github.wizard.game;
 
 import com.github.wizard.Server;
 import com.github.wizard.Updater;
+import com.github.wizard.api.Card;
 import com.github.wizard.api.Response;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import org.tinylog.Logger;
 
 public class Player {
@@ -183,7 +183,7 @@ public class Player {
         }
 
         /** politely asks every player for his/her estimates for the upcoming round */
-        public void tellAllTrumpSelected(Color trump) {
+        public void tellAllTrumpSelected(Card trump) {
             forEach(p -> p.update(Updater.newOnTrumpSelectedResponse(trump)));
         }
 
@@ -192,18 +192,8 @@ public class Player {
         }
 
         /** will hand out random cards to all players, according to the round */
-        public void handoutCards(int roundNumber, Queue<Card> cardsStack) {
-            for (Player p : this) {
-                List<Card> cards = new ArrayList<>(roundNumber);
-
-                for (int i = 0; i < roundNumber; i++) {
-                    cards.add(cardsStack.poll());
-                }
-
-                Logger.debug("cards for player {}: {}", p.playerId, cards);
-
-                p.giveMeCards(cards);
-            }
+        public void handoutCards(int roundNumber, Deck deck) {
+            forEach(player -> player.giveMeCards(deck.draw(roundNumber)));
         }
 
         /**

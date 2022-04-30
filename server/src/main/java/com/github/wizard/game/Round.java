@@ -1,6 +1,7 @@
 package com.github.wizard.game;
 
 import com.github.wizard.Updater;
+import com.github.wizard.api.Card;
 import java.util.Random;
 import org.tinylog.Logger;
 
@@ -15,14 +16,18 @@ public final class Round {
 
     public static Round create(Game game, int number) {
 
-        Color trump = Color.values()[random.nextInt(4)];
+        Card trump = game.deck.draw();
 
         return new Round(game, new Trick(trump), number);
     }
 
     public void start() {
-        players.tellAllTrumpSelected(getTrump());
-        players.handoutCards(number, Card.getShuffledDeck());
+        game.deck.shuffle();
+
+        players.handoutCards(number, game.deck);
+
+        players.tellAllTrumpSelected(cardsInTheMiddle.trump);
+
         players.updateGAmeBoard(cardsInTheMiddle.getCards());
         players.getAllEstimates();
     }
@@ -34,7 +39,7 @@ public final class Round {
         this.number = roundNumber;
     }
 
-    protected Color getTrump() {
+    protected Card getTrump() {
         return getCardsInTheMiddle().trump;
     }
 
