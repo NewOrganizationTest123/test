@@ -31,11 +31,11 @@ class UpdaterTest {
     }
 
     @Test
-    void newOnStichMadeResponse() {
-        Response response = Updater.newOnStichMadeResponse(new Player("player"), 13);
+    void newOnTrickTakenResponse() {
+        Response response = Updater.newOnTrickTakenResponse(new Player("player"), 13);
 
         assertEquals("1", response.getType());
-        assertEquals("Player player has made this stich with value 13", response.getData());
+        assertEquals("Player player has made this trick with value 13", response.getData());
     }
 
     @Test
@@ -66,8 +66,8 @@ class UpdaterTest {
     }
 
     @Test
-    void newOnTrumpfSelectedResponse() {
-        Response response = Updater.newOnTrumpfSelectedResponse(Color.RED);
+    void newOnTrumpSelectedResponse() {
+        Response response = Updater.newOnTrumpSelectedResponse(Color.RED);
 
         assertEquals("4", response.getType());
         assertEquals("RED", response.getData());

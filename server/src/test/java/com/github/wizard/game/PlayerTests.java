@@ -8,14 +8,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.github.wizard.Updater;
-import com.github.wizard.api.Response;
-import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,7 +23,7 @@ public class PlayerTests {
     List<Card> cards = new ArrayList<>();
     Game game;
 
-    @Mock private StreamObserver<Response> responseObserverMock;
+    // @Mock private StreamObserver<Response> responseObserverMock;
 
     @BeforeEach
     public void init() {
@@ -77,8 +74,8 @@ public class PlayerTests {
     @Test
     public void updatePointsCorrectPrediction() {
         player.makeEstimate(2);
-        player.winStich(0);
-        player.winStich(0);
+        player.takeTrick(0);
+        player.takeTrick(0);
 
         player.updatePoints();
 
@@ -87,8 +84,8 @@ public class PlayerTests {
 
     @Test
     public void updatePointsWithoutPrediction() {
-        player.winStich(0);
-        player.winStich(1);
+        player.takeTrick(0);
+        player.takeTrick(1);
 
         player.updatePoints();
 
@@ -98,8 +95,8 @@ public class PlayerTests {
     @Test
     public void updatePointsIncorrectPrediction() {
         player.makeEstimate(4);
-        player.winStich(0);
-        player.winStich(0);
+        player.takeTrick(0);
+        player.takeTrick(0);
 
         player.updatePoints();
 
