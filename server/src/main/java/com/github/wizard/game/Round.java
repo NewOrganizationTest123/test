@@ -8,7 +8,7 @@ public final class Round {
 
     private final Game game;
     private final Player.Players players;
-    private final Stich cardsInTheMiddle;
+    private final Trick cardsInTheMiddle;
     private final int number;
 
     private static final Random random = new Random();
@@ -17,30 +17,28 @@ public final class Round {
 
         Color trump = Color.values()[random.nextInt(4)];
 
-        Round round = new Round(game, new Stich(trump), number);
-
-        return round;
+        return new Round(game, new Trick(trump), number);
     }
 
     public void start() {
-        players.tellAllTrumpfSelected(getTrumpf());
+        players.tellAllTrumpSelected(getTrump());
         players.handoutCards(number, Card.getShuffledDeck());
         players.updateGAmeBoard(cardsInTheMiddle.getCards());
         players.getAllEstimates();
     }
 
-    public Round(Game game, Stich stich, int roundNumber) {
-        this.cardsInTheMiddle = stich;
+    public Round(Game game, Trick trick, int roundNumber) {
+        this.cardsInTheMiddle = trick;
         this.game = game;
         this.players = game.getPlayers();
         this.number = roundNumber;
     }
 
-    protected Color getTrumpf() {
-        return getCardsInTheMiddle().trumpf;
+    protected Color getTrump() {
+        return getCardsInTheMiddle().trump;
     }
 
-    protected Stich getCardsInTheMiddle() {
+    protected Trick getCardsInTheMiddle() {
         return cardsInTheMiddle;
     }
 
@@ -53,9 +51,9 @@ public final class Round {
 
         if (cardsInTheMiddle.getCardsPlayed() == players.size()) {
             Player winner = cardsInTheMiddle.getWinningPlayer();
-            players.finishStich(winner, cardsInTheMiddle.getValue()); // notify other players
+            players.finishTrick(winner, cardsInTheMiddle.getValue()); // notify other players
 
-            winner.update(Updater.newCardPlayRequestResponse()); // request to start next stich
+            winner.update(Updater.newCardPlayRequestResponse()); // request to start next trick
 
             if (winner.cardsLeft() == 0) {
                 players.notifyAboutPointsAndRound(number);

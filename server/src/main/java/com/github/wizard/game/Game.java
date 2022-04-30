@@ -20,7 +20,7 @@ public class Game {
      * adds a player to the current game. This does not include the subscription for updates
      *
      * @param player
-     * @return the playerid of whoever was added
+     * @return the playerId of whoever was added
      */
     public int addPlayer(Player player) {
         players.add(player);
