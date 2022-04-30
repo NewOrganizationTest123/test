@@ -14,8 +14,6 @@ public record Card(Color color, int value) {
 
     public static final List<Card> deck = Collections.unmodifiableList(generateDeck());
 
-    // -1:=Narr
-
     @Override
     public String toString() {
         if (value == Integer.MAX_VALUE) {

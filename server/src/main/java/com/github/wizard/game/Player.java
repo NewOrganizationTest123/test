@@ -19,8 +19,8 @@ public class Player {
     private int points;
 
     private int estimate = -1;
-    private int wonStiche = 0;
-    private int stichValue = 0;
+    private int takenTricks = 0;
+    private int trickValue = 0;
 
     public Player(String name) {
         this.name = name;
@@ -54,33 +54,33 @@ public class Player {
         this.estimate = estimate;
     }
 
-    public void winStich(int value) {
-        wonStiche++;
-        stichValue += value;
+    public void takeTrick(int value) {
+        takenTricks++;
+        trickValue += value;
     }
 
     public void updatePoints() {
         Logger.debug("estimate for player {}: {}", playerId, estimate);
-        Logger.debug("wonStiche for player {}: {}", playerId, wonStiche);
+        Logger.debug("taken tricks for player {}: {}", playerId, takenTricks);
 
         if (estimate == -1) {
-            wonStiche = 0;
-            stichValue = 0;
+            takenTricks = 0;
+            trickValue = 0;
             return;
         }
 
         int roundPoints;
-        if (estimate == wonStiche) {
-            roundPoints = 20 + wonStiche * 10;
+        if (estimate == takenTricks) {
+            roundPoints = 20 + takenTricks * 10;
         } else {
-            roundPoints = (wonStiche - estimate) * 10;
+            roundPoints = (takenTricks - estimate) * 10;
         }
         addPoints(roundPoints);
         Logger.debug("roundPoints for player {}: {}", playerId, roundPoints);
 
         estimate = -1;
-        wonStiche = 0;
-        stichValue = 0;
+        takenTricks = 0;
+        trickValue = 0;
     }
 
     public void giveMeCards(List<Card> newCards) {
@@ -149,7 +149,7 @@ public class Player {
         }
 
         public boolean add(Player player) {
-            // TODO: throw error when playerlist is full
+            // TODO: throw error when player list is full
             if (size() >= Server.MAX_PLAYERS) return false;
 
             int playerId = size();
@@ -172,9 +172,9 @@ public class Player {
             forEach(p -> p.update(Updater.newOnGameBoardUpdate(p.getCards(), tableCards)));
         }
 
-        public void finishStich(Player winningPlayer, int value) {
-            winningPlayer.winStich(value);
-            forEach(p -> p.update(Updater.newOnStichMadeResponse(winningPlayer, value)));
+        public void finishTrick(Player winningPlayer, int value) {
+            winningPlayer.takeTrick(value);
+            forEach(p -> p.update(Updater.newOnTrickTakenResponse(winningPlayer, value)));
         }
 
         /** politely asks every player for his/her estimates for the upcoming round */
@@ -183,8 +183,8 @@ public class Player {
         }
 
         /** politely asks every player for his/her estimates for the upcoming round */
-        public void tellAllTrumpfSelected(Color trumpf) {
-            forEach(p -> p.update(Updater.newOnTrumpfSelectedResponse(trumpf)));
+        public void tellAllTrumpSelected(Color trump) {
+            forEach(p -> p.update(Updater.newOnTrumpSelectedResponse(trump)));
         }
 
         public Player getNextPlayer(Player currentPlayer) {

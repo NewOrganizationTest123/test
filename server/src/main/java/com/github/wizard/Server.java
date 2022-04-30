@@ -61,7 +61,7 @@ public class Server implements Callable<Integer> {
                 ServerBuilder.forPort(port)
                         .addService(new GameStarterImpl())
                         .addService(new GamePlayImpl())
-                        .addService(new GameActiontyIml())
+                        .addService(new GameActionsImpl())
                         .build()
                         .start();
 
@@ -209,7 +209,7 @@ public class Server implements Callable<Integer> {
         }
     }
 
-    class GameActiontyIml extends GameActionsGrpc.GameActionsImplBase {
+    class GameActionsImpl extends GameActionsGrpc.GameActionsImplBase {
 
         /** @param responseObserver */
         @Override
