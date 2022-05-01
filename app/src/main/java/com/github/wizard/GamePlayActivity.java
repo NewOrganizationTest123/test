@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,6 +60,12 @@ public class GamePlayActivity extends AppCompatActivity {
                 .execute(); // fire up the streaming service
         findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
+        View cheatsView = findViewById(R.id.ExposeCheatsView);
+        cheatsView.setVisibility(View.GONE);
+        View playerView = findViewById(R.id.playerRecyclerView);
+        playerView.setVisibility(View.GONE);
+        Button closeCheatsView = findViewById(R.id.closeCheatsViewButton);
+        closeCheatsView.setVisibility(View.GONE);
 
         /*
         cards.add(findViewById(R.id.card1));
