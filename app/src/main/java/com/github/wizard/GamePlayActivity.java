@@ -27,6 +27,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import android.hardware.SensorEventListener;
 
+import org.w3c.dom.Text;
+
 public class GamePlayActivity extends AppCompatActivity {
 
     // ArrayList<ImageView> cards = new ArrayList<>(6);
@@ -43,6 +45,7 @@ public class GamePlayActivity extends AppCompatActivity {
     private View cheatsView;
     private View playerView;
     private Button closeCheatsViewButton;
+    private TextView cheatsViewTitle;
 
     private static void appendLogs(StringBuffer logs, String msg, Object... params) {
         if (params.length > 0) {
@@ -80,6 +83,15 @@ public class GamePlayActivity extends AppCompatActivity {
         playerView.setVisibility(View.GONE);
         closeCheatsViewButton = findViewById(R.id.closeCheatsViewButton);
         closeCheatsViewButton.setVisibility(View.GONE);
+        cheatsViewTitle = findViewById(R.id.cheatingViewTitle);
+        cheatsViewTitle.setVisibility(View.GONE);
+
+        closeCheatsViewButton.setOnClickListener(e->{
+            cheatsView.setVisibility(View.GONE);
+            playerView.setVisibility(View.GONE);
+            closeCheatsViewButton.setVisibility(View.GONE);
+            cheatsViewTitle.setVisibility(View.GONE);
+        });
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         Objects.requireNonNull(sensorManager).registerListener(sensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
@@ -87,8 +99,6 @@ public class GamePlayActivity extends AppCompatActivity {
         deviceAcceleration=10;
         deviceAcceleration_before=SensorManager.GRAVITY_EARTH;
         deviceAcceleration_now=SensorManager.GRAVITY_EARTH;
-
-
 
 
 
@@ -130,6 +140,7 @@ public class GamePlayActivity extends AppCompatActivity {
                 cheatsView.setVisibility(View.VISIBLE);
                 playerView.setVisibility(View.VISIBLE);
                 closeCheatsViewButton.setVisibility(View.VISIBLE);
+                cheatsViewTitle.setVisibility(View.VISIBLE);
             }
         }
 
