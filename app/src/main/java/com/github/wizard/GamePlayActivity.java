@@ -105,14 +105,13 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        sensorManager.registerListener(sensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
         super.onResume();
+        sensorManager.registerListener(sensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
     }
     @Override
     protected void onPause() {
-        sensorManager.unregisterListener(sensorListener);
         super.onPause();
+        sensorManager.unregisterListener(sensorListener);
     }
 
 
@@ -123,15 +122,14 @@ public class GamePlayActivity extends AppCompatActivity {
             double y_axis = sensorEvent.values[1];
             double z_axis = sensorEvent.values[2];
             deviceAcceleration_before = deviceAcceleration_now;
-            deviceAcceleration_now = Math.sqrt((double) (x_axis * x_axis + y_axis * y_axis + z_axis * z_axis));
+            deviceAcceleration_now = Math.sqrt(x_axis * x_axis + y_axis * y_axis + z_axis * z_axis);
             double delta = deviceAcceleration_now - deviceAcceleration_before;
             deviceAcceleration = deviceAcceleration * 0.9 + delta;
 
-            if (deviceAcceleration > 11) {
+            if (deviceAcceleration > 10) {
                 cheatsView.setVisibility(View.VISIBLE);
                 playerView.setVisibility(View.VISIBLE);
                 closeCheatsViewButton.setVisibility(View.VISIBLE);
-                Toast.makeText(getApplicationContext(), "Shake event detected", Toast.LENGTH_SHORT).show();
             }
         }
 
