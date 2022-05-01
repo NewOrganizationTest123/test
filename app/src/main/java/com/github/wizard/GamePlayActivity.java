@@ -1,7 +1,11 @@
 package com.github.wizard;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,10 +20,12 @@ import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import java.lang.ref.WeakReference;
 import java.text.MessageFormat;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import android.hardware.SensorEventListener;
 
 public class GamePlayActivity extends AppCompatActivity {
 
@@ -30,6 +36,13 @@ public class GamePlayActivity extends AppCompatActivity {
     public static String playerId;
     private static final BlockingQueue<GameMove> serverWaitingQueue = new LinkedBlockingQueue<>();
     private ManagedChannel channel;
+    private SensorManager sensorManager;
+    private double deviceAcceleration;
+    private double deviceAcceleration_before;
+    private double deviceAcceleration_now;
+    private View cheatsView;
+    private View playerView;
+    private Button closeCheatsViewButton;
 
     private static void appendLogs(StringBuffer logs, String msg, Object... params) {
         if (params.length > 0) {
@@ -58,14 +71,26 @@ public class GamePlayActivity extends AppCompatActivity {
         playerId = intent.getStringExtra(MainActivity.PLAYER_ID_KEY);
         new GameActionRunner(new GameActionRunnable(), new WeakReference<>(this), channel)
                 .execute(); // fire up the streaming service
+
         findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
-        View cheatsView = findViewById(R.id.ExposeCheatsView);
+        cheatsView = findViewById(R.id.ExposeCheatsView);
         cheatsView.setVisibility(View.GONE);
-        View playerView = findViewById(R.id.playerRecyclerView);
+        playerView = findViewById(R.id.playerRecyclerView);
         playerView.setVisibility(View.GONE);
-        Button closeCheatsView = findViewById(R.id.closeCheatsViewButton);
-        closeCheatsView.setVisibility(View.GONE);
+        closeCheatsViewButton = findViewById(R.id.closeCheatsViewButton);
+        closeCheatsViewButton.setVisibility(View.GONE);
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Objects.requireNonNull(sensorManager).registerListener(sensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+        deviceAcceleration=10;
+        deviceAcceleration_before=SensorManager.GRAVITY_EARTH;
+        deviceAcceleration_now=SensorManager.GRAVITY_EARTH;
+
+
+
+
 
         /*
         cards.add(findViewById(R.id.card1));
@@ -77,6 +102,44 @@ public class GamePlayActivity extends AppCompatActivity {
         */
 
     }
+
+    @Override
+    protected void onResume() {
+        sensorManager.registerListener(sensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+        super.onResume();
+    }
+    @Override
+    protected void onPause() {
+        sensorManager.unregisterListener(sensorListener);
+        super.onPause();
+    }
+
+
+    private final SensorEventListener sensorListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+            double x_axis = sensorEvent.values[0];
+            double y_axis = sensorEvent.values[1];
+            double z_axis = sensorEvent.values[2];
+            deviceAcceleration_before = deviceAcceleration_now;
+            deviceAcceleration_now = Math.sqrt((double) (x_axis * x_axis + y_axis * y_axis + z_axis * z_axis));
+            double delta = deviceAcceleration_now - deviceAcceleration_before;
+            deviceAcceleration = deviceAcceleration * 0.9 + delta;
+
+            if (deviceAcceleration > 11) {
+                cheatsView.setVisibility(View.VISIBLE);
+                playerView.setVisibility(View.VISIBLE);
+                closeCheatsViewButton.setVisibility(View.VISIBLE);
+                Toast.makeText(getApplicationContext(), "Shake event detected", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int i) {
+
+        }
+    };
 
     private void playCard(View view) {
         (findViewById(R.id.editTextN_card)).setVisibility(View.GONE);
