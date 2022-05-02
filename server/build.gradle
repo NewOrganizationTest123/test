@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'com.google.protobuf'
+    id 'com.palantir.docker'
 }
 
 configureProtobuf()
@@ -59,4 +60,10 @@ jar {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
     duplicatesStrategy = 'include'
+}
+
+docker {
+    name "fhilgers/${project.name}:${project.version}"
+    files tasks.jar.outputs
+    buildArgs([NAME: "${project.name}", VERSION: "${project.version}"])
 }
