@@ -414,19 +414,16 @@ public class GamePlayActivity extends AppCompatActivity {
         }
     }
 
-    public static class PlayersRecyclerviewAdapter extends RecyclerView.Adapter<PlayersRecyclerviewAdapter.ViewHolder> {
+    public class PlayersRecyclerviewAdapter extends RecyclerView.Adapter<PlayersRecyclerviewAdapter.ViewHolder> {
 
         private ArrayList<String> players;
         private LayoutInflater layoutInflater;
-        private ItemClickListener itemClickListener;
         public String selectedPlayer;
-        //public int name_index = 0;
 
         PlayersRecyclerviewAdapter(Context context, ArrayList<String> players) {
             this.layoutInflater = LayoutInflater.from(context);
             this.players = players;
             selectedPlayer=null;
-            //name_index=names.size()-1;
         }
 
         @Override
@@ -446,34 +443,21 @@ public class GamePlayActivity extends AppCompatActivity {
             return players.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public class ViewHolder extends RecyclerView.ViewHolder {
             Button playername_holder;
 
             ViewHolder(View view) {
                 super(view);
                 playername_holder = view.findViewById(R.id.cheating_player_button);
 
-                view.setOnClickListener(this);
-            }
-
-            @Override
-            public void onClick(View view) {
-                if (itemClickListener != null) {
-                    itemClickListener.onItemClick(view, getAdapterPosition());
-                }
+                playername_holder.setOnClickListener(e->{
+                    hideCheatingExposingView();
+                });
             }
         }
 
         private String getPlayer(int id) {
             return players.get(id);
-        }
-
-        void setClickListener(ItemClickListener itemClickListener) {
-            this.itemClickListener = itemClickListener;
-        }
-
-        public interface ItemClickListener {
-            void onItemClick(View view, int position);
         }
     }
 
