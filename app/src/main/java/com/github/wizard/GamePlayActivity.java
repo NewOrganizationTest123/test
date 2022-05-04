@@ -12,7 +12,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.wizard.api.GameActionsGrpc;
 import com.github.wizard.api.GameMove;
 import com.github.wizard.api.Response;
@@ -20,6 +24,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import java.lang.ref.WeakReference;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -27,7 +32,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import android.hardware.SensorEventListener;
 
-import org.w3c.dom.Text;
 
 public class GamePlayActivity extends AppCompatActivity {
 
@@ -43,7 +47,7 @@ public class GamePlayActivity extends AppCompatActivity {
     private double deviceAcceleration_before;
     private double deviceAcceleration_now;
     private View cheatsView;
-    private View playerView;
+    private RecyclerView playersRecyclerView;
     private Button closeCheatsViewButton;
     private TextView cheatsViewTitle;
 
@@ -78,19 +82,13 @@ public class GamePlayActivity extends AppCompatActivity {
         findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
         cheatsView = findViewById(R.id.ExposeCheatsView);
-        cheatsView.setVisibility(View.GONE);
-        playerView = findViewById(R.id.playerRecyclerView);
-        playerView.setVisibility(View.GONE);
+        playersRecyclerView = findViewById(R.id.playerRecyclerView);
         closeCheatsViewButton = findViewById(R.id.closeCheatsViewButton);
-        closeCheatsViewButton.setVisibility(View.GONE);
         cheatsViewTitle = findViewById(R.id.cheatingViewTitle);
-        cheatsViewTitle.setVisibility(View.GONE);
+        hideCheatingExposingView(); //by default, the cheating-exposing view is not visible; only shows up after shaking device
 
         closeCheatsViewButton.setOnClickListener(e->{
-            cheatsView.setVisibility(View.GONE);
-            playerView.setVisibility(View.GONE);
-            closeCheatsViewButton.setVisibility(View.GONE);
-            cheatsViewTitle.setVisibility(View.GONE);
+            hideCheatingExposingView();
         });
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -99,6 +97,19 @@ public class GamePlayActivity extends AppCompatActivity {
         deviceAcceleration=10;
         deviceAcceleration_before=SensorManager.GRAVITY_EARTH;
         deviceAcceleration_now=SensorManager.GRAVITY_EARTH;
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        playersRecyclerView.setLayoutManager(layoutManager);
+
+        //TODO: get real players instead of example ArrayList
+        ArrayList<String> players = new ArrayList<>();
+        players.add("Player 1");
+        players.add("Player 2");
+
+        PlayersRecyclerviewAdapter adapter = new PlayersRecyclerviewAdapter(this, players);
+        playersRecyclerView.setAdapter(adapter);
+
+
 
 
 
@@ -111,6 +122,17 @@ public class GamePlayActivity extends AppCompatActivity {
         cards.add(findViewById(R.id.card6));
         */
 
+    }
+
+    public void showCheatingExposingView(){
+
+    }
+
+    public void hideCheatingExposingView(){
+        cheatsView.setVisibility(View.GONE);
+        playersRecyclerView.setVisibility(View.GONE);
+        closeCheatsViewButton.setVisibility(View.GONE);
+        cheatsViewTitle.setVisibility(View.GONE);
     }
 
     @Override
@@ -138,7 +160,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
             if (deviceAcceleration > 10) {
                 cheatsView.setVisibility(View.VISIBLE);
-                playerView.setVisibility(View.VISIBLE);
+                playersRecyclerView.setVisibility(View.VISIBLE);
                 closeCheatsViewButton.setVisibility(View.VISIBLE);
                 cheatsViewTitle.setVisibility(View.VISIBLE);
             }
