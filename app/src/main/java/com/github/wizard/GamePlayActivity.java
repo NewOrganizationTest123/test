@@ -127,7 +127,10 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     public void showCheatingExposingView(){
-
+        cheatsView.setVisibility(View.VISIBLE);
+        playersRecyclerView.setVisibility(View.VISIBLE);
+        closeCheatsViewButton.setVisibility(View.VISIBLE);
+        cheatsViewTitle.setVisibility(View.VISIBLE);
     }
 
     public void hideCheatingExposingView(){
@@ -135,6 +138,21 @@ public class GamePlayActivity extends AppCompatActivity {
         playersRecyclerView.setVisibility(View.GONE);
         closeCheatsViewButton.setVisibility(View.GONE);
         cheatsViewTitle.setVisibility(View.GONE);
+    }
+
+    public void exposeCheating(String playername){
+        //TODO: get boolean variable of player with name "playername" from server, which is true if the player has cheated
+
+        Boolean hasCheated = true; //provisional variable until real value is retrieved from server
+
+        if(hasCheated){
+            //TODO: update points on server (this player +20 and player with name "playername" -2 and show Toast with information to all players
+        }
+
+        else{
+            //TODO: update points on server (this player -10) and show Toast with information to all players
+        }
+
     }
 
     @Override
@@ -161,10 +179,7 @@ public class GamePlayActivity extends AppCompatActivity {
             deviceAcceleration = deviceAcceleration * 0.9 + delta;
 
             if (deviceAcceleration > 10) {
-                cheatsView.setVisibility(View.VISIBLE);
-                playersRecyclerView.setVisibility(View.VISIBLE);
-                closeCheatsViewButton.setVisibility(View.VISIBLE);
-                cheatsViewTitle.setVisibility(View.VISIBLE);
+                showCheatingExposingView();
             }
         }
 
@@ -452,12 +467,9 @@ public class GamePlayActivity extends AppCompatActivity {
 
                 playername_holder.setOnClickListener(e->{
                     hideCheatingExposingView();
+                    exposeCheating(playername_holder.getText().toString());
                 });
             }
-        }
-
-        private String getPlayer(int id) {
-            return players.get(id);
         }
     }
 
