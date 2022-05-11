@@ -131,7 +131,7 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     public void exposeCheating(String playername){
-        //TODO: get boolean variable of player with name "playername" from server, which is true if the player has cheated
+       /* //TODO: get boolean variable of player with name "playername" from server, which is true if the player has cheated
 
         Boolean hasCheated = true; //provisional variable until real value is retrieved from server
 
@@ -141,7 +141,10 @@ public class GamePlayActivity extends AppCompatActivity {
 
         else{
             //TODO: update points on server (this player -10) and show Toast with information to all players
-        }
+        }*/
+        serverWaitingQueue.add(newGameMove(3,playername));
+
+
 
     }
 

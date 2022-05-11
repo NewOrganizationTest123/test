@@ -261,6 +261,15 @@ public class Server implements Callable<Integer> {
                                     player.getPlayerId());
                             player.playCard(Integer.parseInt(gameMove.getData()));
                         }
+                        case "3"->{//player who might have cheated
+                            Game game = newGame;
+                            for (com.github.wizard.game.Player cheater : newGame.players) {
+                                if (cheater.getName().equals(gameMove.getData())) {
+                                    game.cheatDiscoverySubmitted(cheater,player);
+                                }
+                            }
+
+                        }
                         default -> throw new IllegalArgumentException(
                                 "This game Action is not yet implemented");
                     }

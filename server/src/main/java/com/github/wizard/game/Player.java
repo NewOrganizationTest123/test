@@ -195,6 +195,10 @@ public class Player {
             return super.get((currentPlayer.playerId + 1) % size());
         }
 
+        public void onCHeatingDiscovered(Player cheater){
+            forEach(p->{p.update(Updater.newOnCheatingSubmittedResponse(cheater,cheater.iHaveCHeatedFlag));});
+        }
+
         /** will hand out random cards to all players, according to the round */
         public void handoutCards(int roundNumber, Deck deck) {
             forEach(player -> player.giveMeCards(deck.draw(roundNumber)));

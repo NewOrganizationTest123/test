@@ -50,4 +50,8 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
     public static Response newOnRoundFinishedResponse(int points, int round) {
         return Response.newBuilder().setType("6").setData(points + "/" + round).setGameStatus(GameStatus.newBuilder().setRound(round+"").setMyPoints(points+"").build()).build();
     }
+    public static Response newOnCheatingSubmittedResponse(Player player, boolean succesfulOrNot){
+       // return Response.newBuilder().setCheating(CheatingSubmittedResult.newBuilder.)
+return null;
+    }
 }

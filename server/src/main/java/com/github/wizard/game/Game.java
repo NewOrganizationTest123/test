@@ -62,4 +62,16 @@ public class Game {
     public void proceed() {
         currentRound.start();
     }
+
+    public void cheatDiscoverySubmitted(Player cheater, Player petze) {
+        if(cheater.iHaveCHeatedFlag){
+            //if there really was a cheating
+            petze.addPoints(30);
+            cheater.subtractPoints(10);
+        }
+        else{//if there was no cheating
+            petze.subtractPoints(10);
+            petze.iHaveCHeatedFlag=true;//this counts as cheating :D
+        }
+    }
 }

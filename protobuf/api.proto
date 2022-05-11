@@ -55,8 +55,15 @@ syntax = "proto3";
         CardList cardList=3;
         StichMade stichMade=4;
         GameStatus gameStatus=5;
+        CheatingSubmittedResult cheating=6;
 
         }
+        }
+
+        message CheatingSubmittedResult{
+            string cheaterId=1;
+            string succesfulOrNot=2;
+            string newPoints=3;
         }
 
         message GameStatus{
@@ -85,6 +92,7 @@ syntax = "proto3";
  *  0: subscribe for updates about game-board
  *  1: submit estimate for upcoming round
  *  2: play out card
+ *  3: playerName who might have cheated
  */
         message GameMove{
         string gameid = 1;
