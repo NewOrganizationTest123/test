@@ -73,5 +73,6 @@ public class Game {
             petze.subtractPoints(10);
             petze.iHaveCHeatedFlag=true;//this counts as cheating :D
         }
+        players.onCHeatingDiscovered(cheater);
     }
 }

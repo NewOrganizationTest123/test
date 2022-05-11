@@ -40,6 +40,7 @@ syntax = "proto3";
         string name = 1;
         }
 /**
+ * legacy
  * 0: general ok-response
  * 1: player who made 'Stich' and value of it
  * 2: request to play card
@@ -56,8 +57,18 @@ syntax = "proto3";
         StichMade stichMade=4;
         GameStatus gameStatus=5;
         CheatingSubmittedResult cheating=6;
+        PlayersList playerList=7;
 
         }
+        }
+        message PlayersList{
+            repeated GrpcPlayer player=1;
+
+        }
+
+        message GrpcPlayer{
+            string playerId=1;
+            string playerName=2;
         }
 
         message CheatingSubmittedResult{
