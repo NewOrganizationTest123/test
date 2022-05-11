@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.wizard.api.Card;
 import com.github.wizard.api.CardList;
+import com.github.wizard.api.CheatingSubmittedResult;
 import com.github.wizard.api.GameActionsGrpc;
 import com.github.wizard.api.GameMove;
 import com.github.wizard.api.GameStatus;
@@ -343,6 +344,32 @@ public class GamePlayActivity extends AppCompatActivity {
                                             Toast.LENGTH_SHORT)
                                             .show();
                                 }
+                                private void youCheated(Activity activity,CheatingSubmittedResult cheatingSubmittedResult){
+                                    ((TextView) activity.findViewById(R.id.points))
+                                            .setText(
+                                                    "You have "
+                                                            + cheatingSubmittedResult.getNewPoints()
+                                                            + " points");
+                                    Toast.makeText(
+                                            activity.getApplication()
+                                                    .getApplicationContext(),
+                                          "Your cheating was discovered!!!! You now have "+ cheatingSubmittedResult.getNewPoints()+" Points",
+                                            Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+                                private void someOneCheated(Activity activity,CheatingSubmittedResult cheatingSubmittedResult){//we will not get our id because submitting cheaters is anonymous
+                                    ((TextView) activity.findViewById(R.id.points))
+                                            .setText(
+                                                    "You have "
+                                                            + cheatingSubmittedResult.getNewPoints()
+                                                            + " points");
+                                    Toast.makeText(
+                                            activity.getApplication()
+                                                    .getApplicationContext(),
+                                            "Someone cheated! You now have "+ cheatingSubmittedResult.getNewPoints()+" Points",
+                                            Toast.LENGTH_SHORT)
+                                            .show();
+                                }
 
                                 private void handleResponse(Activity activity, Response response) {
 
@@ -362,10 +389,19 @@ public class GamePlayActivity extends AppCompatActivity {
                                         activity.runOnUiThread( () ->
                                                 updateRoundNumberAndPoints(
                                                         activity, response.getGameStatus()));
+                                    }else if(response.getActionCase()==Response.ActionCase.CHEATING){
+                                        if(response.getCheating().getCheaterId().equals(playerId)){//I have cheated
+                                            activity.runOnUiThread(()->youCheated(activity,response.getCheating()));
+                                            return;
+                                        }
+                                        else{//someone else has cheated
+                                            activity.runOnUiThread(()->someOneCheated(activity,response.getCheating()));
+                                            return;
+                                        }
                                     }
 
 
-                                    switch (response.getType()) {
+                                    switch (response.getType()) {//legacy switch case
                                         case "0":
                                             break;
                                         case "1":
