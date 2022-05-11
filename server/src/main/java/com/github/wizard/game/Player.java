@@ -196,7 +196,7 @@ public class Player {
         }
 
         public void onCHeatingDiscovered(Player cheater){
-            forEach(p->{p.update(Updater.newOnCheatingSubmittedResponse(cheater,cheater.iHaveCHeatedFlag));});
+            forEach(p->{p.update(Updater.newOnCheatingSubmittedResponse(cheater,cheater.iHaveCHeatedFlag, p.points));});
         }
 
         /** will hand out random cards to all players, according to the round */

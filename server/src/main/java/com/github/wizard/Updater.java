@@ -2,6 +2,7 @@ package com.github.wizard;
 
 import com.github.wizard.api.Card;
 import com.github.wizard.api.CardList;
+import com.github.wizard.api.CheatingSubmittedResult;
 import com.github.wizard.api.GameStatus;
 import com.github.wizard.api.Response;
 import com.github.wizard.game.Player;
@@ -50,8 +51,7 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
     public static Response newOnRoundFinishedResponse(int points, int round) {
         return Response.newBuilder().setType("6").setData(points + "/" + round).setGameStatus(GameStatus.newBuilder().setRound(round+"").setMyPoints(points+"").build()).build();
     }
-    public static Response newOnCheatingSubmittedResponse(Player player, boolean succesfulOrNot){
-       // return Response.newBuilder().setCheating(CheatingSubmittedResult.newBuilder.)
-return null;
+    public static Response newOnCheatingSubmittedResponse(Player cheater, boolean succesfulOrNot,int points){
+        return Response.newBuilder().setCheating(CheatingSubmittedResult.newBuilder().setCheaterId(cheater.getPlayerId()+"").setNewPoints(points+"").setSuccesfulOrNot(succesfulOrNot+"").build()).build();
     }
 }
