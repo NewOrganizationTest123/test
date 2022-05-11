@@ -152,6 +152,11 @@ public class GamePlayActivity extends AppCompatActivity {
 
     }
 
+    public void updatePlayersInRecyclerView(ArrayList<String> realplayers){
+        PlayersRecyclerviewAdapter newdapater = new PlayersRecyclerviewAdapter(this, realplayers);
+        playersRecyclerView.setAdapter(newdapater);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -204,7 +209,7 @@ public class GamePlayActivity extends AppCompatActivity {
         serverWaitingQueue.add(newGameMove(1, card.getText().toString()));
     }
 
-    private static class GameActionRunnable implements GrpcRunnableNew {
+    private class GameActionRunnable implements GrpcRunnableNew {
         private Throwable failed;
 
         @Override
@@ -403,11 +408,14 @@ public class GamePlayActivity extends AppCompatActivity {
                                         }
                                     }else if(response.getActionCase()==Response.ActionCase.PLAYERLIST){
 
-                                        players=new ArrayList<>();
+                                        ArrayList realplayers=new ArrayList<>();
                                         for (int i = 0; i < response.getPlayerList().getPlayerCount(); i++) {
-                                            players.add(response.getPlayerList().getPlayer(i).getPlayerName());
+                                            realplayers.add(response.getPlayerList().getPlayer(i).getPlayerName());
                                         }
-                                        activity.runOnUiThread(()-> adapter.notifyDataSetChanged());
+
+
+
+                                        activity.runOnUiThread(()-> updatePlayersInRecyclerView(realplayers));
                                         return;
                                     }
 
