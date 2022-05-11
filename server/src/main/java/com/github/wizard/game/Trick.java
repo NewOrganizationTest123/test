@@ -1,23 +1,24 @@
 package com.github.wizard.game;
 
 import com.github.wizard.Server;
+import com.github.wizard.api.Card;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Stich {
+public class Trick {
 
     private final List<Card> cards = new ArrayList<>(Server.MAX_PLAYERS);
     private final List<Player> players = new ArrayList<>(Server.MAX_PLAYERS);
 
-    Color trumpf;
+    Card trump;
 
     public void reset() {
         getCards().clear();
         players.clear();
     }
 
-    public Stich(Color trumpf) {
-        this.trumpf = trumpf;
+    public Trick(Card trump) {
+        this.trump = trump;
     }
 
     public void playCard(Card card, Player player) {
@@ -32,31 +33,31 @@ public class Stich {
         return getCards().size();
     }
     /**
-     * should return the value for a given Stich
+     * should return the value for a given Trick
      *
      * @return
      */
     public int getValue() {
-        Color firstColor =
-                getCards().get(0).color; // as only cards of similar color and wizzards count
+        Card.Color firstColor =
+                getCards().get(0).getColor(); // as only cards of similar color and wizards count
 
         return getCards().stream()
                 .map(
                         card -> {
-                            if (card.color != firstColor
-                                    || card.value == Integer.MAX_VALUE
-                                    || card.value == -1) {
+                            if (card.getColor() != firstColor
+                                    || card.getValue() == Card.Value.WIZARD
+                                    || card.getValue() == Card.Value.JESTER) {
                                 return 0;
                             }
-                            return card.value;
+                            return card.getValue().getNumber();
                         })
                 .reduce(Integer::sum)
                 .orElse(-1);
     }
 
-    public Player getWinningPlayer() { // todo do not ignore trumpf
-        Color firstColor =
-                getCards().get(0).color; // as only cards of similar color and wizzards count
+    public Player getWinningPlayer() { // todo do not ignore trump
+        Card.Color firstColor =
+                getCards().get(0).getColor(); // as only cards of similar color and wizards count
 
         int highestValueIndex = 0;
 
@@ -64,17 +65,19 @@ public class Stich {
             Card card = getCards().get(i);
 
             // First wizard wins
-            if (card.value == Integer.MAX_VALUE) return players.get(i);
+            if (card.getValue() == Card.Value.WIZARD) return players.get(i);
 
             // Jester is always ignored
-            if (card.value == -1) continue;
+            if (card.getValue() == Card.Value.JESTER) continue;
 
             if (i >= 1) {
-                // new color is trumpf, old was not
-                if (card.color == trumpf && getCards().get(highestValueIndex).color != trumpf)
+                // new color is trump, old was not
+                if (card.getColor() == trump.getColor()
+                        && getCards().get(highestValueIndex).getColor() != trump.getColor())
                     highestValueIndex = i;
-                else if (card.color == firstColor
-                        && card.value > getCards().get(highestValueIndex).value)
+                else if (card.getColor() == firstColor
+                        && card.getValue().getNumber()
+                                > getCards().get(highestValueIndex).getValue().getNumber())
                     highestValueIndex = i;
             }
         }

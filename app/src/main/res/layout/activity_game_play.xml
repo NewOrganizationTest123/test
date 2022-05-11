@@ -71,7 +71,7 @@
         android:id="@+id/cards_on_table"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="The cards of the current stich will be displayed here shorlty..."
+        android:text="The cards of the current trick will be displayed here shorlty..."
         app:layout_constraintBottom_toTopOf="@+id/cards_in_Hand"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

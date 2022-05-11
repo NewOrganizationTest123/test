@@ -1,10 +1,13 @@
 package com.github.wizard.game;
 
+import com.github.wizard.api.Card;
+
 public class Game {
     public final int gameId;
     public boolean ready = false;
 
-    private final Player.Players players = new Player.Players(this);
+    public final Player.Players players = new Player.Players(this);
+    public final Deck deck = new Deck();
 
     private Round currentRound;
 
@@ -20,7 +23,7 @@ public class Game {
      * adds a player to the current game. This does not include the subscription for updates
      *
      * @param player
-     * @return the playerid of whoever was added
+     * @return the playerId of whoever was added
      */
     public int addPlayer(Player player) {
         players.add(player);
