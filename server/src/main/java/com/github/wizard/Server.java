@@ -12,6 +12,7 @@ import com.github.wizard.api.StartReply;
 import com.github.wizard.api.StartRequest;
 import com.github.wizard.game.Game;
 import io.grpc.ServerBuilder;
+import io.grpc.protobuf.services.ProtoReflectionService;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.util.HashMap;
@@ -62,6 +63,7 @@ public class Server implements Callable<Integer> {
                         .addService(new GameStarterImpl())
                         .addService(new GamePlayImpl())
                         .addService(new GameActionsImpl())
+                        .addService(ProtoReflectionService.newInstance())
                         .build()
                         .start();
 

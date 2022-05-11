@@ -88,6 +88,7 @@ subprojects {
                     implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
                 } else {
                     runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
+                    implementation "io.grpc:grpc-services:${grpcVersion}"
                     implementation "io.grpc:grpc-protobuf:${grpcVersion}"
                 }
 
