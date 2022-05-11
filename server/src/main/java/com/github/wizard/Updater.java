@@ -1,6 +1,8 @@
 package com.github.wizard;
 
 import com.github.wizard.api.Card;
+import com.github.wizard.api.CardList;
+import com.github.wizard.api.GameStatus;
 import com.github.wizard.api.Response;
 import com.github.wizard.game.Player;
 import io.grpc.stub.StreamObserver;
@@ -33,39 +35,8 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
         if (hand == null) hand = new ArrayList<>();
         if (table == null) table = new ArrayList<>();
 
-        String handCards =
-                hand.stream()
-                        .map(
-                                card -> {
-                                    if (card.getValue() == Card.Value.WIZARD
-                                            || card.getValue() == Card.Value.JESTER) {
-                                        return card.getValue().name();
-                                    }
-                                    return String.format(
-                                            "%s(%s)",
-                                            card.getColor().name(), card.getValue().getNumber());
-                                })
-                        .collect(Collectors.joining("/"));
-
-        String tableCards =
-                hand.stream()
-                        .map(
-                                card -> {
-                                    if (card.getValue() == Card.Value.WIZARD
-                                            || card.getValue() == Card.Value.JESTER) {
-                                        return card.getValue().name();
-                                    }
-                                    return String.format(
-                                            "%s(%s)",
-                                            card.getColor().name(), card.getValue().getNumber());
-                                })
-                        .collect(Collectors.joining("/"));
-
-        String cardsString = String.format("/%s//%s/", handCards, tableCards);
-
-        Logger.info("sending out cards: {}", cardsString);
-
-        return Response.newBuilder().setType("3").setData(cardsString).build();
+        Logger.info("sending out cards in hand: {} and on table: {}",hand.stream().toString(),table.stream().toString());
+        return Response.newBuilder().setType("3").setCardList(CardList.newBuilder().addAllHand(hand).addAllTable(table).build()).build();
     }
 
     public static Response newOnTrumpSelectedResponse(Card c) {
@@ -77,6 +48,6 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
     }
 
     public static Response newOnRoundFinishedResponse(int points, int round) {
-        return Response.newBuilder().setType("6").setData(points + "/" + round).build();
+        return Response.newBuilder().setType("6").setData(points + "/" + round).setGameStatus(GameStatus.newBuilder().setRound(round+"").setMyPoints(points+"").build()).build();
     }
 }

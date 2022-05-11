@@ -22,6 +22,7 @@ public class Player {
     private int takenTricks = 0;
     private int trickValue = 0;
 
+
     public Player(String name) {
         this.name = name;
     }
@@ -57,6 +58,9 @@ public class Player {
     public void takeTrick(int value) {
         takenTricks++;
         trickValue += value;
+    }
+    public int getTakeTrick(){
+        return takenTricks;
     }
 
     public void updatePoints() {
