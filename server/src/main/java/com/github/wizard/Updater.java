@@ -1,8 +1,12 @@
 package com.github.wizard;
 
+import com.github.wizard.api.Card;
+import com.github.wizard.api.CardList;
+import com.github.wizard.api.CheatingSubmittedResult;
+import com.github.wizard.api.GameStatus;
+import com.github.wizard.api.GrpcPlayer;
+import com.github.wizard.api.PlayersList;
 import com.github.wizard.api.Response;
-import com.github.wizard.game.Card;
-import com.github.wizard.game.Color;
 import com.github.wizard.game.Player;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
@@ -10,24 +14,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.tinylog.Logger;
 
-public class Updater {
-
-    private final StreamObserver<Response> responseStreamObserver;
-
-    public Updater(StreamObserver<Response> responseStreamObserver) {
-        this.responseStreamObserver = responseStreamObserver;
-    }
+public record Updater(StreamObserver<Response> responseStreamObserver) {
 
     public void update(Response response) {
         responseStreamObserver.onNext(response);
     }
 
-    public static Response newOnStichMadeResponse(Player player, int value) {
+    public static Response newOnTrickTakenResponse(Player player, int value) {
         return Response.newBuilder()
                 .setType("1")
                 .setData(
                         String.format(
-                                "Player %s has made this stich with value %s",
+                                "Player %s has made this trick with value %s",
                                 player.getName(), value))
                 .build();
     }
@@ -40,18 +38,12 @@ public class Updater {
         if (hand == null) hand = new ArrayList<>();
         if (table == null) table = new ArrayList<>();
 
-        String handCards = hand.stream().map(Card::toString).collect(Collectors.joining("/"));
-        String tableCards = table.stream().map(Card::toString).collect(Collectors.joining("/"));
-
-        String cardsString = String.format("/%s//%s/", handCards, tableCards);
-
-        Logger.info("sending out cards: {}", cardsString);
-
-        return Response.newBuilder().setType("3").setData(cardsString).build();
+        Logger.info("sending out cards in hand: {} and on table: {}",hand.stream().toString(),table.stream().toString());
+        return Response.newBuilder().setType("3").setCardList(CardList.newBuilder().addAllHand(hand).addAllTable(table).build()).build();
     }
 
-    public static Response newOnTrumpfSelectedResponse(Color c) {
-        return Response.newBuilder().setType("4").setData(c.name()).build();
+    public static Response newOnTrumpSelectedResponse(Card c) {
+        return Response.newBuilder().setType("4").setData(c.getColor().name()).build();
     }
 
     public static Response newGetEstimateResponse() {
@@ -59,6 +51,15 @@ public class Updater {
     }
 
     public static Response newOnRoundFinishedResponse(int points, int round) {
-        return Response.newBuilder().setType("6").setData(points + "/" + round).build();
+        return Response.newBuilder().setType("6").setData(points + "/" + round).setGameStatus(GameStatus.newBuilder().setRound(round+"").setMyPoints(points+"").build()).build();
+    }
+    public static Response newOnCheatingSubmittedResponse(Player cheater, boolean succesfulOrNot,int points){
+        return Response.newBuilder().setCheating(CheatingSubmittedResult.newBuilder().setCheaterId(cheater.getPlayerId()+"").setNewPoints(points+"").setSuccesfulOrNot(succesfulOrNot+"").build()).build();
+    }
+    public static Response newGetPlayersResponse(Player.Players players){
+        ArrayList<GrpcPlayer> temp=new ArrayList();
+        for (Player p:players)
+            temp.add(GrpcPlayer.newBuilder().setPlayerName(p.getName()).setPlayerId(p.getPlayerId()+"").build());
+        return Response.newBuilder().setPlayerList(PlayersList.newBuilder().addAllPlayer(temp).build()).build();
     }
 }

@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.github.wizard.Updater;
+import com.github.wizard.api.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -81,7 +82,7 @@ public class GameTests {
         game_withMockedPlayers.start();
         Round firstRound = game_withMockedPlayers.getCurrentRound();
 
-        assertNotNull(firstRound.getTrumpf());
+        assertNotNull(firstRound.getTrump());
         assertEquals(firstRound.getNumber(), 1);
 
         verify(mocked_player1).giveMeCards(argThat(cards -> cards.size() == 1));
@@ -102,7 +103,7 @@ public class GameTests {
         assertFalse(game_withMockedPlayers.getPlayers().areSubscribed());
     }
 
-    @Mock Stich stichMocked;
+    @Mock Trick trickMocked;
 
     @Test
     public void playCardTest_lastCard() {
@@ -110,30 +111,30 @@ public class GameTests {
         player1.makeEstimate(0);
         player2.makeEstimate(1);
 
-        player1.winStich(0);
-        player2.winStich(0);
+        player1.takeTrick(0);
+        player2.takeTrick(0);
 
-        Round round = new Round(game_withMockedPlayers, stichMocked, 1);
+        Round round = new Round(game_withMockedPlayers, trickMocked, 1);
 
-        when(stichMocked.getWinningPlayer()).thenReturn(mocked_player1);
-        when(stichMocked.getCardsPlayed()).thenReturn(2);
-        when(stichMocked.getValue()).thenReturn(12);
+        when(trickMocked.getWinningPlayer()).thenReturn(mocked_player1);
+        when(trickMocked.getCardsPlayed()).thenReturn(2);
+        when(trickMocked.getValue()).thenReturn(12);
         when(mocked_player1.cardsLeft()).thenReturn(0);
 
         round.playCard(mock(Card.class), mocked_player1);
 
-        verify(stichMocked).getWinningPlayer();
-        verify(stichMocked).getValue();
+        verify(trickMocked).getWinningPlayer();
+        verify(trickMocked).getValue();
         verify(mocked_player1).cardsLeft();
 
-        verify(mocked_player2).update(Updater.newOnStichMadeResponse(new Player(null), 12));
+        verify(mocked_player2).update(Updater.newOnTrickTakenResponse(new Player(null), 12));
         verify(mocked_player2).update(Updater.newOnGameBoardUpdate(null, null));
     }
 
     @Test
-    public void playCardTest_NotlastCard() {
-        Round round = new Round(game_withMockedPlayers, stichMocked, 1);
-        when(stichMocked.getCardsPlayed()).thenReturn(1);
+    public void playCardTest_NotLastCard() {
+        Round round = new Round(game_withMockedPlayers, trickMocked, 1);
+        when(trickMocked.getCardsPlayed()).thenReturn(1);
 
         round.playCard(mock(Card.class), mocked_player1);
 

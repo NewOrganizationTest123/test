@@ -61,7 +61,7 @@ public class Server implements Callable<Integer> {
                 ServerBuilder.forPort(port)
                         .addService(new GameStarterImpl())
                         .addService(new GamePlayImpl())
-                        .addService(new GameActiontyIml())
+                        .addService(new GameActionsImpl())
                         .build()
                         .start();
 
@@ -209,7 +209,7 @@ public class Server implements Callable<Integer> {
         }
     }
 
-    class GameActiontyIml extends GameActionsGrpc.GameActionsImplBase {
+    class GameActionsImpl extends GameActionsGrpc.GameActionsImplBase {
 
         /** @param responseObserver */
         @Override
@@ -235,7 +235,7 @@ public class Server implements Callable<Integer> {
                     // do whatever the gameAction was
                     Logger.info("gameMove: {}", gameMove.getType());
                     switch (gameMove.getType()) {
-                        case "0": // player subscribed
+                        case "0" -> { // player subscribed
                             Logger.info("request to subscribe new player");
                             // TODO: 22.04.2022 check
                             if (newGame
@@ -244,26 +244,34 @@ public class Server implements Callable<Integer> {
                                 Logger.info("game starting");
                                 newGame.start();
                             }
-                            break;
-                        case "1": // submit estimates
+                        }
+                        case "1" -> { // submit estimates
                             int estimate = Integer.parseInt(gameMove.getData());
                             Logger.debug(
                                     "submitting estimate {} for player {}",
                                     estimate,
                                     player.getPlayerId());
                             player.makeEstimate(Integer.parseInt(gameMove.getData()));
-                            break;
-                        case "2": // 2 is play card
+                        }
+                        case "2" -> { // 2 is play card
                             int cardIndex = Integer.parseInt(gameMove.getData());
                             Logger.debug(
                                     "playing card {} for player {}",
                                     cardIndex,
                                     player.getPlayerId());
                             player.playCard(Integer.parseInt(gameMove.getData()));
-                            break;
-                        default:
-                            throw new IllegalArgumentException(
-                                    "This game Action is not yet implemented");
+                        }
+                        case "3"->{//player who might have cheated
+                            Game game = newGame;
+                            for (com.github.wizard.game.Player cheater : newGame.players) {
+                                if (cheater.getName().equals(gameMove.getData())) {
+                                    game.cheatDiscoverySubmitted(cheater,player);
+                                }
+                            }
+
+                        }
+                        default -> throw new IllegalArgumentException(
+                                "This game Action is not yet implemented");
                     }
                 }
 

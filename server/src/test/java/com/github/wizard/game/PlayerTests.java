@@ -8,14 +8,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.github.wizard.Updater;
-import com.github.wizard.api.Response;
-import io.grpc.stub.StreamObserver;
+import com.github.wizard.api.Card;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,13 +24,13 @@ public class PlayerTests {
     List<Card> cards = new ArrayList<>();
     Game game;
 
-    @Mock private StreamObserver<Response> responseObserverMock;
+    // @Mock private StreamObserver<Response> responseObserverMock;
 
     @BeforeEach
     public void init() {
         player = new Player("player_name");
-        card1 = new Card(Color.RED, 7);
-        card2 = new Card(Color.RED, 2);
+        card1 = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.SEVEN).build();
+        card2 = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.TWO).build();
         cards.add(card1);
         cards.add(card2);
         game = mock(Game.class);
@@ -77,8 +75,8 @@ public class PlayerTests {
     @Test
     public void updatePointsCorrectPrediction() {
         player.makeEstimate(2);
-        player.winStich(0);
-        player.winStich(0);
+        player.takeTrick(0);
+        player.takeTrick(0);
 
         player.updatePoints();
 
@@ -87,8 +85,8 @@ public class PlayerTests {
 
     @Test
     public void updatePointsWithoutPrediction() {
-        player.winStich(0);
-        player.winStich(1);
+        player.takeTrick(0);
+        player.takeTrick(1);
 
         player.updatePoints();
 
@@ -98,8 +96,8 @@ public class PlayerTests {
     @Test
     public void updatePointsIncorrectPrediction() {
         player.makeEstimate(4);
-        player.winStich(0);
-        player.winStich(0);
+        player.takeTrick(0);
+        player.takeTrick(0);
 
         player.updatePoints();
 
@@ -135,7 +133,11 @@ public class PlayerTests {
     @Test
     public void playInvalidCard() {
         when(game.getRoundNr()).thenReturn(1);
-        player.giveMeCards(List.of(new Card(Color.YELLOW, 1)));
+
+        Card yellow1 =
+                Card.newBuilder().setColor(Card.Color.YELLOW).setValue(Card.Value.ONE).build();
+
+        player.giveMeCards(List.of(yellow1));
 
         assertThrows(
                 IllegalArgumentException.class,
