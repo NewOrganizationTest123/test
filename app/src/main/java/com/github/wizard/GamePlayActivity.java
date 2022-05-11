@@ -25,6 +25,7 @@ import com.github.wizard.api.CheatingSubmittedResult;
 import com.github.wizard.api.GameActionsGrpc;
 import com.github.wizard.api.GameMove;
 import com.github.wizard.api.GameStatus;
+import com.github.wizard.api.GrpcPlayer;
 import com.github.wizard.api.Response;
 import com.github.wizard.api.StichMade;
 
@@ -46,8 +47,11 @@ public class GamePlayActivity extends AppCompatActivity {
 
     public static String gameId;
     public static String playerId;
+    public static ArrayList<String> players = new ArrayList<>();//todo maybe not use String here
+    public static PlayersRecyclerviewAdapter adapter;
+
+    ManagedChannel channel;
     private static final BlockingQueue<GameMove> serverWaitingQueue = new LinkedBlockingQueue<>();
-    private ManagedChannel channel;
     private SensorManager sensorManager;
     private double deviceAcceleration;
     private double deviceAcceleration_before;
@@ -108,12 +112,11 @@ public class GamePlayActivity extends AppCompatActivity {
         playersRecyclerView.setLayoutManager(layoutManager);
 
         //TODO: get real players instead of example ArrayList
-        ArrayList<String> players = new ArrayList<>();
-        players.add("Player 1");
-        players.add("Player 2");
 
-        PlayersRecyclerviewAdapter adapter = new PlayersRecyclerviewAdapter(this, players);
+        adapter = new PlayersRecyclerviewAdapter(this, players);
         playersRecyclerView.setAdapter(adapter);
+
+        findViewById(R.id.cheatin).setOnClickListener((view)->showCheatingExposingView());
 
     }
 
@@ -398,6 +401,14 @@ public class GamePlayActivity extends AppCompatActivity {
                                             activity.runOnUiThread(()->someOneCheated(activity,response.getCheating()));
                                             return;
                                         }
+                                    }else if(response.getActionCase()==Response.ActionCase.PLAYERLIST){
+
+                                        players=new ArrayList<>();
+                                        for (int i = 0; i < response.getPlayerList().getPlayerCount(); i++) {
+                                            players.add(response.getPlayerList().getPlayer(i).getPlayerName());
+                                        }
+                                        activity.runOnUiThread(()-> adapter.notifyDataSetChanged());
+                                        return;
                                     }
 
 

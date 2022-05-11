@@ -4,6 +4,8 @@ import com.github.wizard.api.Card;
 import com.github.wizard.api.CardList;
 import com.github.wizard.api.CheatingSubmittedResult;
 import com.github.wizard.api.GameStatus;
+import com.github.wizard.api.GrpcPlayer;
+import com.github.wizard.api.PlayersList;
 import com.github.wizard.api.Response;
 import com.github.wizard.game.Player;
 import io.grpc.stub.StreamObserver;
@@ -53,5 +55,11 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
     }
     public static Response newOnCheatingSubmittedResponse(Player cheater, boolean succesfulOrNot,int points){
         return Response.newBuilder().setCheating(CheatingSubmittedResult.newBuilder().setCheaterId(cheater.getPlayerId()+"").setNewPoints(points+"").setSuccesfulOrNot(succesfulOrNot+"").build()).build();
+    }
+    public static Response newGetPlayersResponse(Player.Players players){
+        ArrayList<GrpcPlayer> temp=new ArrayList();
+        for (Player p:players)
+            temp.add(GrpcPlayer.newBuilder().setPlayerName(p.getName()).setPlayerId(p.getPlayerId()+"").build());
+        return Response.newBuilder().setPlayerList(PlayersList.newBuilder().addAllPlayer(temp).build()).build();
     }
 }
