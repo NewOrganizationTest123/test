@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  server:
+    image: "fhilgers/wizard-server:latest"
+    ports:
+      - "50051:50051"
+    volumes:
+      - .:/tls
+    environment:
+      CERT: "/tls/cert.pem"
+      KEY: "/tls/key.pem"
