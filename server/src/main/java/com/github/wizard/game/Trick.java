@@ -27,6 +27,7 @@ public class Trick {
 
         getCards().add(card);
         players.add(player);
+        getWinningPlayer();//this will set the cheated flag
     }
 
     public int getCardsPlayed() {
@@ -79,6 +80,9 @@ public class Trick {
                         && card.getValue().getNumber()
                                 > getCards().get(highestValueIndex).getValue().getNumber())
                     highestValueIndex = i;
+                else//not trumpf and some other color
+                    if (players.get(i).getCards().stream().filter(card1 -> card1.getColor()==firstColor||card1.getColor()==trump.getColor()).count()>0)
+                        players.get(i).iHaveCHeatedFlag=true;//if this player could have made this stich with some other card or the trump he has cheated
             }
         }
 
