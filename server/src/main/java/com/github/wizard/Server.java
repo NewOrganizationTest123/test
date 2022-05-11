@@ -11,9 +11,13 @@ import com.github.wizard.api.Response;
 import com.github.wizard.api.StartReply;
 import com.github.wizard.api.StartRequest;
 import com.github.wizard.game.Game;
+import io.grpc.Grpc;
 import io.grpc.ServerBuilder;
+import io.grpc.ServerCredentials;
+import io.grpc.TlsServerCredentials;
 import io.grpc.protobuf.services.ProtoReflectionService;
 import io.grpc.stub.StreamObserver;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +27,7 @@ import org.tinylog.Level;
 import org.tinylog.Logger;
 import org.tinylog.configuration.Configuration;
 import picocli.CommandLine;
+import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Option;
 
 public class Server implements Callable<Integer> {
@@ -43,6 +48,23 @@ public class Server implements Callable<Integer> {
             description = "The logging level (default = ${DEFAULT-VALUE})")
     private Level level;
 
+    static class TlsArgs {
+        @Option(
+                names = {"-c", "--cert"},
+                required = true,
+                description = "The certificate chain for the server.")
+        private File certChain;
+
+        @Option(
+                names = {"-k", "--key"},
+                required = true,
+                description = "The key for the certificate chain.")
+        private File privateKey;
+    }
+
+    @ArgGroup(exclusive = false)
+    private TlsArgs tlsArgs;
+
     public static void main(String[] args) {
         int exitCode = new CommandLine(new Server()).execute(args);
         System.exit(exitCode);
@@ -58,8 +80,20 @@ public class Server implements Callable<Integer> {
     }
 
     private void start() throws IOException {
+        ServerBuilder<?> serverBuilder;
+
+        if (tlsArgs != null) {
+            ServerCredentials serverCredentials =
+                    TlsServerCredentials.newBuilder()
+                            .keyManager(tlsArgs.certChain, tlsArgs.privateKey)
+                            .build();
+            serverBuilder = Grpc.newServerBuilderForPort(port, serverCredentials);
+        } else {
+            serverBuilder = ServerBuilder.forPort(port);
+        }
+
         grpcServer =
-                ServerBuilder.forPort(port)
+                serverBuilder
                         .addService(new GameStarterImpl())
                         .addService(new GamePlayImpl())
                         .addService(new GameActionsImpl())
