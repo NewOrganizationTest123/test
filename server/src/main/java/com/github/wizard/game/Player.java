@@ -185,6 +185,9 @@ public class Player {
         public void getAllEstimates() {
             forEach(p -> p.update(Updater.newGetEstimateResponse()));
         }
+        public void getAllPlayers() {
+            forEach(p -> p.update(Updater.newGetPlayersResponse(this)));
+        }
 
         /** politely asks every player for his/her estimates for the upcoming round */
         public void tellAllTrumpSelected(Card trump) {

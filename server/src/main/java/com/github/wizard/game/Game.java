@@ -57,6 +57,7 @@ public class Game {
     public void start() {
         currentRound = Round.create(this, 1);
         proceed();
+        players.getAllPlayers();//return all players for cheating list
     }
 
     public void proceed() {
