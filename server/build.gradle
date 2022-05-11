@@ -64,6 +64,6 @@ jar {
 
 docker {
     name "fhilgers/${project.name}:${project.version}"
-    files tasks.jar.outputs
+    files tasks.jar.outputs, 'docker-entrypoint.sh'
     buildArgs([NAME: "${project.name}", VERSION: "${project.version}"])
 }

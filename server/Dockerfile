@@ -1,12 +1,20 @@
 FROM openjdk:17-jdk-slim
 
+ENV PORT= \
+    CERT= \
+    KEY= \
+    LOG_LEVEL=
+
 ARG NAME
 ARG VERSION
 
 RUN mkdir /usr/app
 WORKDIR /usr/app
 
-COPY ./$NAME-$VERSION.jar /usr/app/wizard-server.jar
+COPY ./$NAME-$VERSION.jar ./wizard-server.jar
+COPY ./docker-entrypoint.sh ./docker-entrypoint.sh
+
+RUN chmod +x docker-entrypoint.sh
 
 EXPOSE 50051
-ENTRYPOINT ["java", "-jar", "wizard-server.jar"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
