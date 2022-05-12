@@ -1,4 +1,7 @@
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-alpine
+
+RUN apk --no-cache add gcompat
+ENV LD_PRELOAD=/lib/libgcompat.so.0
 
 ENV PORT= \
     CERT= \
