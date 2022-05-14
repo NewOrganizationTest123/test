@@ -69,6 +69,7 @@ public class Game {
             //if there really was a cheating
             petze.addPoints(30);
             cheater.subtractPoints(10);
+            cheater.iHaveCHeatedFlag=false;
         }
         else{//if there was no cheating
             petze.subtractPoints(10);
