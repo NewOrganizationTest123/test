@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,6 +49,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     public static String gameId;
     public static String playerId;
+    public static String playername;
     public static ArrayList<String> players = new ArrayList<>();//todo maybe not use String here
     public static PlayersRecyclerviewAdapter adapter;
 
@@ -60,6 +63,7 @@ public class GamePlayActivity extends AppCompatActivity {
     private RecyclerView playersRecyclerView;
     private Button closeCheatsViewButton;
     private TextView cheatsViewTitle;
+    private TextView points;
 
     private static void appendLogs(StringBuffer logs, String msg, Object... params) {
         if (params.length > 0) {
@@ -86,9 +90,11 @@ public class GamePlayActivity extends AppCompatActivity {
         Intent intent = getIntent();
         gameId = intent.getStringExtra(MainActivity.GAME_ID_KEY); // reuse for later requests
         playerId = intent.getStringExtra(MainActivity.PLAYER_ID_KEY);
+        playername = intent.getStringExtra(MainActivity.PLAYER_NAME);
         new GameActionRunner(new GameActionRunnable(), new WeakReference<>(this), channel)
                 .execute(); // fire up the streaming service
 
+        points = findViewById(R.id.points);
         findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
         cheatsView = findViewById(R.id.ExposeCheatsView);
@@ -110,8 +116,6 @@ public class GamePlayActivity extends AppCompatActivity {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         playersRecyclerView.setLayoutManager(layoutManager);
-
-        //TODO: get real players instead of example ArrayList
 
         adapter = new PlayersRecyclerviewAdapter(this, players);
         playersRecyclerView.setAdapter(adapter);
@@ -135,24 +139,11 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     public void exposeCheating(String playername){
-       /* //TODO: get boolean variable of player with name "playername" from server, which is true if the player has cheated
-
-        Boolean hasCheated = true; //provisional variable until real value is retrieved from server
-
-        if(hasCheated){
-            //TODO: update points on server (this player +20 and player with name "playername" -2 and show Toast with information to all players
-        }
-
-        else{
-            //TODO: update points on server (this player -10) and show Toast with information to all players
-        }*/
         serverWaitingQueue.add(newGameMove(3,playername));
-
-
-
     }
 
     public void updatePlayersInRecyclerView(ArrayList<String> realplayers){
+        realplayers.remove(playername);
         PlayersRecyclerviewAdapter newdapater = new PlayersRecyclerviewAdapter(this, realplayers);
         playersRecyclerView.setAdapter(newdapater);
     }
@@ -370,17 +361,38 @@ public class GamePlayActivity extends AppCompatActivity {
                                             .show();
                                 }
                                 private void someOneCheated(Activity activity,CheatingSubmittedResult cheatingSubmittedResult){//we will not get our id because submitting cheaters is anonymous
+                                    String currentPointsString = points.getText().toString();
+                                    Pattern pattern = Pattern.compile("\\d+");
+                                    Matcher matcher = pattern.matcher(currentPointsString);
+
+                                    int currentPoints = 0;
+
+                                    while(matcher.find()){
+                                        currentPoints = Integer.parseInt(matcher.group());
+                                    }
+
+                                    if(currentPoints>Integer.parseInt(cheatingSubmittedResult.getNewPoints())){
+                                        Toast.makeText(
+                                                activity.getApplication()
+                                                        .getApplicationContext(),
+                                                "Wrong assumption! You now have "+ cheatingSubmittedResult.getNewPoints()+" Points",
+                                                Toast.LENGTH_SHORT)
+                                                .show();
+                                    }
+                                    else{
+                                        Toast.makeText(
+                                                activity.getApplication()
+                                                        .getApplicationContext(),
+                                                "Someone cheated! You now have "+ cheatingSubmittedResult.getNewPoints()+" Points",
+                                                Toast.LENGTH_SHORT)
+                                                .show();
+                                    }
+
                                     ((TextView) activity.findViewById(R.id.points))
                                             .setText(
                                                     "You have "
                                                             + cheatingSubmittedResult.getNewPoints()
                                                             + " points");
-                                    Toast.makeText(
-                                            activity.getApplication()
-                                                    .getApplicationContext(),
-                                            "Someone cheated! You now have "+ cheatingSubmittedResult.getNewPoints()+" Points",
-                                            Toast.LENGTH_SHORT)
-                                            .show();
                                 }
 
                                 private void handleResponse(Activity activity, Response response) {
