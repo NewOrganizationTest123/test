@@ -68,9 +68,15 @@ class UpdaterTest {
         Response response = Updater.newOnGameBoardUpdate(cards, cards);
 
         assertEquals("3", response.getType());
-        assertEquals(
-                "/WIZARD/RED(1)/RED(3)/RED(13)/YELLOW(10)/GREEN(2)/GREEN(5)/JESTER//WIZARD/RED(1)/RED(3)/RED(13)/YELLOW(10)/GREEN(2)/GREEN(5)/JESTER/",
-                response.getData());
+        assertEquals(cards.get(0),response.getCardList().getHand(0));
+        assertEquals(cards.get(1),response.getCardList().getHand(1));
+        assertEquals(cards.get(2),response.getCardList().getHand(2));
+        assertEquals(cards.get(3),response.getCardList().getHand(3));
+        assertEquals(cards.get(4),response.getCardList().getHand(4));
+        assertEquals(cards.get(5),response.getCardList().getHand(5));
+        assertEquals(cards.get(6),response.getCardList().getHand(6));
+        assertEquals(cards.get(7),response.getCardList().getHand(7));
+
     }
 
     @Test
