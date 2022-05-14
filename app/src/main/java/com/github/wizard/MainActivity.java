@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     // real server address
     public static final String SERVER_PORT = "50051"; // todo use real port
     public static final int SERVER_TIMEOUT_SECONDS = 10;
+    public static String PLAYER_NAME;
 
     private EditText name;
     private EditText gameId;
@@ -133,11 +134,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startNewGame(View view) {
+        PLAYER_NAME = name.getText().toString();
         new GrpcTask(this, true)
                 .execute(SERVER_ADDRESS, name.getText().toString(), SERVER_PORT, "-1");
     }
 
     public void joinGame(View view) {
+        PLAYER_NAME = name.getText().toString();
         new GrpcTask(this, false)
                 .execute(
                         SERVER_ADDRESS,
@@ -211,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(activity, GamePlayActivity.class);
                 intent.putExtra(GAME_ID_KEY, gameId);
                 intent.putExtra(PLAYER_ID_KEY, playerId + "");
+                intent.putExtra(PLAYER_NAME, PLAYER_NAME);
                 activity.startActivity(intent);
             } else {
                 gameIdInt = Integer.parseInt(gameId);
@@ -345,6 +349,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(activity, GamePlayActivity.class);
             intent.putExtra(GAME_ID_KEY, gameIdInt + "");
             intent.putExtra(PLAYER_ID_KEY, playerId + "");
+            intent.putExtra(PLAYER_NAME, PLAYER_NAME);
             activity.startActivity(intent);
         }
     }

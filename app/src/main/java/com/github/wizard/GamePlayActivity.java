@@ -47,6 +47,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     public static String gameId;
     public static String playerId;
+    public static String playername;
     public static ArrayList<String> players = new ArrayList<>();//todo maybe not use String here
     public static PlayersRecyclerviewAdapter adapter;
 
@@ -86,6 +87,7 @@ public class GamePlayActivity extends AppCompatActivity {
         Intent intent = getIntent();
         gameId = intent.getStringExtra(MainActivity.GAME_ID_KEY); // reuse for later requests
         playerId = intent.getStringExtra(MainActivity.PLAYER_ID_KEY);
+        playername = intent.getStringExtra(MainActivity.PLAYER_NAME);
         new GameActionRunner(new GameActionRunnable(), new WeakReference<>(this), channel)
                 .execute(); // fire up the streaming service
 
@@ -153,6 +155,7 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     public void updatePlayersInRecyclerView(ArrayList<String> realplayers){
+        realplayers.remove(playername);
         PlayersRecyclerviewAdapter newdapater = new PlayersRecyclerviewAdapter(this, realplayers);
         playersRecyclerView.setAdapter(newdapater);
     }
