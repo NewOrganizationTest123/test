@@ -113,8 +113,6 @@ public class GamePlayActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         playersRecyclerView.setLayoutManager(layoutManager);
 
-        //TODO: get real players instead of example ArrayList
-
         adapter = new PlayersRecyclerviewAdapter(this, players);
         playersRecyclerView.setAdapter(adapter);
 
@@ -137,21 +135,7 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     public void exposeCheating(String playername){
-       /* //TODO: get boolean variable of player with name "playername" from server, which is true if the player has cheated
-
-        Boolean hasCheated = true; //provisional variable until real value is retrieved from server
-
-        if(hasCheated){
-            //TODO: update points on server (this player +20 and player with name "playername" -2 and show Toast with information to all players
-        }
-
-        else{
-            //TODO: update points on server (this player -10) and show Toast with information to all players
-        }*/
         serverWaitingQueue.add(newGameMove(3,playername));
-
-
-
     }
 
     public void updatePlayersInRecyclerView(ArrayList<String> realplayers){
