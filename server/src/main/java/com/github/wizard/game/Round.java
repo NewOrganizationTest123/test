@@ -64,16 +64,18 @@ public final class Round {
             Player winner = cardsInTheMiddle.getWinningPlayer();
             players.finishTrick(winner, cardsInTheMiddle.getValue()); // notify other players
 
-            winner.update(Updater.newCardPlayRequestResponse()); // request to start next trick
+
 
             if (winner.cardsLeft() == 0) {
                 players.notifyAboutPointsAndRound(number);
 
                 // TODO: quit game if it was the last round
                 game.setCurrentRound(Round.create(game, number + 1));
+                game.setNextPlayer(winner);
                 game.proceed();
                 return;
             } else {
+                winner.update(Updater.newCardPlayRequestResponse()); // request to start next trick
                 cardsInTheMiddle.reset();
             }
         } else {

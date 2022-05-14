@@ -285,6 +285,10 @@ public class GamePlayActivity extends AppCompatActivity {
                                                     response.getData(),
                                                     Toast.LENGTH_SHORT)
                                             .show();
+                                    (activity.findViewById(R.id.editTextN_card))
+                                            .setVisibility(View.VISIBLE);
+                                    (activity.findViewById(R.id.button_play_card))
+                                            .setVisibility(View.VISIBLE);
                                 }
 
 

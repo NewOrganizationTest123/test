@@ -252,6 +252,8 @@ public class Server implements Callable<Integer> {
                                     estimate,
                                     player.getPlayerId());
                             player.makeEstimate(Integer.parseInt(gameMove.getData()));
+                            if(newGame.allEstimatesSubmitted())
+                                newGame.playFirstCard();
                         }
                         case "2" -> { // 2 is play card
                             int cardIndex = Integer.parseInt(gameMove.getData());
