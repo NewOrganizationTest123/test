@@ -119,9 +119,6 @@ public class GamePlayActivity extends AppCompatActivity {
 
         adapter = new PlayersRecyclerviewAdapter(this, players);
         playersRecyclerView.setAdapter(adapter);
-
-        findViewById(R.id.cheatin).setOnClickListener((view)->showCheatingExposingView());
-
     }
 
     public void showCheatingExposingView(){
