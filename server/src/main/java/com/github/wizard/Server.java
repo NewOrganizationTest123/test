@@ -252,8 +252,7 @@ public class Server implements Callable<Integer> {
                                     estimate,
                                     player.getPlayerId());
                             player.makeEstimate(Integer.parseInt(gameMove.getData()));
-                            if(newGame.allEstimatesSubmitted())
-                                newGame.playFirstCard();
+                            if (newGame.allEstimatesSubmitted()) newGame.playFirstCard();
                         }
                         case "2" -> { // 2 is play card
                             int cardIndex = Integer.parseInt(gameMove.getData());
@@ -263,14 +262,13 @@ public class Server implements Callable<Integer> {
                                     player.getPlayerId());
                             player.playCard(Integer.parseInt(gameMove.getData()));
                         }
-                        case "3"->{//player who might have cheated
+                        case "3" -> { // player who might have cheated
                             Game game = newGame;
                             for (com.github.wizard.game.Player cheater : newGame.players) {
                                 if (cheater.getName().equals(gameMove.getData())) {
-                                    game.cheatDiscoverySubmitted(cheater,player);
+                                    game.cheatDiscoverySubmitted(cheater, player);
                                 }
                             }
-
                         }
                         default -> throw new IllegalArgumentException(
                                 "This game Action is not yet implemented");

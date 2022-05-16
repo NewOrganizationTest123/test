@@ -22,13 +22,12 @@ public class Player {
     private int takenTricks = 0;
     private int trickValue = 0;
 
-
     public Player(String name) {
         this.name = name;
     }
 
-    public boolean estimateSubmitted(){
-        return estimate!=-1;
+    public boolean estimateSubmitted() {
+        return estimate != -1;
     }
 
     public String getName() {
@@ -63,7 +62,8 @@ public class Player {
         takenTricks++;
         trickValue += value;
     }
-    public int getTakeTrick(){
+
+    public int getTakeTrick() {
         return takenTricks;
     }
 
@@ -185,11 +185,15 @@ public class Player {
             forEach(p -> p.update(Updater.newOnTrickTakenResponse(winningPlayer, value)));
         }
 
-        /** politely asks every player for his/her estimates for the upcoming round and resets existing estimates*/
+        /**
+         * politely asks every player for his/her estimates for the upcoming round and resets
+         * existing estimates
+         */
         public void getAllEstimates() {
-            forEach(p->p.estimate=-1);//reset all estimates
+            forEach(p -> p.estimate = -1); // reset all estimates
             forEach(p -> p.update(Updater.newGetEstimateResponse()));
         }
+
         public void getAllPlayers() {
             forEach(p -> p.update(Updater.newGetPlayersResponse(this)));
         }
@@ -203,14 +207,18 @@ public class Player {
             return super.get((currentPlayer.playerId + 1) % size());
         }
 
-        public void onCHeatingDiscovered(Player cheater){
-            forEach(p->{p.update(Updater.newOnCheatingSubmittedResponse(cheater,cheater.iHaveCHeatedFlag, p.points));});
+        public void onCHeatingDiscovered(Player cheater) {
+            forEach(
+                    p -> {
+                        p.update(
+                                Updater.newOnCheatingSubmittedResponse(
+                                        cheater, cheater.iHaveCHeatedFlag, p.points));
+                    });
         }
         /** will hand out random cards to all players, according to the round */
         public void handoutCards(int roundNumber, Deck deck) {
             forEach(player -> player.giveMeCards(deck.draw(roundNumber)));
         }
-
 
         /**
          * the host is the last to join. Always

@@ -24,10 +24,9 @@ public final class Round {
     public void start() {
         game.deck.shuffle();
 
-        //reset cheating-Flags for all players
-        for (Player player: players
-             ) {
-            player.iHaveCHeatedFlag=false;
+        // reset cheating-Flags for all players
+        for (Player player : players) {
+            player.iHaveCHeatedFlag = false;
         }
 
         players.handoutCards(number, game.deck);
@@ -63,8 +62,6 @@ public final class Round {
         if (cardsInTheMiddle.getCardsPlayed() == players.size()) {
             Player winner = cardsInTheMiddle.getWinningPlayer();
             players.finishTrick(winner, cardsInTheMiddle.getValue()); // notify other players
-
-
 
             if (winner.cardsLeft() == 0) {
                 players.notifyAboutPointsAndRound(number);

@@ -11,7 +11,6 @@ import com.github.wizard.game.Player;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.tinylog.Logger;
 
 public record Updater(StreamObserver<Response> responseStreamObserver) {
@@ -38,8 +37,14 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
         if (hand == null) hand = new ArrayList<>();
         if (table == null) table = new ArrayList<>();
 
-        Logger.info("sending out cards in hand: {} and on table: {}",hand.stream().toString(),table.stream().toString());
-        return Response.newBuilder().setType("3").setCardList(CardList.newBuilder().addAllHand(hand).addAllTable(table).build()).build();
+        Logger.info(
+                "sending out cards in hand: {} and on table: {}",
+                hand.stream().toString(),
+                table.stream().toString());
+        return Response.newBuilder()
+                .setType("3")
+                .setCardList(CardList.newBuilder().addAllHand(hand).addAllTable(table).build())
+                .build();
     }
 
     public static Response newOnTrumpSelectedResponse(Card c) {
@@ -51,15 +56,39 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
     }
 
     public static Response newOnRoundFinishedResponse(int points, int round) {
-        return Response.newBuilder().setType("6").setData(points + "/" + round).setGameStatus(GameStatus.newBuilder().setRound(round+"").setMyPoints(points+"").build()).build();
+        return Response.newBuilder()
+                .setType("6")
+                .setData(points + "/" + round)
+                .setGameStatus(
+                        GameStatus.newBuilder()
+                                .setRound(round + "")
+                                .setMyPoints(points + "")
+                                .build())
+                .build();
     }
-    public static Response newOnCheatingSubmittedResponse(Player cheater, boolean succesfulOrNot,int points){
-        return Response.newBuilder().setCheating(CheatingSubmittedResult.newBuilder().setCheaterId(cheater.getPlayerId()+"").setNewPoints(points+"").setSuccesfulOrNot(succesfulOrNot+"").build()).build();
+
+    public static Response newOnCheatingSubmittedResponse(
+            Player cheater, boolean succesfulOrNot, int points) {
+        return Response.newBuilder()
+                .setCheating(
+                        CheatingSubmittedResult.newBuilder()
+                                .setCheaterId(cheater.getPlayerId() + "")
+                                .setNewPoints(points + "")
+                                .setSuccesfulOrNot(succesfulOrNot + "")
+                                .build())
+                .build();
     }
-    public static Response newGetPlayersResponse(Player.Players players){
-        ArrayList<GrpcPlayer> temp=new ArrayList();
-        for (Player p:players)
-            temp.add(GrpcPlayer.newBuilder().setPlayerName(p.getName()).setPlayerId(p.getPlayerId()+"").build());
-        return Response.newBuilder().setPlayerList(PlayersList.newBuilder().addAllPlayer(temp).build()).build();
+
+    public static Response newGetPlayersResponse(Player.Players players) {
+        ArrayList<GrpcPlayer> temp = new ArrayList();
+        for (Player p : players)
+            temp.add(
+                    GrpcPlayer.newBuilder()
+                            .setPlayerName(p.getName())
+                            .setPlayerId(p.getPlayerId() + "")
+                            .build());
+        return Response.newBuilder()
+                .setPlayerList(PlayersList.newBuilder().addAllPlayer(temp).build())
+                .build();
     }
 }

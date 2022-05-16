@@ -6,10 +6,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.github.wizard.api.Card;
+import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 
 public class TrickTests {
     Trick redTrumpTrick;
@@ -39,7 +38,7 @@ public class TrickTests {
     @BeforeEach
     public void init() {
         redTrumpTrick = new Trick(red1);
-        mock=mock(Game.class);
+        mock = mock(Game.class);
     }
 
     @Test
@@ -85,41 +84,52 @@ public class TrickTests {
     }
 
     @Test
-    public void iHaveCheatedFlagTEst_cheated(){
-        redTrumpTrick.playCard(green2, player1);//initial card, other players must now play green if they have some
-        ArrayList<Card> cards=new ArrayList<>();
-        when(mock.getRoundNr()).thenReturn(2);//for avoiding the error checking while handing out cards
-        player2.game=mock;
+    public void iHaveCheatedFlagTEst_cheated() {
+        redTrumpTrick.playCard(
+                green2,
+                player1); // initial card, other players must now play green if they have some
+        ArrayList<Card> cards = new ArrayList<>();
+        when(mock.getRoundNr())
+                .thenReturn(2); // for avoiding the error checking while handing out cards
+        player2.game = mock;
         cards.add(green5);
         cards.add(yellow10);
         player2.giveMeCards(cards);
-        redTrumpTrick.playCard(yellow10, player2);//player two plays yellow card despite having green
+        redTrumpTrick.playCard(
+                yellow10, player2); // player two plays yellow card despite having green
         assertEquals(true, player2.iHaveCHeatedFlag);
         assertEquals(false, player1.iHaveCHeatedFlag);
     }
+
     @Test
-    public void iHaveCheatedFlagTEst_noCheating(){
-        redTrumpTrick.playCard(green2, player1);//initial card, other players must now play green if they have some
-        ArrayList<Card> cards=new ArrayList<>();
-        when(mock.getRoundNr()).thenReturn(2);//for avoiding the error checking while handing out cards
-        player2.game=mock;
+    public void iHaveCheatedFlagTEst_noCheating() {
+        redTrumpTrick.playCard(
+                green2,
+                player1); // initial card, other players must now play green if they have some
+        ArrayList<Card> cards = new ArrayList<>();
+        when(mock.getRoundNr())
+                .thenReturn(2); // for avoiding the error checking while handing out cards
+        player2.game = mock;
         cards.add(green5);
         cards.add(yellow10);
         player2.giveMeCards(cards);
-        redTrumpTrick.playCard(green5, player2);//player two plays yellow card despite having green
+        redTrumpTrick.playCard(
+                green5, player2); // player two plays yellow card despite having green
         assertEquals(false, player2.iHaveCHeatedFlag);
         assertEquals(false, player1.iHaveCHeatedFlag);
     }
 
     @Test
-    public void iHaveCheatedFlagTEst_noCheating_singlePlayer(){
-        ArrayList<Card> cards=new ArrayList<>();
-        when(mock.getRoundNr()).thenReturn(2);//for avoiding the error checking while handing out cards
-        player2.game=mock;
+    public void iHaveCheatedFlagTEst_noCheating_singlePlayer() {
+        ArrayList<Card> cards = new ArrayList<>();
+        when(mock.getRoundNr())
+                .thenReturn(2); // for avoiding the error checking while handing out cards
+        player2.game = mock;
         cards.add(green5);
         cards.add(yellow10);
         player2.giveMeCards(cards);
-        redTrumpTrick.playCard(yellow10, player2);//player two plays yellow card despite having green
+        redTrumpTrick.playCard(
+                yellow10, player2); // player two plays yellow card despite having green
         assertEquals(false, player2.iHaveCHeatedFlag);
     }
 
