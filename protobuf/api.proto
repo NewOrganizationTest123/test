@@ -1,45 +1,46 @@
 syntax = "proto3";
-option java_multiple_files = true;
-option java_package = "com.github.wizard.api";
+        option java_multiple_files = true;
+        option java_package = "com.github.wizard.api";
 
-package api;
+        package api;
 
-service GameStarter{
-  rpc startGame(StartRequest)returns(StartReply){}
-  rpc joinGame(JoinRequest)returns(StartReply){}
-  rpc checkJoinRequest(JoinRequest)returns(ReadyToJoin){}
-}
+        service GameStarter{
+        rpc startGame(StartRequest)returns(StartReply){}
+        rpc joinGame(JoinRequest)returns(StartReply){}
+        rpc checkJoinRequest(JoinRequest)returns(ReadyToJoin){}
+        }
 
-service GamePlay{
-  rpc getPlayers(JoinRequest)returns(stream Player){}
-  rpc setAsReady(JoinRequest)returns(ReadyToJoin){}
-}
-service GameActions {
-  rpc gameStream(stream GameMove) returns (stream Response) {}
-  rpc test(JoinRequest)returns(StartReply){}
-}
+        service GamePlay{
+        rpc getPlayers(JoinRequest)returns(stream Player){}
+        rpc setAsReady(JoinRequest)returns(ReadyToJoin){}
+        }
+        service GameActions {
+        rpc gameStream(stream GameMove) returns (stream Response) {}
+        rpc test(JoinRequest)returns(StartReply){}
+        }
 
-message StartRequest{
-  string name = 1;
-}
+        message StartRequest{
+        string name = 1;
+        }
 
-message StartReply{
-  string gameid = 1;
-  string playerid = 2;
-}
+        message StartReply{
+        string gameid = 1;
+        string playerid = 2;
+        }
 
-message JoinRequest{
-  string name = 1;
-  string gameid = 2;
-}
-message ReadyToJoin{
-  bool ready = 1;
-}
+        message JoinRequest{
+        string name = 1;
+        string gameid = 2;
+        }
+        message ReadyToJoin{
+        bool ready = 1;
+        }
 
-message Player{
-  string name = 1;
-}
+        message Player{
+        string name = 1;
+        }
 /**
+ * legacy
  * 0: general ok-response
  * 1: player who made 'Stich' and value of it
  * 2: request to play card
@@ -48,34 +49,78 @@ message Player{
  * 5: request to submit your estimate
  * 6: results for the current round and updated round nr like points/roundNr
  */
-message Response {
-  string type = 1;
-  string data = 2;
-}
+        message Response {
+        string type = 1;
+        string data = 2;
+        oneof action{
+        CardList cardList=3;
+        StichMade stichMade=4;
+        GameStatus gameStatus=5;
+        CheatingSubmittedResult cheating=6;
+        PlayersList playerList=7;
+
+        }
+        }
+        message PlayersList{
+            repeated GrpcPlayer player=1;
+
+        }
+
+        message GrpcPlayer{
+            string playerId=1;
+            string playerName=2;
+        }
+
+        message CheatingSubmittedResult{
+            string cheaterId=1;
+            string succesfulOrNot=2;
+            string newPoints=3;
+        }
+
+        message GameStatus{
+        string round=1;
+        string myPoints=2;
+
+
+        }
+
+        message StichMade{
+        string playerid=1;
+        string playerName=2;
+        string totalstichebyplayer=3;
+        }
+
+        message CardList{
+
+        repeated Card hand=1;
+        repeated Card table=2;
+
+        }
 
 /**
-type:
+ type:
  * -1: end
  *  0: subscribe for updates about game-board
  *  1: submit estimate for upcoming round
  *  2: play out card
+ *  3: playerName who might have cheated
  */
-message GameMove{
-  string gameid = 1;
-  string playerid = 2;
-  string type = 3;
-  string data = 4;
-}
+        message GameMove{
+        string gameid = 1;
+        string playerid = 2;
+        string type = 3;
+        string data = 4;
+        }
 
-message Card {
-  enum Color {
+        message Card {
+enum Color {
     NONE = 0;
     RED = 1;
     GREEN = 2;
     BLUE = 3;
     YELLOW = 4;
-  }
-  enum Value {
+}
+enum Value {
     JESTER = 0;
     ONE = 1;
     TWO = 2;
@@ -91,8 +136,8 @@ message Card {
     TWELVE = 12;
     THIRTEEN = 13;
     WIZARD = 14;
-  }
+}
 
-  Color color = 1;
-  Value value = 2;
+    Color color = 1;
+    Value value = 2;
 }

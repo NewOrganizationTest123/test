@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GamePlayActivity">
- <!-- android:background = "@drawable/gameboard_background">-->
+    <!-- android:background = "@drawable/gameboard_background">-->
 
- <!--  <Button
+    <!--  <Button
        android:id="@+id/btnPoints"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
@@ -36,24 +36,26 @@
        android:textSize="20sp"
        tools:layout_editor_absoluteX="56dp"
        tools:layout_editor_absoluteY="65dp" />-->
- <!--
+    <!--
  todo martinfri144 chenge back the absolute positioning to avoid problems with different screen layouts!
  -->
 
- <Button
-     android:id="@+id/button_play_card"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
-     android:text="play card"
-     app:layout_constraintBottom_toTopOf="@+id/button_estimate"
-     app:layout_constraintEnd_toEndOf="parent" />
+    <Button
+        android:id="@+id/button_play_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="play card"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/button_estimate"
+        app:layout_constraintEnd_toEndOf="parent" />
 
- <EditText
+    <EditText
         android:id="@+id/editTextN_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="number"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/button_play_card"
         app:layout_constraintEnd_toStartOf="@+id/button_play_card"
         app:layout_constraintStart_toStartOf="parent" />
@@ -133,78 +135,118 @@
         app:layout_constraintEnd_toStartOf="@+id/button_estimate"
         app:layout_constraintStart_toStartOf="parent" />
 
- <TextView
-     android:id="@+id/round"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
-     android:layout_marginStart="24dp"
-     android:layout_marginTop="8dp"
-     android:text="This is round 0"
-     app:layout_constraintStart_toStartOf="parent"
-     app:layout_constraintTop_toBottomOf="@+id/trumpf" />
+    <TextView
+        android:id="@+id/round"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:text="This is round 0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/trumpf" />
 
- <!--
+    <View
+        android:id="@+id/ExposeCheatsView"
+        android:layout_width="200dp"
+        android:layout_height="300dp"
+        android:background="@drawable/cheating_view_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-  <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:layout_marginTop="550dp"
-       android:orientation="horizontal"
-       app:layout_constraintTop_toTopOf="@+id/cards_on_table">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playerRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/closeCheatsViewButton"
+        app:layout_constraintEnd_toEndOf="@+id/ExposeCheatsView"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="@+id/ExposeCheatsView"
+        app:layout_constraintTop_toBottomOf="@+id/cheatingViewTitle" />
 
-       <ImageView
-           android:id="@+id/card1"
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_weight="1"
-           android:scaleType="centerInside"
-           android:src="@drawable/bl_01"
-           android:layout_margin="10dp" />
+    <Button
+        android:id="@+id/closeCheatsViewButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="CANCEL"
+        app:layout_constraintBottom_toBottomOf="@+id/ExposeCheatsView"
+        app:layout_constraintEnd_toEndOf="@+id/ExposeCheatsView"
+        app:layout_constraintStart_toStartOf="@+id/ExposeCheatsView" />
 
-       <ImageView
-           android:id="@+id/card2"
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_weight="1"
-           android:scaleType="centerInside"
-           android:src="@drawable/bl_01"
-           android:layout_margin="10dp" />
+    <TextView
+        android:id="@+id/cheatingViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Who is cheating?"
+        app:layout_constraintEnd_toEndOf="@+id/ExposeCheatsView"
+        app:layout_constraintStart_toStartOf="@+id/ExposeCheatsView"
+        app:layout_constraintTop_toTopOf="@+id/ExposeCheatsView" />
 
-       <ImageView
-           android:id="@+id/card3"
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_weight="1"
-           android:scaleType="centerInside"
-           android:src="@drawable/bl_01"
-           android:layout_margin="10dp" />
+    <!--
 
-       <ImageView
-           android:id="@+id/card4"
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_weight="1"
-           android:scaleType="centerInside"
-           android:src="@drawable/bl_01"
-           android:layout_margin="10dp" />
+     <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_marginTop="550dp"
+          android:orientation="horizontal"
+          app:layout_constraintTop_toTopOf="@+id/cards_on_table">
 
-       <ImageView
-           android:id="@+id/card5"
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_weight="1"
-           android:scaleType="centerInside"
-           android:src="@drawable/bl_01"
-           android:layout_margin="10dp" />
+          <ImageView
+              android:id="@+id/card1"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:scaleType="centerInside"
+              android:src="@drawable/bl_01"
+              android:layout_margin="10dp" />
 
-       <ImageView
-           android:id="@+id/card6"
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_weight="1"
-           android:scaleType="centerInside"
-           android:src="@drawable/bl_01"
-           android:layout_margin="10dp"/>
+          <ImageView
+              android:id="@+id/card2"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:scaleType="centerInside"
+              android:src="@drawable/bl_01"
+              android:layout_margin="10dp" />
 
-   </LinearLayout>-->
+          <ImageView
+              android:id="@+id/card3"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:scaleType="centerInside"
+              android:src="@drawable/bl_01"
+              android:layout_margin="10dp" />
+
+          <ImageView
+              android:id="@+id/card4"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:scaleType="centerInside"
+              android:src="@drawable/bl_01"
+              android:layout_margin="10dp" />
+
+          <ImageView
+              android:id="@+id/card5"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:scaleType="centerInside"
+              android:src="@drawable/bl_01"
+              android:layout_margin="10dp" />
+
+          <ImageView
+              android:id="@+id/card6"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:scaleType="centerInside"
+              android:src="@drawable/bl_01"
+              android:layout_margin="10dp"/>
+
+      </LinearLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>

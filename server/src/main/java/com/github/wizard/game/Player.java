@@ -26,6 +26,10 @@ public class Player {
         this.name = name;
     }
 
+    public boolean estimateSubmitted() {
+        return estimate != -1;
+    }
+
     public String getName() {
         return name;
     }
@@ -57,6 +61,10 @@ public class Player {
     public void takeTrick(int value) {
         takenTricks++;
         trickValue += value;
+    }
+
+    public int getTakeTrick() {
+        return takenTricks;
     }
 
     public void updatePoints() {
@@ -177,9 +185,17 @@ public class Player {
             forEach(p -> p.update(Updater.newOnTrickTakenResponse(winningPlayer, value)));
         }
 
-        /** politely asks every player for his/her estimates for the upcoming round */
+        /**
+         * politely asks every player for his/her estimates for the upcoming round and resets
+         * existing estimates
+         */
         public void getAllEstimates() {
+            forEach(p -> p.estimate = -1); // reset all estimates
             forEach(p -> p.update(Updater.newGetEstimateResponse()));
+        }
+
+        public void getAllPlayers() {
+            forEach(p -> p.update(Updater.newGetPlayersResponse(this)));
         }
 
         /** politely asks every player for his/her estimates for the upcoming round */
@@ -191,6 +207,14 @@ public class Player {
             return super.get((currentPlayer.playerId + 1) % size());
         }
 
+        public void onCHeatingDiscovered(Player cheater) {
+            forEach(
+                    p -> {
+                        p.update(
+                                Updater.newOnCheatingSubmittedResponse(
+                                        cheater, cheater.iHaveCHeatedFlag, p.points));
+                    });
+        }
         /** will hand out random cards to all players, according to the round */
         public void handoutCards(int roundNumber, Deck deck) {
             forEach(player -> player.giveMeCards(deck.draw(roundNumber)));

@@ -38,7 +38,9 @@ public class GameTests {
 
         game_withMockedPlayers = new Game(2);
         mocked_player1 = mock(Player.class);
+
         mocked_player2 = mock(Player.class);
+
         game_withMockedPlayers.addPlayer(mocked_player1);
         game_withMockedPlayers.addPlayer(mocked_player2);
 
@@ -79,6 +81,8 @@ public class GameTests {
 
     @Test
     public void testStartGame() {
+        when(mocked_player2.getName()).thenReturn("mocked_player2");
+        when(mocked_player1.getName()).thenReturn("mocked_player1");
         game_withMockedPlayers.start();
         Round firstRound = game_withMockedPlayers.getCurrentRound();
 
