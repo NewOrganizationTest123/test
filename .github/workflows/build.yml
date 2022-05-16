@@ -28,11 +28,19 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: gradle
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build and analyze
+    - name: Gradle Build
+      run: ./gradlew build
+    - name: Gradle Sonarqube
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: ./gradlew build sonarqube --info
+      run: ./gradlew sonarqube --info
+    - name: Gradle Docker
+      run: ./gradlew docker
+    - name: Docker Login
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+    - name: Gradle Docker Publish
+      run: ./gradlew dockerPush
