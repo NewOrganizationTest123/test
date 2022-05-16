@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,17 +14,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.wizard.api.Card;
 import com.github.wizard.api.CardList;
 import com.github.wizard.api.CheatingSubmittedResult;
 import com.github.wizard.api.GameActionsGrpc;
 import com.github.wizard.api.GameMove;
 import com.github.wizard.api.GameStatus;
+import com.github.wizard.api.GrpcPlayer;
 import com.github.wizard.api.Response;
 import com.github.wizard.api.StichMade;
+
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import java.lang.ref.WeakReference;
@@ -36,15 +41,16 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import android.hardware.SensorEventListener;
+
 
 public class GamePlayActivity extends AppCompatActivity {
+
 
     public static String gameId;
     public static String playerId;
     public static String playername;
-    public static ArrayList<String> players = new ArrayList<>(); // todo maybe not use String here
+    public static ArrayList<String> players = new ArrayList<>();//todo maybe not use String here
     public static PlayersRecyclerviewAdapter adapter;
 
     ManagedChannel channel;
@@ -95,52 +101,45 @@ public class GamePlayActivity extends AppCompatActivity {
         playersRecyclerView = findViewById(R.id.playerRecyclerView);
         closeCheatsViewButton = findViewById(R.id.closeCheatsViewButton);
         cheatsViewTitle = findViewById(R.id.cheatingViewTitle);
-        hideCheatingExposingView(); // by default, the cheating-exposing view is not visible; only
-        // shows up after shaking device
+        hideCheatingExposingView(); //by default, the cheating-exposing view is not visible; only shows up after shaking device
 
-        closeCheatsViewButton.setOnClickListener(
-                e -> {
-                    hideCheatingExposingView();
-                });
+        closeCheatsViewButton.setOnClickListener(e->{
+            hideCheatingExposingView();
+        });
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        Objects.requireNonNull(sensorManager)
-                .registerListener(
-                        sensorListener,
-                        sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                        SensorManager.SENSOR_DELAY_NORMAL);
-        deviceAcceleration = 10;
-        deviceAcceleration_before = SensorManager.GRAVITY_EARTH;
-        deviceAcceleration_now = SensorManager.GRAVITY_EARTH;
+        Objects.requireNonNull(sensorManager).registerListener(sensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+        deviceAcceleration=10;
+        deviceAcceleration_before=SensorManager.GRAVITY_EARTH;
+        deviceAcceleration_now=SensorManager.GRAVITY_EARTH;
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         playersRecyclerView.setLayoutManager(layoutManager);
 
         adapter = new PlayersRecyclerviewAdapter(this, players);
         playersRecyclerView.setAdapter(adapter);
-
-        findViewById(R.id.cheatin).setOnClickListener((view) -> showCheatingExposingView());
     }
 
-    public void showCheatingExposingView() {
+    public void showCheatingExposingView(){
         cheatsView.setVisibility(View.VISIBLE);
         playersRecyclerView.setVisibility(View.VISIBLE);
         closeCheatsViewButton.setVisibility(View.VISIBLE);
         cheatsViewTitle.setVisibility(View.VISIBLE);
     }
 
-    public void hideCheatingExposingView() {
+    public void hideCheatingExposingView(){
         cheatsView.setVisibility(View.GONE);
         playersRecyclerView.setVisibility(View.GONE);
         closeCheatsViewButton.setVisibility(View.GONE);
         cheatsViewTitle.setVisibility(View.GONE);
     }
 
-    public void exposeCheating(String playername) {
-        serverWaitingQueue.add(newGameMove(3, playername));
+    public void exposeCheating(String playername){
+        serverWaitingQueue.add(newGameMove(3,playername));
     }
 
-    public void updatePlayersInRecyclerView(ArrayList<String> realplayers) {
+    public void updatePlayersInRecyclerView(ArrayList<String> realplayers){
         realplayers.remove(playername);
         PlayersRecyclerviewAdapter newdapater = new PlayersRecyclerviewAdapter(this, realplayers);
         playersRecyclerView.setAdapter(newdapater);
@@ -149,39 +148,36 @@ public class GamePlayActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(
-                sensorListener,
-                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(sensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
     }
-
     @Override
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(sensorListener);
     }
 
-    private final SensorEventListener sensorListener =
-            new SensorEventListener() {
-                @Override
-                public void onSensorChanged(SensorEvent sensorEvent) {
-                    double x_axis = sensorEvent.values[0];
-                    double y_axis = sensorEvent.values[1];
-                    double z_axis = sensorEvent.values[2];
-                    deviceAcceleration_before = deviceAcceleration_now;
-                    deviceAcceleration_now =
-                            Math.sqrt(x_axis * x_axis + y_axis * y_axis + z_axis * z_axis);
-                    double delta = deviceAcceleration_now - deviceAcceleration_before;
-                    deviceAcceleration = deviceAcceleration * 0.9 + delta;
 
-                    if (deviceAcceleration > 10) {
-                        showCheatingExposingView();
-                    }
-                }
+    private final SensorEventListener sensorListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+            double x_axis = sensorEvent.values[0];
+            double y_axis = sensorEvent.values[1];
+            double z_axis = sensorEvent.values[2];
+            deviceAcceleration_before = deviceAcceleration_now;
+            deviceAcceleration_now = Math.sqrt(x_axis * x_axis + y_axis * y_axis + z_axis * z_axis);
+            double delta = deviceAcceleration_now - deviceAcceleration_before;
+            deviceAcceleration = deviceAcceleration * 0.9 + delta;
 
-                @Override
-                public void onAccuracyChanged(Sensor sensor, int i) {}
-            };
+            if (deviceAcceleration > 10) {
+                showCheatingExposingView();
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int i) {
+
+        }
+    };
 
     private void playCard(View view) {
         (findViewById(R.id.editTextN_card)).setVisibility(View.GONE);
@@ -250,29 +246,22 @@ public class GamePlayActivity extends AppCompatActivity {
                             new StreamObserver<Response>() {
 
                                 private void showStich(Activity activity, StichMade stichmade) {
-                                    if (stichmade
-                                            .getPlayerid()
-                                            .equals(playerId)) { // I made the stich
+                                    if(stichmade.getPlayerid().equals(playerId)){//I made the stich
                                         Toast.makeText(
-                                                        activity.getApplication()
-                                                                .getApplicationContext(),
-                                                        "You have made this stich!",
-                                                        Toast.LENGTH_SHORT)
+                                                activity.getApplication()
+                                                        .getApplicationContext(),
+                                                "You have made this stich!",
+                                                Toast.LENGTH_SHORT)
                                                 .show();
-                                        ((TextView) activity.findViewById(R.id.stiche_made))
-                                                .setText(stichmade.getTotalstichebyplayer());
+                                        ((TextView) activity.findViewById(R.id.stiche_made)).setText(stichmade.getTotalstichebyplayer());
 
-                                    } else // someone else made the stich
-                                    Toast.makeText(
-                                                        activity.getApplication()
-                                                                .getApplicationContext(),
-                                                        "player "
-                                                                + stichmade.getPlayerName()
-                                                                + " has made this stich. They have"
-                                                                + " made a total of "
-                                                                + stichmade.getTotalstichebyplayer()
-                                                                + " stich",
-                                                        Toast.LENGTH_SHORT)
+                                    }
+                                    else//someone else made the stich
+                                        Toast.makeText(
+                                                activity.getApplication()
+                                                        .getApplicationContext(),
+                                                "player "+ stichmade.getPlayerName()+" has made this stich. They have made a total of "+stichmade.getTotalstichebyplayer()+" stich",
+                                                Toast.LENGTH_SHORT)
                                                 .show();
                                 }
 
@@ -290,29 +279,28 @@ public class GamePlayActivity extends AppCompatActivity {
                                             .setVisibility(View.VISIBLE);
                                 }
 
+
                                 private void updateGameField(Activity activity, CardList cardList) {
-                                    // update cards in hand
-                                    StringBuilder builderHand = new StringBuilder();
-                                    for (Card c : cardList.getHandList()) {
-                                        builderHand.append(
-                                                c.getColor() + c.getValue().toString() + "/");
+                                    //update cards in hand
+                                    StringBuilder builderHand=new StringBuilder();
+                                    for (Card c:cardList.getHandList()) {
+                                        builderHand.append(c.getColor()+c.getValue().toString()+"/");
                                     }
                                     ((TextView) activity.findViewById(R.id.cards_in_Hand))
                                             .setText(builderHand.toString());
 
-                                    // update cards on table
-                                    StringBuilder builderTable = new StringBuilder();
-                                    for (Card c : cardList.getTableList()) {
-                                        builderTable.append(
-                                                c.getColor() + c.getValue().toString() + "/");
+                                    //update cards on table
+                                    StringBuilder builderTable=new StringBuilder();
+                                    for (Card c:cardList.getTableList()) {
+                                        builderTable.append(c.getColor()+c.getValue().toString()+"/");
                                     }
                                     ((TextView) activity.findViewById(R.id.cards_on_table))
                                             .setText(builderTable);
                                     Toast.makeText(
-                                                    activity.getApplication()
-                                                            .getApplicationContext(),
-                                                    "your have received your" + " cards",
-                                                    Toast.LENGTH_SHORT)
+                                            activity.getApplication()
+                                                    .getApplicationContext(),
+                                            "your have received your" + " cards",
+                                            Toast.LENGTH_SHORT)
                                             .show();
                                 }
 
@@ -334,83 +322,66 @@ public class GamePlayActivity extends AppCompatActivity {
                                             .setVisibility(View.VISIBLE);
                                 }
 
-                                private void updateRoundNumberAndPoints(
-                                        Activity activity, GameStatus gameStatus) {
+                                private void updateRoundNumberAndPoints(Activity activity, GameStatus gameStatus) {
                                     ((TextView) activity.findViewById(R.id.points))
                                             .setText(
                                                     "You have "
                                                             + gameStatus.getMyPoints()
                                                             + " points");
                                     ((TextView) activity.findViewById(R.id.round))
-                                            .setText("This is round " + gameStatus.getRound());
+                                            .setText(
+                                                    "This is round "
+                                                            +gameStatus.getRound());
 
                                     Toast.makeText(
-                                                    activity.getApplication()
-                                                            .getApplicationContext(),
-                                                    "after round "
-                                                            + gameStatus.getRound()
-                                                            + " you have "
-                                                            + gameStatus.getMyPoints()
-                                                            + " points!",
-                                                    Toast.LENGTH_SHORT)
+                                            activity.getApplication()
+                                                    .getApplicationContext(),
+                                            "after round "
+                                                    + gameStatus.getRound()
+                                                    + " you have "
+                                                    + gameStatus.getMyPoints()
+                                                    + " points!",
+                                            Toast.LENGTH_SHORT)
                                             .show();
                                 }
-
-                                private void youCheated(
-                                        Activity activity,
-                                        CheatingSubmittedResult cheatingSubmittedResult) {
+                                private void youCheated(Activity activity,CheatingSubmittedResult cheatingSubmittedResult){
                                     ((TextView) activity.findViewById(R.id.points))
                                             .setText(
                                                     "You have "
                                                             + cheatingSubmittedResult.getNewPoints()
                                                             + " points");
                                     Toast.makeText(
-                                                    activity.getApplication()
-                                                            .getApplicationContext(),
-                                                    "Your cheating was discovered!!!! You now have "
-                                                            + cheatingSubmittedResult.getNewPoints()
-                                                            + " Points",
-                                                    Toast.LENGTH_SHORT)
+                                            activity.getApplication()
+                                                    .getApplicationContext(),
+                                          "Your cheating was discovered!!!! You now have "+ cheatingSubmittedResult.getNewPoints()+" Points",
+                                            Toast.LENGTH_SHORT)
                                             .show();
                                 }
-
-                                private void someOneCheated(
-                                        Activity activity,
-                                        CheatingSubmittedResult
-                                                cheatingSubmittedResult) { // we will not get our id
-                                    // because submitting
-                                    // cheaters is anonymous
+                                private void someOneCheated(Activity activity,CheatingSubmittedResult cheatingSubmittedResult){//we will not get our id because submitting cheaters is anonymous
                                     String currentPointsString = points.getText().toString();
                                     Pattern pattern = Pattern.compile("\\d+");
                                     Matcher matcher = pattern.matcher(currentPointsString);
 
                                     int currentPoints = 0;
 
-                                    while (matcher.find()) {
+                                    while(matcher.find()){
                                         currentPoints = Integer.parseInt(matcher.group());
                                     }
 
-                                    if (currentPoints
-                                            > Integer.parseInt(
-                                                    cheatingSubmittedResult.getNewPoints())) {
+                                    if(currentPoints>Integer.parseInt(cheatingSubmittedResult.getNewPoints())){
                                         Toast.makeText(
-                                                        activity.getApplication()
-                                                                .getApplicationContext(),
-                                                        "Wrong assumption! You now have "
-                                                                + cheatingSubmittedResult
-                                                                        .getNewPoints()
-                                                                + " Points",
-                                                        Toast.LENGTH_SHORT)
+                                                activity.getApplication()
+                                                        .getApplicationContext(),
+                                                "Wrong assumption! You now have "+ cheatingSubmittedResult.getNewPoints()+" Points",
+                                                Toast.LENGTH_SHORT)
                                                 .show();
-                                    } else {
+                                    }
+                                    else{
                                         Toast.makeText(
-                                                        activity.getApplication()
-                                                                .getApplicationContext(),
-                                                        "Someone cheated! You now have "
-                                                                + cheatingSubmittedResult
-                                                                        .getNewPoints()
-                                                                + " Points",
-                                                        Toast.LENGTH_SHORT)
+                                                activity.getApplication()
+                                                        .getApplicationContext(),
+                                                "Someone cheated! You now have "+ cheatingSubmittedResult.getNewPoints()+" Points",
+                                                Toast.LENGTH_SHORT)
                                                 .show();
                                     }
 
@@ -423,78 +394,59 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                 private void handleResponse(Activity activity, Response response) {
 
-                                    if (response.getActionCase() == Response.ActionCase.CARDLIST) {
-                                        // todo new display cards
+
+
+                                    if(response.getActionCase()==Response.ActionCase.CARDLIST){
+                                        //todo new display cards
                                         activity.runOnUiThread(
-                                                () ->
-                                                        updateGameField(
-                                                                activity, response.getCardList()));
+                                                () -> updateGameField(activity, response.getCardList()));
 
                                         return;
-                                    } else if (response.getActionCase()
-                                            == Response.ActionCase.STICHMADE) {
+                                    }else if(response.getActionCase()==Response.ActionCase.STICHMADE){
                                         activity.runOnUiThread(
                                                 () -> showStich(activity, response.getStichMade()));
                                         return;
-                                    } else if (response.getActionCase()
-                                            == Response.ActionCase.GAMESTATUS) {
-                                        activity.runOnUiThread(
-                                                () ->
-                                                        updateRoundNumberAndPoints(
-                                                                activity,
-                                                                response.getGameStatus()));
-                                    } else if (response.getActionCase()
-                                            == Response.ActionCase.CHEATING) {
-                                        if (response.getCheating()
-                                                .getCheaterId()
-                                                .equals(playerId)) { // I have cheated
-                                            activity.runOnUiThread(
-                                                    () ->
-                                                            youCheated(
-                                                                    activity,
-                                                                    response.getCheating()));
-                                            return;
-                                        } else { // someone else has cheated
-                                            activity.runOnUiThread(
-                                                    () ->
-                                                            someOneCheated(
-                                                                    activity,
-                                                                    response.getCheating()));
+                                    }else if(response.getActionCase()==Response.ActionCase.GAMESTATUS){
+                                        activity.runOnUiThread( () ->
+                                                updateRoundNumberAndPoints(
+                                                        activity, response.getGameStatus()));
+                                    }else if(response.getActionCase()==Response.ActionCase.CHEATING){
+                                        if(response.getCheating().getCheaterId().equals(playerId)){//I have cheated
+                                            activity.runOnUiThread(()->youCheated(activity,response.getCheating()));
                                             return;
                                         }
-                                    } else if (response.getActionCase()
-                                            == Response.ActionCase.PLAYERLIST) {
+                                        else{//someone else has cheated
+                                            activity.runOnUiThread(()->someOneCheated(activity,response.getCheating()));
+                                            return;
+                                        }
+                                    }else if(response.getActionCase()==Response.ActionCase.PLAYERLIST){
 
-                                        ArrayList realplayers = new ArrayList<>();
-                                        for (int i = 0;
-                                                i < response.getPlayerList().getPlayerCount();
-                                                i++) {
-                                            realplayers.add(
-                                                    response.getPlayerList()
-                                                            .getPlayer(i)
-                                                            .getPlayerName());
+                                        ArrayList realplayers=new ArrayList<>();
+                                        for (int i = 0; i < response.getPlayerList().getPlayerCount(); i++) {
+                                            realplayers.add(response.getPlayerList().getPlayer(i).getPlayerName());
                                         }
 
-                                        activity.runOnUiThread(
-                                                () -> updatePlayersInRecyclerView(realplayers));
+
+
+                                        activity.runOnUiThread(()-> updatePlayersInRecyclerView(realplayers));
                                         return;
                                     }
 
-                                    switch (response.getType()) { // legacy switch case
+
+                                    switch (response.getType()) {//legacy switch case
                                         case "0":
                                             break;
                                         case "1":
                                             /*activity.runOnUiThread(
-                                            () -> showStich(activity, response));*/
-                                            // todo remove
+                                                    () -> showStich(activity, response));*///todo remove
                                             break;
                                         case "2":
                                             activity.runOnUiThread(
                                                     () -> makeCardPlayRequest(activity, response));
                                             break;
-                                        case "3": // todo remove
-                                            /* activity.runOnUiThread(
-                                            () -> updateGameField(activity, response));*/
+                                        case "3"://todo remove
+                                           /* activity.runOnUiThread(
+                                                    () -> updateGameField(activity, response));*/
                                             break;
                                         case "4":
                                             activity.runOnUiThread(
@@ -505,10 +457,10 @@ public class GamePlayActivity extends AppCompatActivity {
                                                     () -> makeEstimate(activity, response));
                                             break;
                                         case "6":
-                                            /* activity.runOnUiThread(
-                                            () ->
-                                                    updateRoundNumberAndPoints(
-                                                            activity, response));*/
+                                           /* activity.runOnUiThread(
+                                                    () ->
+                                                            updateRoundNumberAndPoints(
+                                                                    activity, response));*/
                                             break;
                                         default:
                                             throw new IllegalArgumentException(
@@ -576,8 +528,7 @@ public class GamePlayActivity extends AppCompatActivity {
         }
     }
 
-    public class PlayersRecyclerviewAdapter
-            extends RecyclerView.Adapter<PlayersRecyclerviewAdapter.ViewHolder> {
+    public class PlayersRecyclerviewAdapter extends RecyclerView.Adapter<PlayersRecyclerviewAdapter.ViewHolder> {
 
         private ArrayList<String> players;
         private LayoutInflater layoutInflater;
@@ -586,14 +537,12 @@ public class GamePlayActivity extends AppCompatActivity {
         PlayersRecyclerviewAdapter(Context context, ArrayList<String> players) {
             this.layoutInflater = LayoutInflater.from(context);
             this.players = players;
-            selectedPlayer = null;
+            selectedPlayer=null;
         }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            View view =
-                    layoutInflater.inflate(
-                            R.layout.players_recyclerview_textfield, viewGroup, false);
+            View view = layoutInflater.inflate(R.layout.players_recyclerview_textfield, viewGroup, false);
             return new ViewHolder(view);
         }
 
@@ -615,12 +564,12 @@ public class GamePlayActivity extends AppCompatActivity {
                 super(view);
                 playername_holder = view.findViewById(R.id.cheating_player_button);
 
-                playername_holder.setOnClickListener(
-                        e -> {
-                            hideCheatingExposingView();
-                            exposeCheating(playername_holder.getText().toString());
-                        });
+                playername_holder.setOnClickListener(e->{
+                    hideCheatingExposingView();
+                    exposeCheating(playername_holder.getText().toString());
+                });
             }
         }
     }
+
 }
