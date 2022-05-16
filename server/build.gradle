@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'com.google.protobuf'
+    id 'com.palantir.docker'
 }
 
 configureProtobuf()
@@ -45,4 +46,25 @@ jacocoTestReport {
     reports {
         xml.enabled true
     }
+}
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": project.name,
+                "Implementation-Version": project.version,
+                "Main-Class": "com.github.wizard.Server"
+                )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = 'include'
+}
+
+docker {
+    name "fhilgers/${project.name}:${project.version}"
+    tag 'latest', "fhilgers/${project.name}:latest"
+    files tasks.jar.outputs, 'docker-entrypoint.sh'
+    buildArgs([NAME: "${project.name}", VERSION: "${project.version}"])
 }

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -36,12 +35,11 @@ import java.util.concurrent.TimeoutException;
 
 public class MainActivity extends AppCompatActivity {
     public static final String GAME_ID_KEY = "com.github.wizard.GAME_ID_KEY";
-    public static final String PLAYER_ID_KEY = "com.github.wizard.PALYER_ID_KEY";
+    public static final String PLAYER_ID_KEY = "com.github.wizard.PLAYER_ID_KEY";
     public static final String TAG = "wizard";
-    public static final String SERVER_ADDRESS =
-            "10.0.2.2"; // this is the address for localhost on the host of the emulator. todo use
-    // real server address
-    public static final String SERVER_PORT = "50051"; // todo use real port
+    public static final String SERVER_ADDRESS = "10.0.2.2";
+    public static final boolean USE_PLAINTEXT = true;
+    public static final int SERVER_PORT = 50051;
     public static final int SERVER_TIMEOUT_SECONDS = 10;
 
     private EditText name;
@@ -84,13 +82,14 @@ public class MainActivity extends AppCompatActivity {
                                         () -> {
                                             if (gameId.getText() != null
                                                     && gameId.getText().length() != 0) {
-                                                ManagedChannel channel =
+                                                ManagedChannelBuilder<?> builder =
                                                         ManagedChannelBuilder.forAddress(
-                                                                        SERVER_ADDRESS,
-                                                                        Integer.parseInt(
-                                                                                SERVER_PORT))
-                                                                .usePlaintext()
-                                                                .build();
+                                                                SERVER_ADDRESS, SERVER_PORT);
+
+                                                if (USE_PLAINTEXT) builder.usePlaintext();
+
+                                                channel = builder.build();
+
                                                 GameStarterGrpc.GameStarterBlockingStub stub =
                                                         GameStarterGrpc.newBlockingStub(channel);
                                                 JoinRequest request =
@@ -133,17 +132,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startNewGame(View view) {
-        new GrpcTask(this, true)
-                .execute(SERVER_ADDRESS, name.getText().toString(), SERVER_PORT, "-1");
+        new GrpcTask(this, true).execute(name.getText().toString(), "-1");
     }
 
     public void joinGame(View view) {
-        new GrpcTask(this, false)
-                .execute(
-                        SERVER_ADDRESS,
-                        name.getText().toString(),
-                        SERVER_PORT,
-                        gameId.getText().toString());
+        new GrpcTask(this, false).execute(name.getText().toString(), gameId.getText().toString());
     }
 
     @Override
@@ -167,15 +160,19 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            String host = params[0];
-            String name = params[1];
-            String portStr = params[2];
-            String gameid = params[3];
+            String name = params[0];
+            String gameid = params[1];
 
-            int port = TextUtils.isEmpty(portStr) ? 0 : Integer.parseInt(portStr);
             try {
-                if (channel == null || channel.isShutdown())
-                    channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
+                if (channel == null || channel.isShutdown()) {
+                    ManagedChannelBuilder<?> builder =
+                            ManagedChannelBuilder.forAddress(SERVER_ADDRESS, SERVER_PORT);
+
+                    if (USE_PLAINTEXT) builder.usePlaintext();
+
+                    channel = builder.build();
+                }
+
                 if (gameStarterBlockingStub == null)
                     gameStarterBlockingStub = GameStarterGrpc.newBlockingStub(channel);
                 if (startNewGame) {
@@ -294,11 +291,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... nothing) {
             try {
-                if (channel == null || channel.isShutdown())
-                    channel =
-                            ManagedChannelBuilder.forAddress(SERVER_ADDRESS, SERVER_TIMEOUT_SECONDS)
-                                    .usePlaintext()
-                                    .build();
+                if (channel == null || channel.isShutdown()) {
+                    ManagedChannelBuilder<?> builder =
+                            ManagedChannelBuilder.forAddress(SERVER_ADDRESS, SERVER_PORT);
+
+                    if (USE_PLAINTEXT) builder.usePlaintext();
+
+                    channel = builder.build();
+                }
                 if (gamePlayBlockingStub == null)
                     gamePlayBlockingStub = GamePlayGrpc.newBlockingStub(channel);
                 String logs = grpcRunnable.run(activityReference);

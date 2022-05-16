@@ -34,12 +34,13 @@ public class GameActionRunner extends AsyncTask<Void, Void, String> {
         boolean reconnect = false;
         try {
             if (channel == null || channel.isShutdown()) {
-                channel =
+                ManagedChannelBuilder<?> builder =
                         ManagedChannelBuilder.forAddress(
-                                        MainActivity.SERVER_ADDRESS,
-                                        Integer.parseInt(MainActivity.SERVER_PORT))
-                                .usePlaintext()
-                                .build();
+                                MainActivity.SERVER_ADDRESS, MainActivity.SERVER_PORT);
+
+                if (MainActivity.USE_PLAINTEXT) builder.usePlaintext();
+
+                channel = builder.build();
                 reconnect = true;
             }
             if (gamePlayBlockingStub == null || reconnect)
