@@ -193,6 +193,11 @@ public class GamePlayActivity extends AppCompatActivity {
         serverWaitingQueue.add(newGameMove(2, card.getText().toString()));
     }
 
+    private void updateEstimateTextview(String estimate){
+        TextView estimateTextView = findViewById(R.id.stiche_estimated);
+        estimateTextView.setText("You wanted to make " + estimate + " Stiche");
+    }
+
     private void submitEstimate(String estimate) {
         serverWaitingQueue.add(newGameMove(1, estimate));
     }
@@ -643,6 +648,7 @@ public class GamePlayActivity extends AppCompatActivity {
                 estimateInputField = findViewById(R.id.dialogEstimateInput);
                 String estimate = estimateInputField.getText().toString();
                 submitEstimate(estimate);
+                updateEstimateTextview(estimate);
                 dismiss();
             });
 
