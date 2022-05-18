@@ -157,7 +157,7 @@
         android:id="@+id/ExposeCheatsView"
         android:layout_width="200dp"
         android:layout_height="300dp"
-        android:background="@drawable/cheating_view_background"
+        android:background="@drawable/dialog_and_view_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
