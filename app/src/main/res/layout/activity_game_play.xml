@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GamePlayActivity">
+    tools:context=".GamePlayActivity"
+    android:background = "@drawable/gameboard_background">
     <!-- android:background = "@drawable/gameboard_background">-->
 
     <!--  <Button
@@ -67,7 +68,8 @@
         android:text="your cards will be displayed here shortly..."
         app:layout_constraintBottom_toTopOf="@+id/editTextN_card"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        style="@style/TextViewStyle"/>
 
     <TextView
         android:id="@+id/cards_on_table"
@@ -77,7 +79,8 @@
         app:layout_constraintBottom_toTopOf="@+id/cards_in_Hand"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/TextViewStyle"/>
 
     <TextView
         android:id="@+id/trumpf"
@@ -88,7 +91,8 @@
         android:text="Trumpf is"
         android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/TextViewStyle"/>
 
     <TextView
         android:id="@+id/points"
@@ -96,7 +100,8 @@
         android:layout_height="wrap_content"
         android:text="you have 0 points "
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/TextViewStyle"/>
 
     <TextView
         android:id="@+id/stiche_estimated"
@@ -104,7 +109,8 @@
         android:layout_height="wrap_content"
         android:text="You wanted to make 0 Stiche"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/points" />
+        app:layout_constraintTop_toBottomOf="@+id/points"
+        style="@style/TextViewStyle"/>
 
     <TextView
         android:id="@+id/stiche_made"
@@ -113,7 +119,8 @@
         android:layout_marginTop="64dp"
         android:text="You have already made 0 Stiche"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stiche_estimated" />
+        app:layout_constraintTop_toBottomOf="@+id/stiche_estimated"
+        style="@style/TextViewStyle"/>
 
     <Button
         android:id="@+id/button_estimate"
@@ -143,7 +150,8 @@
         android:layout_marginTop="8dp"
         android:text="This is round 0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trumpf" />
+        app:layout_constraintTop_toBottomOf="@+id/trumpf"
+        style="@style/TextViewStyle"/>
 
     <View
         android:id="@+id/ExposeCheatsView"
