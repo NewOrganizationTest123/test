@@ -647,9 +647,12 @@ public class GamePlayActivity extends AppCompatActivity {
             estimateSend.setOnClickListener(e->{
                 estimateInputField = findViewById(R.id.dialogEstimateInput);
                 String estimate = estimateInputField.getText().toString();
-                submitEstimate(estimate);
-                updateEstimateTextview(estimate);
-                dismiss();
+
+                if(!estimate.equals("")) {
+                    submitEstimate(estimate);
+                    updateEstimateTextview(estimate);
+                    dismiss();
+                }
             });
 
         }
