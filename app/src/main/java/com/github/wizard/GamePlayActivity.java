@@ -194,21 +194,11 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     private void submitEstimate(String estimate) {
-        //(findViewById(R.id.editTextNumber_estimate)).setVisibility(View.GONE);
-        //(findViewById(R.id.button_estimate)).setVisibility(View.GONE);
-
-        // submit to server
-        //EditText card = findViewById(R.id.editTextNumber_estimate);
         serverWaitingQueue.add(newGameMove(1, estimate));
     }
 
     private void openEstimateDialog(){
-
         EstimateDialog estimateDialog = new EstimateDialog(this);
-
-        //EditText estimateInputField = findViewById(R.id.dialogEstimateInput);
-        //Button estimateSend = estimateDialog.findViewById(R.id.dialogEnterButton);
-
         estimateDialog.setContentView(R.layout.estimate_dialog);
         estimateDialog.setCancelable(false);
         estimateDialog.show();
@@ -341,16 +331,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                 }
 
                                 private void makeEstimate(Activity activity, Response response) {
-                                    //TODO: Dialog
-
                                     openEstimateDialog();
-
-                                    /*
-                                    (activity.findViewById(R.id.editTextNumber_estimate))
-                                            .setVisibility(View.VISIBLE);
-                                    (activity.findViewById(R.id.button_estimate))
-                                            .setVisibility(View.VISIBLE);
-                                            */
                                 }
 
                                 private void updateRoundNumberAndPoints(
