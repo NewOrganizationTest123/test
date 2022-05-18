@@ -368,12 +368,16 @@ public class GamePlayActivity extends AppCompatActivity {
                                     }
                                     ((TextView) activity.findViewById(R.id.cards_on_table))
                                             .setText(builderTable);
+
+                                    /*
                                     Toast.makeText(
                                                     activity.getApplication()
                                                             .getApplicationContext(),
                                                     "your have received your" + " cards",
                                                     Toast.LENGTH_SHORT)
                                             .show();
+
+                                     */
                                 }
 
                                 private void showTrump(Activity activity, Response response) {
