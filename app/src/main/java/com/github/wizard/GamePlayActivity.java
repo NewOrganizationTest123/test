@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,6 +65,7 @@ public class GamePlayActivity extends AppCompatActivity {
     private TextView points;
     private RecyclerView cardsInHandRecyclerView;
     private RecyclerView cardsInTheMiddleRecyclerView;
+    private TextView whosTurnIsItText;
 
     private static void appendLogs(StringBuffer logs, String msg, Object... params) {
         if (params.length > 0) {
@@ -97,6 +97,7 @@ public class GamePlayActivity extends AppCompatActivity {
                 .execute(); // fire up the streaming service
 
         points = findViewById(R.id.points);
+        whosTurnIsItText = findViewById(R.id.whosTurnIsItTextview);
         //findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         //findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
         cheatsView = findViewById(R.id.ExposeCheatsView);
@@ -204,6 +205,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
         // submit to server
         //EditText card = findViewById(R.id.editTextN_card);
+        whosTurnIsItText.setText("Please wait for your turn!");
         serverWaitingQueue.add(newGameMove(2, cardnum));
     }
 
@@ -232,6 +234,7 @@ public class GamePlayActivity extends AppCompatActivity {
         //TODO: only allow playing Card when CardPlayRequest
         CardsInHandRecyclerViewAdapter playcardadapter = (CardsInHandRecyclerViewAdapter) cardsInHandRecyclerView.getAdapter();
         playcardadapter.activatePlayingCard();
+        whosTurnIsItText.setText("Its your turn!");
     }
 
     private class GameActionRunnable implements GrpcRunnableNew {
@@ -311,12 +314,15 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                 private void makeCardPlayRequest(
                                         Activity activity, Response response) {
+                                    /*
                                     Toast.makeText(
                                                     activity.getApplication()
                                                             .getApplicationContext(),
                                                     response.getData(),
                                                     Toast.LENGTH_SHORT)
                                             .show();
+
+                                     */
 
                                     allowPlayingCard();
                                     /*

@@ -28,23 +28,21 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/cards_in_Hand"
+        android:id="@+id/whosTurnIsItTextview"
+        style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="your cards will be displayed here shortly..."
+        android:text="Please wait for your turn!"
         app:layout_constraintBottom_toTopOf="@+id/editTextN_card"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        style="@style/TextViewStyle"
-        android:visibility="invisible"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/cards_on_table"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="The cards of the current trick will be displayed here shorlty..."
-        app:layout_constraintBottom_toTopOf="@+id/cards_in_Hand"
+        app:layout_constraintBottom_toTopOf="@+id/whosTurnIsItTextview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -165,7 +163,7 @@
         android:id="@+id/cardsInHandRecyclerview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/editTextN_card"
+        app:layout_constraintBottom_toTopOf="@+id/whosTurnIsItTextview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
