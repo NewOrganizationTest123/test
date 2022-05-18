@@ -51,6 +51,7 @@ public class GamePlayActivity extends AppCompatActivity {
     public static ArrayList<String> players = new ArrayList<>(); // todo maybe not use String here
     public static PlayersRecyclerviewAdapter players_adapter;
     public static CardsInHandRecyclerViewAdapter cards_adapter;
+    public static CardsInTheMiddleRecyclerViewAdapter cards_middle_adapter;
 
     ManagedChannel channel;
     private static final BlockingQueue<GameMove> serverWaitingQueue = new LinkedBlockingQueue<>();
@@ -135,6 +136,14 @@ public class GamePlayActivity extends AppCompatActivity {
         ArrayList<String> cardsList = new ArrayList<>();
         cards_adapter = new CardsInHandRecyclerViewAdapter(this, cardsList);
         cardsInHandRecyclerView.setAdapter(players_adapter);
+
+        cardsInTheMiddleRecyclerView=findViewById(R.id.cardsInTheMiddleRecyclerView);
+        LinearLayoutManager layoutManagerCardsMiddle = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        cardsInTheMiddleRecyclerView.setLayoutManager(layoutManagerCardsMiddle);
+
+        ArrayList<String> cardsMiddleList = new ArrayList<>();
+        cards_middle_adapter = new CardsInTheMiddleRecyclerViewAdapter(this, cardsMiddleList);
+        cardsInTheMiddleRecyclerView.setAdapter(cards_middle_adapter);
 
     }
 
@@ -228,6 +237,11 @@ public class GamePlayActivity extends AppCompatActivity {
     private void updateCardsInHandRecyclerView(ArrayList<String> cards_in_hand){
         CardsInHandRecyclerViewAdapter newcards_adapter = new CardsInHandRecyclerViewAdapter(this, cards_in_hand);
         cardsInHandRecyclerView.setAdapter(newcards_adapter);
+    }
+
+    private void updateCardsInMiddleRecyclerView(ArrayList<String> cards_in_middle){
+        CardsInTheMiddleRecyclerViewAdapter newcards_adapter = new CardsInTheMiddleRecyclerViewAdapter(this, cards_in_middle);
+        cardsInTheMiddleRecyclerView.setAdapter(newcards_adapter);
     }
 
     private void allowPlayingCard(){
@@ -338,9 +352,6 @@ public class GamePlayActivity extends AppCompatActivity {
                                     // update cards in hand
                                     StringBuilder builderHand = new StringBuilder();
 
-
-                                    //TODO: show Cards in RecyclerView
-
                                     ArrayList<String> cards_in_hand = new ArrayList<>();
                                     for (Card c : cardList.getHandList()) {
                                         String cardname = c.getColor()+c.getValue().toString();
@@ -354,20 +365,23 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                     updateCardsInHandRecyclerView(cards_in_hand);
 
-                                    /*
-                                    ((TextView) activity.findViewById(R.id.cards_in_Hand))
-                                            .setText(builderHand.toString());
+                                    ((TextView) activity.findViewById(R.id.cards_on_table))
+                                            .setText("");
 
-                                     */
 
                                     // update cards on table
-                                    StringBuilder builderTable = new StringBuilder();
+                                    //StringBuilder builderTable = new StringBuilder();
+                                    ArrayList<String> cards_in_middle = new ArrayList<>();
                                     for (Card c : cardList.getTableList()) {
-                                        builderTable.append(
-                                                c.getColor() + c.getValue().toString() + "/");
+                                        String cardname = c.getColor()+c.getValue().toString();
+                                        cards_in_middle.add(cardname);
+                                        //builderTable.append(
+                                         //       c.getColor() + c.getValue().toString() + "/");
                                     }
-                                    ((TextView) activity.findViewById(R.id.cards_on_table))
-                                            .setText(builderTable);
+                                    //((TextView) activity.findViewById(R.id.cards_on_table))
+                                    //        .setText(builderTable);
+
+                                    updateCardsInMiddleRecyclerView(cards_in_middle);
 
                                     /*
                                     Toast.makeText(
@@ -900,6 +914,219 @@ public class GamePlayActivity extends AppCompatActivity {
                                 allowPlayingCard=false;
                             }
                         });
+            }
+        }
+    }
+
+    public class CardsInTheMiddleRecyclerViewAdapter
+            extends RecyclerView.Adapter<CardsInTheMiddleRecyclerViewAdapter.ViewHolder> {
+        private ArrayList<String> cards;
+        private LayoutInflater layoutInflater;
+        //public String selectedCard;
+        //public int counter = 0;
+        //private boolean allowPlayingCard = false;
+        //public boolean isActivated = false;
+
+        CardsInTheMiddleRecyclerViewAdapter(Context context, ArrayList<String> cards) {
+            this.layoutInflater = LayoutInflater.from(context);
+            this.cards = cards;
+            //selectedCard = null;
+        }
+
+        /*
+        public void activatePlayingCard(){
+            allowPlayingCard=true;
+        }
+
+         */
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            View view =
+                    layoutInflater.inflate(
+                            R.layout.cards_recyclerview_image, viewGroup, false);
+            return new ViewHolder(view);
+        }
+
+        @SuppressLint("UseCompatLoadingForDrawables")
+        @Override
+        public void onBindViewHolder(ViewHolder viewHolder, int position) {
+            String cardname = cards.get(position);
+
+            //viewHolder.card_holder.setTag(counter);
+            //counter++;
+
+            switch(cardname){
+                case("BLUEONE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_01);
+                    break;
+                case("BLUETWO"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_02);
+                    break;
+                case("BLUETHREE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_03);
+                    break;
+                case("BLUEFOUR"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_04);
+                    break;
+                case("BLUEFIVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_05);
+                    break;
+                case("BLUESIX"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_06);
+                    break;
+                case("BLUESEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_07);
+                    break;
+                case("BLUEEIGHT"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_08);
+                    break;
+                case ("BLUENINE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_09);
+                    break;
+                case ("BLUETEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_10);
+                    break;
+                case ("BLUEELEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_11);
+                    break;
+                case("BLUETWELVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_12);
+                    break;
+
+                case("REDONE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_01);
+                    break;
+                case("REDTWO"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_02);
+                    break;
+                case("REDTHREE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_03);
+                    break;
+                case("REDFOUR"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_04);
+                    break;
+                case("REDFIVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_05);
+                    break;
+                case("REDSIX"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_06);
+                    break;
+                case("REDSEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_07);
+                    break;
+                case("REDEIGHT"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_08);
+                    break;
+                case ("REDNINE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_09);
+                    break;
+                case ("REDTEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_10);
+                    break;
+                case ("REDELEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_11);
+                    break;
+                case("REDTWELVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_12);
+                    break;
+
+                case("YELLOWONE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_01);
+                    break;
+                case("YELLOWTWO"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_02);
+                    break;
+                case("YELLOWTHREE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_03);
+                    break;
+                case("YELLOWFOUR"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_04);
+                    break;
+                case("YELLOWFIVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_05);
+                    break;
+                case("YELLOWSIX"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_06);
+                    break;
+                case("YELLOWSEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_07);
+                    break;
+                case("YELLOWEIGHT"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_08);
+                    break;
+                case ("YELLOWNINE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_09);
+                    break;
+                case ("YELLOWTEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_10);
+                    break;
+                case ("YELLOWELEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_11);
+                    break;
+                case("YELLOWTWELVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_12);
+                    break;
+
+                case("GREENONE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_01);
+                    break;
+                case("GREENTWO"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_02);
+                    break;
+                case("GREENTHREE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_03);
+                    break;
+                case("GREENFOUR"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_04);
+                    break;
+                case("GREENFIVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_05);
+                    break;
+                case("GREENSIX"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_06);
+                    break;
+                case("GREENSEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_07);
+                    break;
+                case("GREENEIGHT"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_08);
+                    break;
+                case ("GREENNINE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_09);
+                    break;
+                case ("GREENTEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_10);
+                    break;
+                case ("GREENLEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_11);
+                    break;
+                case("GREENTWELVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_12);
+                    break;
+                case("NONEWIZARD"):
+                    viewHolder.card_holder.setImageResource(R.drawable.z_01);
+                    break;
+                case("NONEJESTER"):
+                    viewHolder.card_holder.setImageResource(R.drawable.n_01);
+                    break;
+                //TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
+                default:break;
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return cards.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            ImageView card_holder;
+            //String cardname;
+
+            ViewHolder(View view) {
+                super(view);
+                card_holder = view.findViewById(R.id.cardImageButton);
             }
         }
     }
