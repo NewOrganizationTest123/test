@@ -69,7 +69,9 @@
         app:layout_constraintBottom_toTopOf="@+id/editTextN_card"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        style="@style/TextViewStyle"/>
+        style="@style/TextViewStyle"
+        android:visibility="invisible"
+        />
 
     <TextView
         android:id="@+id/cards_on_table"
@@ -192,6 +194,14 @@
         app:layout_constraintEnd_toEndOf="@+id/ExposeCheatsView"
         app:layout_constraintStart_toStartOf="@+id/ExposeCheatsView"
         app:layout_constraintTop_toTopOf="@+id/ExposeCheatsView" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cardsInHandRecyclerview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/editTextN_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!--
 
