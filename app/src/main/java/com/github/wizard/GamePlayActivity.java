@@ -1,6 +1,7 @@
 package com.github.wizard;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -26,6 +27,8 @@ import com.github.wizard.api.GameMove;
 import com.github.wizard.api.GameStatus;
 import com.github.wizard.api.Response;
 import com.github.wizard.api.StichMade;
+import com.google.android.material.textfield.TextInputEditText;
+
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import java.lang.ref.WeakReference;
@@ -89,7 +92,7 @@ public class GamePlayActivity extends AppCompatActivity {
                 .execute(); // fire up the streaming service
 
         points = findViewById(R.id.points);
-        findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
+        //findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
         cheatsView = findViewById(R.id.ExposeCheatsView);
         playersRecyclerView = findViewById(R.id.playerRecyclerView);
@@ -190,13 +193,25 @@ public class GamePlayActivity extends AppCompatActivity {
         serverWaitingQueue.add(newGameMove(2, card.getText().toString()));
     }
 
-    private void submitEstimate(View view) {
-        (findViewById(R.id.editTextNumber_estimate)).setVisibility(View.GONE);
-        (findViewById(R.id.button_estimate)).setVisibility(View.GONE);
+    private void submitEstimate(String estimate) {
+        //(findViewById(R.id.editTextNumber_estimate)).setVisibility(View.GONE);
+        //(findViewById(R.id.button_estimate)).setVisibility(View.GONE);
 
         // submit to server
-        EditText card = findViewById(R.id.editTextNumber_estimate);
-        serverWaitingQueue.add(newGameMove(1, card.getText().toString()));
+        //EditText card = findViewById(R.id.editTextNumber_estimate);
+        serverWaitingQueue.add(newGameMove(1, estimate));
+    }
+
+    private void openEstimateDialog(){
+
+        EstimateDialog estimateDialog = new EstimateDialog(this);
+
+        //EditText estimateInputField = findViewById(R.id.dialogEstimateInput);
+        //Button estimateSend = estimateDialog.findViewById(R.id.dialogEnterButton);
+
+        estimateDialog.setContentView(R.layout.estimate_dialog);
+        estimateDialog.setCancelable(false);
+        estimateDialog.show();
     }
 
     private class GameActionRunnable implements GrpcRunnableNew {
@@ -326,10 +341,16 @@ public class GamePlayActivity extends AppCompatActivity {
                                 }
 
                                 private void makeEstimate(Activity activity, Response response) {
+                                    //TODO: Dialog
+
+                                    openEstimateDialog();
+
+                                    /*
                                     (activity.findViewById(R.id.editTextNumber_estimate))
                                             .setVisibility(View.VISIBLE);
                                     (activity.findViewById(R.id.button_estimate))
                                             .setVisibility(View.VISIBLE);
+                                            */
                                 }
 
                                 private void updateRoundNumberAndPoints(
@@ -619,6 +640,31 @@ public class GamePlayActivity extends AppCompatActivity {
                             exposeCheating(playername_holder.getText().toString());
                         });
             }
+        }
+    }
+
+    public class EstimateDialog extends Dialog{
+        public Activity activity;
+        EditText estimateInputField;
+        Button estimateSend;
+
+        public EstimateDialog(Activity activity){
+            super(activity);
+            this.activity=activity;
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            estimateSend = findViewById(R.id.dialogEnterButton);
+            estimateSend.setOnClickListener(e->{
+                estimateInputField = findViewById(R.id.dialogEstimateInput);
+                String estimate = estimateInputField.getText().toString();
+                submitEstimate(estimate);
+                dismiss();
+            });
+
         }
     }
 }
