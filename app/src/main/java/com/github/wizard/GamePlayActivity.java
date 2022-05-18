@@ -228,6 +228,12 @@ public class GamePlayActivity extends AppCompatActivity {
         cardsInHandRecyclerView.setAdapter(newcards_adapter);
     }
 
+    private void allowPlayingCard(){
+        //TODO: only allow playing Card when CardPlayRequest
+        CardsInHandRecyclerViewAdapter playcardadapter = (CardsInHandRecyclerViewAdapter) cardsInHandRecyclerView.getAdapter();
+        playcardadapter.activatePlayingCard();
+    }
+
     private class GameActionRunnable implements GrpcRunnableNew {
         private Throwable failed;
 
@@ -311,6 +317,8 @@ public class GamePlayActivity extends AppCompatActivity {
                                                     response.getData(),
                                                     Toast.LENGTH_SHORT)
                                             .show();
+
+                                    allowPlayingCard();
                                     /*
                                     (activity.findViewById(R.id.editTextN_card))
                                             .setVisibility(View.VISIBLE);
@@ -669,16 +677,21 @@ public class GamePlayActivity extends AppCompatActivity {
 
     public class CardsInHandRecyclerViewAdapter
             extends RecyclerView.Adapter<CardsInHandRecyclerViewAdapter.ViewHolder> {
-
         private ArrayList<String> cards;
         private LayoutInflater layoutInflater;
         public String selectedCard;
         public int counter = 0;
+        private boolean allowPlayingCard = false;
+        //public boolean isActivated = false;
 
         CardsInHandRecyclerViewAdapter(Context context, ArrayList<String> cards) {
             this.layoutInflater = LayoutInflater.from(context);
             this.cards = cards;
             selectedCard = null;
+        }
+
+        public void activatePlayingCard(){
+            allowPlayingCard=true;
         }
 
         @Override
@@ -871,8 +884,11 @@ public class GamePlayActivity extends AppCompatActivity {
 
                 card_holder.setOnClickListener(
                         e -> {
-                            String cardname = card_holder.getTag().toString();
-                            playCard(cardname);
+                            if(allowPlayingCard) {
+                                String cardname = card_holder.getTag().toString();
+                                playCard(cardname);
+                                allowPlayingCard=false;
+                            }
                         });
             }
         }
