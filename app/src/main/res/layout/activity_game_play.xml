@@ -54,9 +54,10 @@
         style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Trumpf is"
+        android:layout_marginTop="32dp"
+        android:text="Trump is"
         android:textColor="#FFFFFF"
+        android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/stiche_made" />
@@ -68,7 +69,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="you have 0 points "
+        android:text="0 Points "
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -119,7 +120,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="This is round 0"
+        android:text="Round 0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/points" />
 
@@ -178,7 +179,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/ExposeCheatsView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trumpf" />
+        app:layout_constraintTop_toBottomOf="@+id/trumpf"
+        />
 
     <TextView
         android:id="@+id/myCardsTextview"

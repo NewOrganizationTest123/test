@@ -250,7 +250,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     public void updateNumberOfStichesTextview(){
         TextView stiche = findViewById(R.id.stiche_made);
-        stiche.setText(numberOfStitchesMade);
+        stiche.setText("You habe already made " + numberOfStitchesMade + " Stiche");
     }
 
     private class GameActionRunnable implements GrpcRunnableNew {
@@ -363,6 +363,25 @@ public class GamePlayActivity extends AppCompatActivity {
                                 private void showTrump(Activity activity, Response response) {
                                     ((TextView) activity.findViewById(R.id.trumpf))
                                             .setText("Trumpf is " + response.getData());
+
+                                    switch (response.getData()){
+                                        case "GREEN":
+                                            ((TextView) activity.findViewById(R.id.trumpf)).setTextColor(getResources().getColor(R.color.green));
+                                            break;
+                                        case "BLUE":
+                                            ((TextView) activity.findViewById(R.id.trumpf)).setTextColor(getResources().getColor(R.color.blue));
+                                            break;
+                                        case "RED":
+                                            ((TextView) activity.findViewById(R.id.trumpf)).setTextColor(getResources().getColor(R.color.red));
+                                            break;
+                                        case "YELLOW":
+                                            ((TextView) activity.findViewById(R.id.trumpf)).setTextColor(getResources().getColor(R.color.yellow));
+                                            break;
+                                        default:
+                                            ((TextView) activity.findViewById(R.id.trumpf)).setTextColor(getResources().getColor(R.color.white));
+                                            break;
+                                    }
+
                                     Toast.makeText(
                                                     activity.getApplication()
                                                             .getApplicationContext(),
