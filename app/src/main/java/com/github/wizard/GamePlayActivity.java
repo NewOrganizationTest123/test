@@ -209,11 +209,6 @@ public class GamePlayActivity extends AppCompatActivity {
             };
 
     private void playCard(String cardnum) {
-        //(findViewById(R.id.editTextN_card)).setVisibility(View.GONE);
-        //(findViewById(R.id.button_play_card)).setVisibility(View.GONE);
-
-        // submit to server
-        //EditText card = findViewById(R.id.editTextN_card);
         whosTurnIsItText.setText("Please wait for your turn!");
         serverWaitingQueue.add(newGameMove(2, cardnum));
     }
@@ -328,24 +323,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                 private void makeCardPlayRequest(
                                         Activity activity, Response response) {
-                                    /*
-                                    Toast.makeText(
-                                                    activity.getApplication()
-                                                            .getApplicationContext(),
-                                                    response.getData(),
-                                                    Toast.LENGTH_SHORT)
-                                            .show();
-
-                                     */
-
                                     allowPlayingCard();
-                                    /*
-                                    (activity.findViewById(R.id.editTextN_card))
-                                            .setVisibility(View.VISIBLE);
-                                    (activity.findViewById(R.id.button_play_card))
-                                            .setVisibility(View.VISIBLE);
-
-                                     */
                                 }
 
                                 private void updateGameField(Activity activity, CardList cardList) {
@@ -356,11 +334,6 @@ public class GamePlayActivity extends AppCompatActivity {
                                     for (Card c : cardList.getHandList()) {
                                         String cardname = c.getColor()+c.getValue().toString();
                                         cards_in_hand.add(cardname);
-                                        /*
-                                        builderHand.append(
-                                                c.getColor() + c.getValue().toString() + "/");
-                                                /*
-                                         */
                                     }
 
                                     updateCardsInHandRecyclerView(cards_in_hand);
@@ -368,30 +341,12 @@ public class GamePlayActivity extends AppCompatActivity {
                                     ((TextView) activity.findViewById(R.id.cards_on_table))
                                             .setText("");
 
-
-                                    // update cards on table
-                                    //StringBuilder builderTable = new StringBuilder();
                                     ArrayList<String> cards_in_middle = new ArrayList<>();
                                     for (Card c : cardList.getTableList()) {
                                         String cardname = c.getColor()+c.getValue().toString();
                                         cards_in_middle.add(cardname);
-                                        //builderTable.append(
-                                         //       c.getColor() + c.getValue().toString() + "/");
                                     }
-                                    //((TextView) activity.findViewById(R.id.cards_on_table))
-                                    //        .setText(builderTable);
-
                                     updateCardsInMiddleRecyclerView(cards_in_middle);
-
-                                    /*
-                                    Toast.makeText(
-                                                    activity.getApplication()
-                                                            .getApplicationContext(),
-                                                    "your have received your" + " cards",
-                                                    Toast.LENGTH_SHORT)
-                                            .show();
-
-                                     */
                                 }
 
                                 private void showTrump(Activity activity, Response response) {
@@ -922,23 +877,11 @@ public class GamePlayActivity extends AppCompatActivity {
             extends RecyclerView.Adapter<CardsInTheMiddleRecyclerViewAdapter.ViewHolder> {
         private ArrayList<String> cards;
         private LayoutInflater layoutInflater;
-        //public String selectedCard;
-        //public int counter = 0;
-        //private boolean allowPlayingCard = false;
-        //public boolean isActivated = false;
 
         CardsInTheMiddleRecyclerViewAdapter(Context context, ArrayList<String> cards) {
             this.layoutInflater = LayoutInflater.from(context);
             this.cards = cards;
-            //selectedCard = null;
         }
-
-        /*
-        public void activatePlayingCard(){
-            allowPlayingCard=true;
-        }
-
-         */
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -952,9 +895,6 @@ public class GamePlayActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
             String cardname = cards.get(position);
-
-            //viewHolder.card_holder.setTag(counter);
-            //counter++;
 
             switch(cardname){
                 case("BLUEONE"):
@@ -1122,7 +1062,6 @@ public class GamePlayActivity extends AppCompatActivity {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             ImageView card_holder;
-            //String cardname;
 
             ViewHolder(View view) {
                 super(view);
