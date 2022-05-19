@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GamePlayActivity"
-    android:background = "@drawable/gameboard_background">
+    android:background="@drawable/gameboard_background"
+    tools:context=".GamePlayActivity">
 
     <Button
         android:id="@+id/button_play_card"
@@ -32,6 +32,7 @@
         style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="Please wait for your turn!"
         app:layout_constraintBottom_toTopOf="@+id/editTextN_card"
         app:layout_constraintEnd_toEndOf="parent"
@@ -39,54 +40,58 @@
 
     <TextView
         android:id="@+id/cards_on_table"
+        style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="The cards of the current trick will be displayed here shorlty..."
         app:layout_constraintBottom_toTopOf="@+id/whosTurnIsItTextview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        style="@style/TextViewStyle"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/trumpf"
+        style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="172dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="24dp"
         android:text="Trumpf is"
         android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        style="@style/TextViewStyle"/>
+        app:layout_constraintTop_toBottomOf="@+id/stiche_made" />
 
     <TextView
         android:id="@+id/points"
+        style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="you have 0 points "
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        style="@style/TextViewStyle"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/stiche_estimated"
+        style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:text="You wanted to make 0 Stiche"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/points"
-        style="@style/TextViewStyle"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/stiche_made"
+        style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:layout_marginEnd="8dp"
         android:text="You have already made 0 Stiche"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stiche_estimated"
-        style="@style/TextViewStyle"/>
+        app:layout_constraintTop_toBottomOf="@+id/stiche_estimated" />
 
     <Button
         android:id="@+id/button_estimate"
@@ -110,14 +115,13 @@
 
     <TextView
         android:id="@+id/round"
+        style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:text="This is round 0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trumpf"
-        style="@style/TextViewStyle"/>
+        app:layout_constraintTop_toBottomOf="@+id/points" />
 
     <View
         android:id="@+id/ExposeCheatsView"
@@ -175,4 +179,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/trumpf" />
+
+    <TextView
+        android:id="@+id/myCardsTextview"
+        style="@style/TextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Cards:"
+        app:layout_constraintBottom_toTopOf="@+id/cardsInHandRecyclerview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

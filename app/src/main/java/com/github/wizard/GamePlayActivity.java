@@ -67,6 +67,7 @@ public class GamePlayActivity extends AppCompatActivity {
     private RecyclerView cardsInHandRecyclerView;
     private RecyclerView cardsInTheMiddleRecyclerView;
     private TextView whosTurnIsItText;
+    private int numberOfStitchesMade = 0;
 
     private static void appendLogs(StringBuffer logs, String msg, Object... params) {
         if (params.length > 0) {
@@ -227,6 +228,7 @@ public class GamePlayActivity extends AppCompatActivity {
         estimateDialog.setContentView(R.layout.estimate_dialog);
         estimateDialog.setCancelable(false);
         estimateDialog.show();
+        numberOfStitchesMade = 0;
     }
 
     private void updateCardsInHandRecyclerView(ArrayList<String> cards_in_hand){
@@ -244,6 +246,11 @@ public class GamePlayActivity extends AppCompatActivity {
         CardsInHandRecyclerViewAdapter playcardadapter = (CardsInHandRecyclerViewAdapter) cardsInHandRecyclerView.getAdapter();
         playcardadapter.activatePlayingCard();
         whosTurnIsItText.setText("Its your turn!");
+    }
+
+    public void updateNumberOfStichesTextview(){
+        TextView stiche = findViewById(R.id.stiche_made);
+        stiche.setText(numberOfStitchesMade);
     }
 
     private class GameActionRunnable implements GrpcRunnableNew {
@@ -298,6 +305,10 @@ public class GamePlayActivity extends AppCompatActivity {
                                     if (stichmade
                                             .getPlayerid()
                                             .equals(playerId)) { // I made the stich
+
+                                        numberOfStitchesMade++;
+                                        updateNumberOfStichesTextview();
+
                                         Toast.makeText(
                                                         activity.getApplication()
                                                                 .getApplicationContext(),
