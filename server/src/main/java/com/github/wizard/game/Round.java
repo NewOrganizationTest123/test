@@ -82,7 +82,8 @@ public final class Round {
             nextPlayer.update(Updater.newCardPlayRequestResponse());
             Logger.info("asking player {} to play", nextPlayer.getPlayerId());
         }
-        //players.updateGAmeBoard(cardsInTheMiddle.getCards()); //-> moved because Gameboard needs to be updated before making a CardPlayRequest
+        // players.updateGAmeBoard(cardsInTheMiddle.getCards()); //-> moved because Gameboard needs
+        // to be updated before making a CardPlayRequest
 
     }
 }
