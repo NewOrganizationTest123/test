@@ -29,7 +29,6 @@ import com.github.wizard.api.GameMove;
 import com.github.wizard.api.GameStatus;
 import com.github.wizard.api.Response;
 import com.github.wizard.api.StichMade;
-
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import java.lang.ref.WeakReference;
@@ -100,8 +99,8 @@ public class GamePlayActivity extends AppCompatActivity {
 
         points = findViewById(R.id.points);
         whosTurnIsItText = findViewById(R.id.whosTurnIsItTextview);
-        //findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
-        //findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
+        // findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
+        // findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
         cheatsView = findViewById(R.id.ExposeCheatsView);
         playersRecyclerView = findViewById(R.id.playerRecyclerView);
         closeCheatsViewButton = findViewById(R.id.closeCheatsViewButton);
@@ -131,21 +130,22 @@ public class GamePlayActivity extends AppCompatActivity {
         playersRecyclerView.setAdapter(players_adapter);
 
         cardsInHandRecyclerView = findViewById(R.id.cardsInHandRecyclerview);
-        LinearLayoutManager layoutManagerCards = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManagerCards =
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         cardsInHandRecyclerView.setLayoutManager(layoutManagerCards);
 
         ArrayList<String> cardsList = new ArrayList<>();
         cards_adapter = new CardsInHandRecyclerViewAdapter(this, cardsList);
         cardsInHandRecyclerView.setAdapter(players_adapter);
 
-        cardsInTheMiddleRecyclerView=findViewById(R.id.cardsInTheMiddleRecyclerView);
-        LinearLayoutManager layoutManagerCardsMiddle = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        cardsInTheMiddleRecyclerView = findViewById(R.id.cardsInTheMiddleRecyclerView);
+        LinearLayoutManager layoutManagerCardsMiddle =
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         cardsInTheMiddleRecyclerView.setLayoutManager(layoutManagerCardsMiddle);
 
         ArrayList<String> cardsMiddleList = new ArrayList<>();
         cards_middle_adapter = new CardsInTheMiddleRecyclerViewAdapter(this, cardsMiddleList);
         cardsInTheMiddleRecyclerView.setAdapter(cards_middle_adapter);
-
     }
 
     public void showCheatingExposingView() {
@@ -214,7 +214,7 @@ public class GamePlayActivity extends AppCompatActivity {
         serverWaitingQueue.add(newGameMove(2, cardnum));
     }
 
-    private void updateEstimateTextview(String estimate){
+    private void updateEstimateTextview(String estimate) {
         TextView estimateTextView = findViewById(R.id.stiche_estimated);
         estimateTextView.setText("You wanted to make " + estimate + " Stiche");
     }
@@ -223,7 +223,7 @@ public class GamePlayActivity extends AppCompatActivity {
         serverWaitingQueue.add(newGameMove(1, estimate));
     }
 
-    private void openEstimateDialog(){
+    private void openEstimateDialog() {
         EstimateDialog estimateDialog = new EstimateDialog(this);
         estimateDialog.setContentView(R.layout.estimate_dialog);
         estimateDialog.setCancelable(false);
@@ -231,24 +231,27 @@ public class GamePlayActivity extends AppCompatActivity {
         numberOfStitchesMade = 0;
     }
 
-    private void updateCardsInHandRecyclerView(ArrayList<String> cards_in_hand){
-        CardsInHandRecyclerViewAdapter newcards_adapter = new CardsInHandRecyclerViewAdapter(this, cards_in_hand);
+    private void updateCardsInHandRecyclerView(ArrayList<String> cards_in_hand) {
+        CardsInHandRecyclerViewAdapter newcards_adapter =
+                new CardsInHandRecyclerViewAdapter(this, cards_in_hand);
         cardsInHandRecyclerView.setAdapter(newcards_adapter);
     }
 
-    private void updateCardsInMiddleRecyclerView(ArrayList<String> cards_in_middle){
-        CardsInTheMiddleRecyclerViewAdapter newcards_adapter = new CardsInTheMiddleRecyclerViewAdapter(this, cards_in_middle);
+    private void updateCardsInMiddleRecyclerView(ArrayList<String> cards_in_middle) {
+        CardsInTheMiddleRecyclerViewAdapter newcards_adapter =
+                new CardsInTheMiddleRecyclerViewAdapter(this, cards_in_middle);
         cardsInTheMiddleRecyclerView.setAdapter(newcards_adapter);
     }
 
-    private void allowPlayingCard(){
-        //TODO: only allow playing Card when CardPlayRequest
-        CardsInHandRecyclerViewAdapter playcardadapter = (CardsInHandRecyclerViewAdapter) cardsInHandRecyclerView.getAdapter();
+    private void allowPlayingCard() {
+        // TODO: only allow playing Card when CardPlayRequest
+        CardsInHandRecyclerViewAdapter playcardadapter =
+                (CardsInHandRecyclerViewAdapter) cardsInHandRecyclerView.getAdapter();
         playcardadapter.activatePlayingCard();
         whosTurnIsItText.setText("Its your turn!");
     }
 
-    public void updateNumberOfStichesTextview(){
+    public void updateNumberOfStichesTextview() {
         TextView stiche = findViewById(R.id.stiche_made);
         stiche.setText("You habe already made " + numberOfStitchesMade + " Stiche");
     }
@@ -343,7 +346,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                     ArrayList<String> cards_in_hand = new ArrayList<>();
                                     for (Card c : cardList.getHandList()) {
-                                        String cardname = c.getColor()+c.getValue().toString();
+                                        String cardname = c.getColor() + c.getValue().toString();
                                         cards_in_hand.add(cardname);
                                     }
 
@@ -354,7 +357,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                     ArrayList<String> cards_in_middle = new ArrayList<>();
                                     for (Card c : cardList.getTableList()) {
-                                        String cardname = c.getColor()+c.getValue().toString();
+                                        String cardname = c.getColor() + c.getValue().toString();
                                         cards_in_middle.add(cardname);
                                     }
                                     updateCardsInMiddleRecyclerView(cards_in_middle);
@@ -364,21 +367,32 @@ public class GamePlayActivity extends AppCompatActivity {
                                     ((TextView) activity.findViewById(R.id.trumpf))
                                             .setText("Trumpf is " + response.getData());
 
-                                    switch (response.getData()){
+                                    switch (response.getData()) {
                                         case "GREEN":
-                                            ((TextView) activity.findViewById(R.id.trumpf)).setTextColor(getResources().getColor(R.color.green));
+                                            ((TextView) activity.findViewById(R.id.trumpf))
+                                                    .setTextColor(
+                                                            getResources().getColor(R.color.green));
                                             break;
                                         case "BLUE":
-                                            ((TextView) activity.findViewById(R.id.trumpf)).setTextColor(getResources().getColor(R.color.blue));
+                                            ((TextView) activity.findViewById(R.id.trumpf))
+                                                    .setTextColor(
+                                                            getResources().getColor(R.color.blue));
                                             break;
                                         case "RED":
-                                            ((TextView) activity.findViewById(R.id.trumpf)).setTextColor(getResources().getColor(R.color.red));
+                                            ((TextView) activity.findViewById(R.id.trumpf))
+                                                    .setTextColor(
+                                                            getResources().getColor(R.color.red));
                                             break;
                                         case "YELLOW":
-                                            ((TextView) activity.findViewById(R.id.trumpf)).setTextColor(getResources().getColor(R.color.yellow));
+                                            ((TextView) activity.findViewById(R.id.trumpf))
+                                                    .setTextColor(
+                                                            getResources()
+                                                                    .getColor(R.color.yellow));
                                             break;
                                         default:
-                                            ((TextView) activity.findViewById(R.id.trumpf)).setTextColor(getResources().getColor(R.color.white));
+                                            ((TextView) activity.findViewById(R.id.trumpf))
+                                                    .setTextColor(
+                                                            getResources().getColor(R.color.white));
                                             break;
                                     }
 
@@ -691,7 +705,7 @@ public class GamePlayActivity extends AppCompatActivity {
         public String selectedCard;
         public int counter = 0;
         private boolean allowPlayingCard = false;
-        //public boolean isActivated = false;
+        // public boolean isActivated = false;
 
         CardsInHandRecyclerViewAdapter(Context context, ArrayList<String> cards) {
             this.layoutInflater = LayoutInflater.from(context);
@@ -699,15 +713,13 @@ public class GamePlayActivity extends AppCompatActivity {
             selectedCard = null;
         }
 
-        public void activatePlayingCard(){
-            allowPlayingCard=true;
+        public void activatePlayingCard() {
+            allowPlayingCard = true;
         }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            View view =
-                    layoutInflater.inflate(
-                            R.layout.cards_recyclerview_image, viewGroup, false);
+            View view = layoutInflater.inflate(R.layout.cards_recyclerview_image, viewGroup, false);
             return new ViewHolder(view);
         }
 
@@ -719,29 +731,29 @@ public class GamePlayActivity extends AppCompatActivity {
             viewHolder.card_holder.setTag(counter);
             counter++;
 
-            switch(cardname){
-                case("BLUEONE"):
+            switch (cardname) {
+                case ("BLUEONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_01);
                     break;
-                case("BLUETWO"):
+                case ("BLUETWO"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_02);
                     break;
-                case("BLUETHREE"):
+                case ("BLUETHREE"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_03);
                     break;
-                case("BLUEFOUR"):
+                case ("BLUEFOUR"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_04);
                     break;
-                case("BLUEFIVE"):
+                case ("BLUEFIVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_05);
                     break;
-                case("BLUESIX"):
+                case ("BLUESIX"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_06);
                     break;
-                case("BLUESEVEN"):
+                case ("BLUESEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_07);
                     break;
-                case("BLUEEIGHT"):
+                case ("BLUEEIGHT"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_08);
                     break;
                 case ("BLUENINE"):
@@ -753,32 +765,32 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("BLUEELEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_11);
                     break;
-                case("BLUETWELVE"):
+                case ("BLUETWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_12);
                     break;
 
-                case("REDONE"):
+                case ("REDONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_01);
                     break;
-                case("REDTWO"):
+                case ("REDTWO"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_02);
                     break;
-                case("REDTHREE"):
+                case ("REDTHREE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_03);
                     break;
-                case("REDFOUR"):
+                case ("REDFOUR"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_04);
                     break;
-                case("REDFIVE"):
+                case ("REDFIVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_05);
                     break;
-                case("REDSIX"):
+                case ("REDSIX"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_06);
                     break;
-                case("REDSEVEN"):
+                case ("REDSEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_07);
                     break;
-                case("REDEIGHT"):
+                case ("REDEIGHT"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_08);
                     break;
                 case ("REDNINE"):
@@ -790,32 +802,32 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("REDELEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_11);
                     break;
-                case("REDTWELVE"):
+                case ("REDTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_12);
                     break;
 
-                case("YELLOWONE"):
+                case ("YELLOWONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_01);
                     break;
-                case("YELLOWTWO"):
+                case ("YELLOWTWO"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_02);
                     break;
-                case("YELLOWTHREE"):
+                case ("YELLOWTHREE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_03);
                     break;
-                case("YELLOWFOUR"):
+                case ("YELLOWFOUR"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_04);
                     break;
-                case("YELLOWFIVE"):
+                case ("YELLOWFIVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_05);
                     break;
-                case("YELLOWSIX"):
+                case ("YELLOWSIX"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_06);
                     break;
-                case("YELLOWSEVEN"):
+                case ("YELLOWSEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_07);
                     break;
-                case("YELLOWEIGHT"):
+                case ("YELLOWEIGHT"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_08);
                     break;
                 case ("YELLOWNINE"):
@@ -827,32 +839,32 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("YELLOWELEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_11);
                     break;
-                case("YELLOWTWELVE"):
+                case ("YELLOWTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_12);
                     break;
 
-                case("GREENONE"):
+                case ("GREENONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_01);
                     break;
-                case("GREENTWO"):
+                case ("GREENTWO"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_02);
                     break;
-                case("GREENTHREE"):
+                case ("GREENTHREE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_03);
                     break;
-                case("GREENFOUR"):
+                case ("GREENFOUR"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_04);
                     break;
-                case("GREENFIVE"):
+                case ("GREENFIVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_05);
                     break;
-                case("GREENSIX"):
+                case ("GREENSIX"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_06);
                     break;
-                case("GREENSEVEN"):
+                case ("GREENSEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_07);
                     break;
-                case("GREENEIGHT"):
+                case ("GREENEIGHT"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_08);
                     break;
                 case ("GREENNINE"):
@@ -864,17 +876,18 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("GREENLEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_11);
                     break;
-                case("GREENTWELVE"):
+                case ("GREENTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_12);
                     break;
-                case("NONEWIZARD"):
+                case ("NONEWIZARD"):
                     viewHolder.card_holder.setImageResource(R.drawable.z_01);
                     break;
-                case("NONEJESTER"):
+                case ("NONEJESTER"):
                     viewHolder.card_holder.setImageResource(R.drawable.n_01);
                     break;
-                //TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
-                default:break;
+                    // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
+                default:
+                    break;
             }
         }
 
@@ -893,10 +906,10 @@ public class GamePlayActivity extends AppCompatActivity {
 
                 card_holder.setOnClickListener(
                         e -> {
-                            if(allowPlayingCard) {
+                            if (allowPlayingCard) {
                                 String cardname = card_holder.getTag().toString();
                                 playCard(cardname);
-                                allowPlayingCard=false;
+                                allowPlayingCard = false;
                             }
                         });
             }
@@ -915,9 +928,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            View view =
-                    layoutInflater.inflate(
-                            R.layout.cards_recyclerview_image, viewGroup, false);
+            View view = layoutInflater.inflate(R.layout.cards_recyclerview_image, viewGroup, false);
             return new ViewHolder(view);
         }
 
@@ -926,29 +937,29 @@ public class GamePlayActivity extends AppCompatActivity {
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
             String cardname = cards.get(position);
 
-            switch(cardname){
-                case("BLUEONE"):
+            switch (cardname) {
+                case ("BLUEONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_01);
                     break;
-                case("BLUETWO"):
+                case ("BLUETWO"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_02);
                     break;
-                case("BLUETHREE"):
+                case ("BLUETHREE"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_03);
                     break;
-                case("BLUEFOUR"):
+                case ("BLUEFOUR"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_04);
                     break;
-                case("BLUEFIVE"):
+                case ("BLUEFIVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_05);
                     break;
-                case("BLUESIX"):
+                case ("BLUESIX"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_06);
                     break;
-                case("BLUESEVEN"):
+                case ("BLUESEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_07);
                     break;
-                case("BLUEEIGHT"):
+                case ("BLUEEIGHT"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_08);
                     break;
                 case ("BLUENINE"):
@@ -960,32 +971,32 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("BLUEELEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_11);
                     break;
-                case("BLUETWELVE"):
+                case ("BLUETWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_12);
                     break;
 
-                case("REDONE"):
+                case ("REDONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_01);
                     break;
-                case("REDTWO"):
+                case ("REDTWO"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_02);
                     break;
-                case("REDTHREE"):
+                case ("REDTHREE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_03);
                     break;
-                case("REDFOUR"):
+                case ("REDFOUR"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_04);
                     break;
-                case("REDFIVE"):
+                case ("REDFIVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_05);
                     break;
-                case("REDSIX"):
+                case ("REDSIX"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_06);
                     break;
-                case("REDSEVEN"):
+                case ("REDSEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_07);
                     break;
-                case("REDEIGHT"):
+                case ("REDEIGHT"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_08);
                     break;
                 case ("REDNINE"):
@@ -997,32 +1008,32 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("REDELEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_11);
                     break;
-                case("REDTWELVE"):
+                case ("REDTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_12);
                     break;
 
-                case("YELLOWONE"):
+                case ("YELLOWONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_01);
                     break;
-                case("YELLOWTWO"):
+                case ("YELLOWTWO"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_02);
                     break;
-                case("YELLOWTHREE"):
+                case ("YELLOWTHREE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_03);
                     break;
-                case("YELLOWFOUR"):
+                case ("YELLOWFOUR"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_04);
                     break;
-                case("YELLOWFIVE"):
+                case ("YELLOWFIVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_05);
                     break;
-                case("YELLOWSIX"):
+                case ("YELLOWSIX"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_06);
                     break;
-                case("YELLOWSEVEN"):
+                case ("YELLOWSEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_07);
                     break;
-                case("YELLOWEIGHT"):
+                case ("YELLOWEIGHT"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_08);
                     break;
                 case ("YELLOWNINE"):
@@ -1034,32 +1045,32 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("YELLOWELEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_11);
                     break;
-                case("YELLOWTWELVE"):
+                case ("YELLOWTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_12);
                     break;
 
-                case("GREENONE"):
+                case ("GREENONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_01);
                     break;
-                case("GREENTWO"):
+                case ("GREENTWO"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_02);
                     break;
-                case("GREENTHREE"):
+                case ("GREENTHREE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_03);
                     break;
-                case("GREENFOUR"):
+                case ("GREENFOUR"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_04);
                     break;
-                case("GREENFIVE"):
+                case ("GREENFIVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_05);
                     break;
-                case("GREENSIX"):
+                case ("GREENSIX"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_06);
                     break;
-                case("GREENSEVEN"):
+                case ("GREENSEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_07);
                     break;
-                case("GREENEIGHT"):
+                case ("GREENEIGHT"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_08);
                     break;
                 case ("GREENNINE"):
@@ -1071,17 +1082,18 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("GREENLEVEN"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_11);
                     break;
-                case("GREENTWELVE"):
+                case ("GREENTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_12);
                     break;
-                case("NONEWIZARD"):
+                case ("NONEWIZARD"):
                     viewHolder.card_holder.setImageResource(R.drawable.z_01);
                     break;
-                case("NONEJESTER"):
+                case ("NONEJESTER"):
                     viewHolder.card_holder.setImageResource(R.drawable.n_01);
                     break;
-                //TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
-                default:break;
+                    // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
+                default:
+                    break;
             }
         }
 
@@ -1100,14 +1112,14 @@ public class GamePlayActivity extends AppCompatActivity {
         }
     }
 
-    public class EstimateDialog extends Dialog{
+    public class EstimateDialog extends Dialog {
         public Activity activity;
         EditText estimateInputField;
         Button estimateSend;
 
-        public EstimateDialog(Activity activity){
+        public EstimateDialog(Activity activity) {
             super(activity);
-            this.activity=activity;
+            this.activity = activity;
         }
 
         @Override
@@ -1115,17 +1127,17 @@ public class GamePlayActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
 
             estimateSend = findViewById(R.id.dialogEnterButton);
-            estimateSend.setOnClickListener(e->{
-                estimateInputField = findViewById(R.id.dialogEstimateInput);
-                String estimate = estimateInputField.getText().toString();
+            estimateSend.setOnClickListener(
+                    e -> {
+                        estimateInputField = findViewById(R.id.dialogEstimateInput);
+                        String estimate = estimateInputField.getText().toString();
 
-                if(!estimate.equals("")) {
-                    submitEstimate(estimate);
-                    updateEstimateTextview(estimate);
-                    dismiss();
-                }
-            });
-
+                        if (!estimate.equals("")) {
+                            submitEstimate(estimate);
+                            updateEstimateTextview(estimate);
+                            dismiss();
+                        }
+                    });
         }
     }
 }
