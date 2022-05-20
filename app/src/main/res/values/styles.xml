@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextViewStyle">
+        <item name="android:textColor">#EEE8E8</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowRadius">15</item>
+        <item name="android:shadowColor">#1871B8</item>
+        <item name="android:textSize">14dp</item>
+    </style>
+
+</resources>

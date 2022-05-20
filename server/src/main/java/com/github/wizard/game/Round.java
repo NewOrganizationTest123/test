@@ -72,15 +72,18 @@ public final class Round {
                 game.proceed();
                 return;
             } else {
-                winner.update(Updater.newCardPlayRequestResponse()); // request to start next trick
                 cardsInTheMiddle.reset();
+                players.updateGAmeBoard(cardsInTheMiddle.getCards());
+                winner.update(Updater.newCardPlayRequestResponse()); // request to start next trick
             }
         } else {
+            players.updateGAmeBoard(cardsInTheMiddle.getCards());
             Player nextPlayer = players.getNextPlayer(player);
             nextPlayer.update(Updater.newCardPlayRequestResponse());
             Logger.info("asking player {} to play", nextPlayer.getPlayerId());
         }
+        // players.updateGAmeBoard(cardsInTheMiddle.getCards()); //-> moved because Gameboard needs
+        // to be updated before making a CardPlayRequest
 
-        players.updateGAmeBoard(cardsInTheMiddle.getCards());
     }
 }

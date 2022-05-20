@@ -4,41 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gameboard_background"
     tools:context=".GamePlayActivity">
-    <!-- android:background = "@drawable/gameboard_background">-->
-
-    <!--  <Button
-       android:id="@+id/btnPoints"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:backgroundTint="#00FFFFFF"
-       android:text="@string/punkte"
-       android:textSize="20sp"
-       tools:layout_editor_absoluteX="230dp"
-       tools:layout_editor_absoluteY="28dp" />
-
-   <TextView
-       android:id="@+id/tVRound"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:text="@string/runde"
-       android:textColor="@color/white"
-       android:textSize="20sp"
-       tools:layout_editor_absoluteX="26dp"
-       tools:layout_editor_absoluteY="38dp" />
-
-   <TextView
-       android:id="@+id/tVRundenzahl"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:text="1"
-       android:textColor="@color/white"
-       android:textSize="20sp"
-       tools:layout_editor_absoluteX="56dp"
-       tools:layout_editor_absoluteY="65dp" />-->
-    <!--
- todo martinfri144 chenge back the absolute positioning to avoid problems with different screen layouts!
- -->
 
     <Button
         android:id="@+id/button_play_card"
@@ -61,56 +28,68 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/cards_in_Hand"
+        android:id="@+id/whosTurnIsItTextview"
+        style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="your cards will be displayed here shortly..."
+        android:layout_marginBottom="8dp"
+        android:text="Please wait for your turn!"
         app:layout_constraintBottom_toTopOf="@+id/editTextN_card"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/cards_on_table"
+        style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="The cards of the current trick will be displayed here shorlty..."
-        app:layout_constraintBottom_toTopOf="@+id/cards_in_Hand"
+        app:layout_constraintBottom_toTopOf="@+id/whosTurnIsItTextview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/trumpf"
+        style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="172dp"
-        android:layout_marginTop="76dp"
-        android:text="Trumpf is"
+        android:layout_marginTop="32dp"
+        android:text="Trump is"
         android:textColor="#FFFFFF"
+        android:textSize="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stiche_made" />
+
+    <TextView
+        android:id="@+id/points"
+        style="@style/TextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="0 Points "
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/points"
+        android:id="@+id/stiche_estimated"
+        style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="you have 0 points "
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="You wanted to make 0 Stiche"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/stiche_estimated"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="You wanted to make 0 Stiche"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/points" />
-
-    <TextView
         android:id="@+id/stiche_made"
+        style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:layout_marginEnd="8dp"
         android:text="You have already made 0 Stiche"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/stiche_estimated" />
@@ -137,19 +116,19 @@
 
     <TextView
         android:id="@+id/round"
+        style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:text="This is round 0"
+        android:layout_marginStart="8dp"
+        android:text="Round 0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trumpf" />
+        app:layout_constraintTop_toBottomOf="@+id/points" />
 
     <View
         android:id="@+id/ExposeCheatsView"
         android:layout_width="200dp"
         android:layout_height="300dp"
-        android:background="@drawable/cheating_view_background"
+        android:background="@drawable/dialog_and_view_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -185,68 +164,31 @@
         app:layout_constraintStart_toStartOf="@+id/ExposeCheatsView"
         app:layout_constraintTop_toTopOf="@+id/ExposeCheatsView" />
 
-    <!--
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cardsInHandRecyclerview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/whosTurnIsItTextview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-     <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:layout_marginTop="550dp"
-          android:orientation="horizontal"
-          app:layout_constraintTop_toTopOf="@+id/cards_on_table">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cardsInTheMiddleRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/ExposeCheatsView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/trumpf"
+        />
 
-          <ImageView
-              android:id="@+id/card1"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:scaleType="centerInside"
-              android:src="@drawable/bl_01"
-              android:layout_margin="10dp" />
-
-          <ImageView
-              android:id="@+id/card2"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:scaleType="centerInside"
-              android:src="@drawable/bl_01"
-              android:layout_margin="10dp" />
-
-          <ImageView
-              android:id="@+id/card3"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:scaleType="centerInside"
-              android:src="@drawable/bl_01"
-              android:layout_margin="10dp" />
-
-          <ImageView
-              android:id="@+id/card4"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:scaleType="centerInside"
-              android:src="@drawable/bl_01"
-              android:layout_margin="10dp" />
-
-          <ImageView
-              android:id="@+id/card5"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:scaleType="centerInside"
-              android:src="@drawable/bl_01"
-              android:layout_margin="10dp" />
-
-          <ImageView
-              android:id="@+id/card6"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:scaleType="centerInside"
-              android:src="@drawable/bl_01"
-              android:layout_margin="10dp"/>
-
-      </LinearLayout>-->
+    <TextView
+        android:id="@+id/myCardsTextview"
+        style="@style/TextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Cards:"
+        app:layout_constraintBottom_toTopOf="@+id/cardsInHandRecyclerview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

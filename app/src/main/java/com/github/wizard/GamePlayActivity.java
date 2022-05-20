@@ -1,6 +1,8 @@
 package com.github.wizard;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,7 +48,9 @@ public class GamePlayActivity extends AppCompatActivity {
     public static String playerId;
     public static String playername;
     public static ArrayList<String> players = new ArrayList<>(); // todo maybe not use String here
-    public static PlayersRecyclerviewAdapter adapter;
+    public static PlayersRecyclerviewAdapter players_adapter;
+    public static CardsInHandRecyclerViewAdapter cards_adapter;
+    public static CardsInTheMiddleRecyclerViewAdapter cards_middle_adapter;
 
     ManagedChannel channel;
     private static final BlockingQueue<GameMove> serverWaitingQueue = new LinkedBlockingQueue<>();
@@ -58,6 +63,10 @@ public class GamePlayActivity extends AppCompatActivity {
     private Button closeCheatsViewButton;
     private TextView cheatsViewTitle;
     private TextView points;
+    private RecyclerView cardsInHandRecyclerView;
+    private RecyclerView cardsInTheMiddleRecyclerView;
+    private TextView whosTurnIsItText;
+    private int numberOfStitchesMade = 0;
 
     private static void appendLogs(StringBuffer logs, String msg, Object... params) {
         if (params.length > 0) {
@@ -89,8 +98,9 @@ public class GamePlayActivity extends AppCompatActivity {
                 .execute(); // fire up the streaming service
 
         points = findViewById(R.id.points);
-        findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
-        findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
+        whosTurnIsItText = findViewById(R.id.whosTurnIsItTextview);
+        // findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
+        // findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
         cheatsView = findViewById(R.id.ExposeCheatsView);
         playersRecyclerView = findViewById(R.id.playerRecyclerView);
         closeCheatsViewButton = findViewById(R.id.closeCheatsViewButton);
@@ -113,11 +123,29 @@ public class GamePlayActivity extends AppCompatActivity {
         deviceAcceleration_before = SensorManager.GRAVITY_EARTH;
         deviceAcceleration_now = SensorManager.GRAVITY_EARTH;
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        playersRecyclerView.setLayoutManager(layoutManager);
+        LinearLayoutManager layoutManagerPlayers = new LinearLayoutManager(this);
+        playersRecyclerView.setLayoutManager(layoutManagerPlayers);
 
-        adapter = new PlayersRecyclerviewAdapter(this, players);
-        playersRecyclerView.setAdapter(adapter);
+        players_adapter = new PlayersRecyclerviewAdapter(this, players);
+        playersRecyclerView.setAdapter(players_adapter);
+
+        cardsInHandRecyclerView = findViewById(R.id.cardsInHandRecyclerview);
+        LinearLayoutManager layoutManagerCards =
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        cardsInHandRecyclerView.setLayoutManager(layoutManagerCards);
+
+        ArrayList<String> cardsList = new ArrayList<>();
+        cards_adapter = new CardsInHandRecyclerViewAdapter(this, cardsList);
+        cardsInHandRecyclerView.setAdapter(players_adapter);
+
+        cardsInTheMiddleRecyclerView = findViewById(R.id.cardsInTheMiddleRecyclerView);
+        LinearLayoutManager layoutManagerCardsMiddle =
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        cardsInTheMiddleRecyclerView.setLayoutManager(layoutManagerCardsMiddle);
+
+        ArrayList<String> cardsMiddleList = new ArrayList<>();
+        cards_middle_adapter = new CardsInTheMiddleRecyclerViewAdapter(this, cardsMiddleList);
+        cardsInTheMiddleRecyclerView.setAdapter(cards_middle_adapter);
     }
 
     public void showCheatingExposingView() {
@@ -181,22 +209,51 @@ public class GamePlayActivity extends AppCompatActivity {
                 public void onAccuracyChanged(Sensor sensor, int i) {}
             };
 
-    private void playCard(View view) {
-        (findViewById(R.id.editTextN_card)).setVisibility(View.GONE);
-        (findViewById(R.id.button_play_card)).setVisibility(View.GONE);
-
-        // submit to server
-        EditText card = findViewById(R.id.editTextN_card);
-        serverWaitingQueue.add(newGameMove(2, card.getText().toString()));
+    private void playCard(String cardnum) {
+        whosTurnIsItText.setText("Please wait for your turn!");
+        serverWaitingQueue.add(newGameMove(2, cardnum));
     }
 
-    private void submitEstimate(View view) {
-        (findViewById(R.id.editTextNumber_estimate)).setVisibility(View.GONE);
-        (findViewById(R.id.button_estimate)).setVisibility(View.GONE);
+    private void updateEstimateTextview(String estimate) {
+        TextView estimateTextView = findViewById(R.id.stiche_estimated);
+        estimateTextView.setText("You wanted to make " + estimate + " Stiche");
+    }
 
-        // submit to server
-        EditText card = findViewById(R.id.editTextNumber_estimate);
-        serverWaitingQueue.add(newGameMove(1, card.getText().toString()));
+    private void submitEstimate(String estimate) {
+        serverWaitingQueue.add(newGameMove(1, estimate));
+    }
+
+    private void openEstimateDialog() {
+        EstimateDialog estimateDialog = new EstimateDialog(this);
+        estimateDialog.setContentView(R.layout.estimate_dialog);
+        estimateDialog.setCancelable(false);
+        estimateDialog.show();
+        numberOfStitchesMade = 0;
+    }
+
+    private void updateCardsInHandRecyclerView(ArrayList<String> cards_in_hand) {
+        CardsInHandRecyclerViewAdapter newcards_adapter =
+                new CardsInHandRecyclerViewAdapter(this, cards_in_hand);
+        cardsInHandRecyclerView.setAdapter(newcards_adapter);
+    }
+
+    private void updateCardsInMiddleRecyclerView(ArrayList<String> cards_in_middle) {
+        CardsInTheMiddleRecyclerViewAdapter newcards_adapter =
+                new CardsInTheMiddleRecyclerViewAdapter(this, cards_in_middle);
+        cardsInTheMiddleRecyclerView.setAdapter(newcards_adapter);
+    }
+
+    private void allowPlayingCard() {
+        // TODO: only allow playing Card when CardPlayRequest
+        CardsInHandRecyclerViewAdapter playcardadapter =
+                (CardsInHandRecyclerViewAdapter) cardsInHandRecyclerView.getAdapter();
+        playcardadapter.activatePlayingCard();
+        whosTurnIsItText.setText("Its your turn!");
+    }
+
+    public void updateNumberOfStichesTextview() {
+        TextView stiche = findViewById(R.id.stiche_made);
+        stiche.setText("You habe already made " + numberOfStitchesMade + " Stiche");
     }
 
     private class GameActionRunnable implements GrpcRunnableNew {
@@ -251,6 +308,10 @@ public class GamePlayActivity extends AppCompatActivity {
                                     if (stichmade
                                             .getPlayerid()
                                             .equals(playerId)) { // I made the stich
+
+                                        numberOfStitchesMade++;
+                                        updateNumberOfStichesTextview();
+
                                         Toast.makeText(
                                                         activity.getApplication()
                                                                 .getApplicationContext(),
@@ -276,47 +337,65 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                 private void makeCardPlayRequest(
                                         Activity activity, Response response) {
-                                    Toast.makeText(
-                                                    activity.getApplication()
-                                                            .getApplicationContext(),
-                                                    response.getData(),
-                                                    Toast.LENGTH_SHORT)
-                                            .show();
-                                    (activity.findViewById(R.id.editTextN_card))
-                                            .setVisibility(View.VISIBLE);
-                                    (activity.findViewById(R.id.button_play_card))
-                                            .setVisibility(View.VISIBLE);
+                                    allowPlayingCard();
                                 }
 
                                 private void updateGameField(Activity activity, CardList cardList) {
                                     // update cards in hand
                                     StringBuilder builderHand = new StringBuilder();
-                                    for (Card c : cardList.getHandList()) {
-                                        builderHand.append(
-                                                c.getColor() + c.getValue().toString() + "/");
-                                    }
-                                    ((TextView) activity.findViewById(R.id.cards_in_Hand))
-                                            .setText(builderHand.toString());
 
-                                    // update cards on table
-                                    StringBuilder builderTable = new StringBuilder();
-                                    for (Card c : cardList.getTableList()) {
-                                        builderTable.append(
-                                                c.getColor() + c.getValue().toString() + "/");
+                                    ArrayList<String> cards_in_hand = new ArrayList<>();
+                                    for (Card c : cardList.getHandList()) {
+                                        String cardname = c.getColor() + c.getValue().toString();
+                                        cards_in_hand.add(cardname);
                                     }
+
+                                    updateCardsInHandRecyclerView(cards_in_hand);
+
                                     ((TextView) activity.findViewById(R.id.cards_on_table))
-                                            .setText(builderTable);
-                                    Toast.makeText(
-                                                    activity.getApplication()
-                                                            .getApplicationContext(),
-                                                    "your have received your" + " cards",
-                                                    Toast.LENGTH_SHORT)
-                                            .show();
+                                            .setText("");
+
+                                    ArrayList<String> cards_in_middle = new ArrayList<>();
+                                    for (Card c : cardList.getTableList()) {
+                                        String cardname = c.getColor() + c.getValue().toString();
+                                        cards_in_middle.add(cardname);
+                                    }
+                                    updateCardsInMiddleRecyclerView(cards_in_middle);
                                 }
 
                                 private void showTrump(Activity activity, Response response) {
                                     ((TextView) activity.findViewById(R.id.trumpf))
                                             .setText("Trumpf is " + response.getData());
+
+                                    switch (response.getData()) {
+                                        case "GREEN":
+                                            ((TextView) activity.findViewById(R.id.trumpf))
+                                                    .setTextColor(
+                                                            getResources().getColor(R.color.green));
+                                            break;
+                                        case "BLUE":
+                                            ((TextView) activity.findViewById(R.id.trumpf))
+                                                    .setTextColor(
+                                                            getResources().getColor(R.color.blue));
+                                            break;
+                                        case "RED":
+                                            ((TextView) activity.findViewById(R.id.trumpf))
+                                                    .setTextColor(
+                                                            getResources().getColor(R.color.red));
+                                            break;
+                                        case "YELLOW":
+                                            ((TextView) activity.findViewById(R.id.trumpf))
+                                                    .setTextColor(
+                                                            getResources()
+                                                                    .getColor(R.color.yellow));
+                                            break;
+                                        default:
+                                            ((TextView) activity.findViewById(R.id.trumpf))
+                                                    .setTextColor(
+                                                            getResources().getColor(R.color.white));
+                                            break;
+                                    }
+
                                     Toast.makeText(
                                                     activity.getApplication()
                                                             .getApplicationContext(),
@@ -326,10 +405,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                 }
 
                                 private void makeEstimate(Activity activity, Response response) {
-                                    (activity.findViewById(R.id.editTextNumber_estimate))
-                                            .setVisibility(View.VISIBLE);
-                                    (activity.findViewById(R.id.button_estimate))
-                                            .setVisibility(View.VISIBLE);
+                                    openEstimateDialog();
                                 }
 
                                 private void updateRoundNumberAndPoints(
@@ -619,6 +695,449 @@ public class GamePlayActivity extends AppCompatActivity {
                             exposeCheating(playername_holder.getText().toString());
                         });
             }
+        }
+    }
+
+    public class CardsInHandRecyclerViewAdapter
+            extends RecyclerView.Adapter<CardsInHandRecyclerViewAdapter.ViewHolder> {
+        private ArrayList<String> cards;
+        private LayoutInflater layoutInflater;
+        public String selectedCard;
+        public int counter = 0;
+        private boolean allowPlayingCard = false;
+        // public boolean isActivated = false;
+
+        CardsInHandRecyclerViewAdapter(Context context, ArrayList<String> cards) {
+            this.layoutInflater = LayoutInflater.from(context);
+            this.cards = cards;
+            selectedCard = null;
+        }
+
+        public void activatePlayingCard() {
+            allowPlayingCard = true;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            View view = layoutInflater.inflate(R.layout.cards_recyclerview_image, viewGroup, false);
+            return new ViewHolder(view);
+        }
+
+        @SuppressLint("UseCompatLoadingForDrawables")
+        @Override
+        public void onBindViewHolder(ViewHolder viewHolder, int position) {
+            String cardname = cards.get(position);
+
+            viewHolder.card_holder.setTag(counter);
+            counter++;
+
+            switch (cardname) {
+                case ("BLUEONE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_01);
+                    break;
+                case ("BLUETWO"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_02);
+                    break;
+                case ("BLUETHREE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_03);
+                    break;
+                case ("BLUEFOUR"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_04);
+                    break;
+                case ("BLUEFIVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_05);
+                    break;
+                case ("BLUESIX"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_06);
+                    break;
+                case ("BLUESEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_07);
+                    break;
+                case ("BLUEEIGHT"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_08);
+                    break;
+                case ("BLUENINE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_09);
+                    break;
+                case ("BLUETEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_10);
+                    break;
+                case ("BLUEELEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_11);
+                    break;
+                case ("BLUETWELVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_12);
+                    break;
+
+                case ("REDONE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_01);
+                    break;
+                case ("REDTWO"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_02);
+                    break;
+                case ("REDTHREE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_03);
+                    break;
+                case ("REDFOUR"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_04);
+                    break;
+                case ("REDFIVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_05);
+                    break;
+                case ("REDSIX"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_06);
+                    break;
+                case ("REDSEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_07);
+                    break;
+                case ("REDEIGHT"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_08);
+                    break;
+                case ("REDNINE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_09);
+                    break;
+                case ("REDTEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_10);
+                    break;
+                case ("REDELEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_11);
+                    break;
+                case ("REDTWELVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_12);
+                    break;
+
+                case ("YELLOWONE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_01);
+                    break;
+                case ("YELLOWTWO"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_02);
+                    break;
+                case ("YELLOWTHREE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_03);
+                    break;
+                case ("YELLOWFOUR"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_04);
+                    break;
+                case ("YELLOWFIVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_05);
+                    break;
+                case ("YELLOWSIX"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_06);
+                    break;
+                case ("YELLOWSEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_07);
+                    break;
+                case ("YELLOWEIGHT"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_08);
+                    break;
+                case ("YELLOWNINE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_09);
+                    break;
+                case ("YELLOWTEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_10);
+                    break;
+                case ("YELLOWELEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_11);
+                    break;
+                case ("YELLOWTWELVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_12);
+                    break;
+
+                case ("GREENONE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_01);
+                    break;
+                case ("GREENTWO"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_02);
+                    break;
+                case ("GREENTHREE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_03);
+                    break;
+                case ("GREENFOUR"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_04);
+                    break;
+                case ("GREENFIVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_05);
+                    break;
+                case ("GREENSIX"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_06);
+                    break;
+                case ("GREENSEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_07);
+                    break;
+                case ("GREENEIGHT"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_08);
+                    break;
+                case ("GREENNINE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_09);
+                    break;
+                case ("GREENTEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_10);
+                    break;
+                case ("GREENLEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_11);
+                    break;
+                case ("GREENTWELVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_12);
+                    break;
+                case ("NONEWIZARD"):
+                    viewHolder.card_holder.setImageResource(R.drawable.z_01);
+                    break;
+                case ("NONEJESTER"):
+                    viewHolder.card_holder.setImageResource(R.drawable.n_01);
+                    break;
+                    // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return cards.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            ImageView card_holder;
+            String cardname;
+
+            ViewHolder(View view) {
+                super(view);
+                card_holder = view.findViewById(R.id.cardImageButton);
+
+                card_holder.setOnClickListener(
+                        e -> {
+                            if (allowPlayingCard) {
+                                String cardname = card_holder.getTag().toString();
+                                playCard(cardname);
+                                allowPlayingCard = false;
+                            }
+                        });
+            }
+        }
+    }
+
+    public class CardsInTheMiddleRecyclerViewAdapter
+            extends RecyclerView.Adapter<CardsInTheMiddleRecyclerViewAdapter.ViewHolder> {
+        private ArrayList<String> cards;
+        private LayoutInflater layoutInflater;
+
+        CardsInTheMiddleRecyclerViewAdapter(Context context, ArrayList<String> cards) {
+            this.layoutInflater = LayoutInflater.from(context);
+            this.cards = cards;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            View view = layoutInflater.inflate(R.layout.cards_recyclerview_image, viewGroup, false);
+            return new ViewHolder(view);
+        }
+
+        @SuppressLint("UseCompatLoadingForDrawables")
+        @Override
+        public void onBindViewHolder(ViewHolder viewHolder, int position) {
+            String cardname = cards.get(position);
+
+            switch (cardname) {
+                case ("BLUEONE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_01);
+                    break;
+                case ("BLUETWO"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_02);
+                    break;
+                case ("BLUETHREE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_03);
+                    break;
+                case ("BLUEFOUR"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_04);
+                    break;
+                case ("BLUEFIVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_05);
+                    break;
+                case ("BLUESIX"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_06);
+                    break;
+                case ("BLUESEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_07);
+                    break;
+                case ("BLUEEIGHT"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_08);
+                    break;
+                case ("BLUENINE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_09);
+                    break;
+                case ("BLUETEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_10);
+                    break;
+                case ("BLUEELEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_11);
+                    break;
+                case ("BLUETWELVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.bl_12);
+                    break;
+
+                case ("REDONE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_01);
+                    break;
+                case ("REDTWO"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_02);
+                    break;
+                case ("REDTHREE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_03);
+                    break;
+                case ("REDFOUR"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_04);
+                    break;
+                case ("REDFIVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_05);
+                    break;
+                case ("REDSIX"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_06);
+                    break;
+                case ("REDSEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_07);
+                    break;
+                case ("REDEIGHT"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_08);
+                    break;
+                case ("REDNINE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_09);
+                    break;
+                case ("REDTEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_10);
+                    break;
+                case ("REDELEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_11);
+                    break;
+                case ("REDTWELVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ro_12);
+                    break;
+
+                case ("YELLOWONE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_01);
+                    break;
+                case ("YELLOWTWO"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_02);
+                    break;
+                case ("YELLOWTHREE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_03);
+                    break;
+                case ("YELLOWFOUR"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_04);
+                    break;
+                case ("YELLOWFIVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_05);
+                    break;
+                case ("YELLOWSIX"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_06);
+                    break;
+                case ("YELLOWSEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_07);
+                    break;
+                case ("YELLOWEIGHT"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_08);
+                    break;
+                case ("YELLOWNINE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_09);
+                    break;
+                case ("YELLOWTEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_10);
+                    break;
+                case ("YELLOWELEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_11);
+                    break;
+                case ("YELLOWTWELVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.ge_12);
+                    break;
+
+                case ("GREENONE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_01);
+                    break;
+                case ("GREENTWO"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_02);
+                    break;
+                case ("GREENTHREE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_03);
+                    break;
+                case ("GREENFOUR"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_04);
+                    break;
+                case ("GREENFIVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_05);
+                    break;
+                case ("GREENSIX"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_06);
+                    break;
+                case ("GREENSEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_07);
+                    break;
+                case ("GREENEIGHT"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_08);
+                    break;
+                case ("GREENNINE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_09);
+                    break;
+                case ("GREENTEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_10);
+                    break;
+                case ("GREENLEVEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_11);
+                    break;
+                case ("GREENTWELVE"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_12);
+                    break;
+                case ("NONEWIZARD"):
+                    viewHolder.card_holder.setImageResource(R.drawable.z_01);
+                    break;
+                case ("NONEJESTER"):
+                    viewHolder.card_holder.setImageResource(R.drawable.n_01);
+                    break;
+                    // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return cards.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            ImageView card_holder;
+
+            ViewHolder(View view) {
+                super(view);
+                card_holder = view.findViewById(R.id.cardImageButton);
+            }
+        }
+    }
+
+    public class EstimateDialog extends Dialog {
+        public Activity activity;
+        EditText estimateInputField;
+        Button estimateSend;
+
+        public EstimateDialog(Activity activity) {
+            super(activity);
+            this.activity = activity;
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            estimateSend = findViewById(R.id.dialogEnterButton);
+            estimateSend.setOnClickListener(
+                    e -> {
+                        estimateInputField = findViewById(R.id.dialogEstimateInput);
+                        String estimate = estimateInputField.getText().toString();
+
+                        if (!estimate.equals("")) {
+                            submitEstimate(estimate);
+                            updateEstimateTextview(estimate);
+                            dismiss();
+                        }
+                    });
         }
     }
 }
