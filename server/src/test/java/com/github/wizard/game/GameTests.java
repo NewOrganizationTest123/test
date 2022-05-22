@@ -5,12 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -149,20 +145,20 @@ public class GameTests {
     }
 
     @Test
-    public void allEstimatesSubmittedTest(){
+    public void allEstimatesSubmittedTest() {
         player1.makeEstimate(1);
         player2.makeEstimate(0);
         assertTrue(game.allEstimatesSubmitted());
     }
 
     @Test
-    public void notAllEstimatesSubmittedTest(){
+    public void notAllEstimatesSubmittedTest() {
         player1.makeEstimate(1);
         assertFalse(game.allEstimatesSubmitted());
     }
 
     @Test
-    public void CorrectCheatDiscoverySubmittedTest(){
+    public void CorrectCheatDiscoverySubmittedTest() {
         Updater updater = mock(Updater.class);
         player1.setUpdater(updater);
         player2.setUpdater(updater);
@@ -170,26 +166,26 @@ public class GameTests {
         int player2_points = player2.getPoints();
         int player1_points = player1.getPoints();
 
-        player1.iHaveCHeatedFlag=true;
+        player1.iHaveCHeatedFlag = true;
         game.cheatDiscoverySubmitted(player1, player2);
 
-        assertEquals(player1.getPoints(), player1_points-10);
-        assertEquals(player2.getPoints(), player2_points+30);
+        assertEquals(player1.getPoints(), player1_points - 10);
+        assertEquals(player2.getPoints(), player2_points + 30);
         assertFalse(player1.iHaveCHeatedFlag);
     }
 
     @Test
-    public void FalseCheatDiscoverySubmittedTest(){
+    public void FalseCheatDiscoverySubmittedTest() {
         Updater updater = mock(Updater.class);
         player1.setUpdater(updater);
         player2.setUpdater(updater);
 
         int player2_points = player2.getPoints();
 
-        player1.iHaveCHeatedFlag=false;
+        player1.iHaveCHeatedFlag = false;
         game.cheatDiscoverySubmitted(player1, player2);
 
-        assertEquals(player2.getPoints(), player2_points-10);
+        assertEquals(player2.getPoints(), player2_points - 10);
         assertTrue(player2.iHaveCHeatedFlag);
     }
 }
