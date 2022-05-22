@@ -43,8 +43,6 @@ public class GameTests {
 
         game_withMockedPlayers.addPlayer(mocked_player1);
         game_withMockedPlayers.addPlayer(mocked_player2);
-
-        // when(mocked_player1.)
     }
 
     @Test
@@ -144,5 +142,50 @@ public class GameTests {
 
         verify(mocked_player2).update(Updater.newCardPlayRequestResponse());
         verify(mocked_player2).update(Updater.newOnGameBoardUpdate(null, null));
+    }
+
+    @Test
+    public void allEstimatesSubmittedTest() {
+        player1.makeEstimate(1);
+        player2.makeEstimate(0);
+        assertTrue(game.allEstimatesSubmitted());
+    }
+
+    @Test
+    public void notAllEstimatesSubmittedTest() {
+        player1.makeEstimate(1);
+        assertFalse(game.allEstimatesSubmitted());
+    }
+
+    @Test
+    public void CorrectCheatDiscoverySubmittedTest() {
+        Updater updater = mock(Updater.class);
+        player1.setUpdater(updater);
+        player2.setUpdater(updater);
+
+        int player2_points = player2.getPoints();
+        int player1_points = player1.getPoints();
+
+        player1.iHaveCHeatedFlag = true;
+        game.cheatDiscoverySubmitted(player1, player2);
+
+        assertEquals(player1.getPoints(), player1_points - 10);
+        assertEquals(player2.getPoints(), player2_points + 30);
+        assertFalse(player1.iHaveCHeatedFlag);
+    }
+
+    @Test
+    public void FalseCheatDiscoverySubmittedTest() {
+        Updater updater = mock(Updater.class);
+        player1.setUpdater(updater);
+        player2.setUpdater(updater);
+
+        int player2_points = player2.getPoints();
+
+        player1.iHaveCHeatedFlag = false;
+        game.cheatDiscoverySubmitted(player1, player2);
+
+        assertEquals(player2.getPoints(), player2_points - 10);
+        assertTrue(player2.iHaveCHeatedFlag);
     }
 }
