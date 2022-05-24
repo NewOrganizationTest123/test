@@ -86,6 +86,7 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
                     GrpcPlayer.newBuilder()
                             .setPlayerName(p.getName())
                             .setPlayerId(p.getPlayerId() + "")
+                            .setPoints(p.getPoints()+"")
                             .build());
         return Response.newBuilder()
                 .setPlayerList(PlayersList.newBuilder().addAllPlayer(temp).build())

@@ -47,7 +47,7 @@ public class GamePlayActivity extends AppCompatActivity {
     public static String gameId;
     public static String playerId;
     public static String playername;
-    public static ArrayList<String> players = new ArrayList<>(); // todo maybe not use String here
+    public static ArrayList<ClientPlayer> players = new ArrayList<>(); // todo maybe not use String here
     public static PlayersRecyclerviewAdapter players_adapter;
     public static CardsInHandRecyclerViewAdapter cards_adapter;
     public static CardsInTheMiddleRecyclerViewAdapter cards_middle_adapter;
@@ -166,7 +166,7 @@ public class GamePlayActivity extends AppCompatActivity {
         serverWaitingQueue.add(newGameMove(3, playername));
     }
 
-    public void updatePlayersInRecyclerView(ArrayList<String> realplayers) {
+    public void updatePlayersInRecyclerView(ArrayList<ClientPlayer> realplayers) {
         realplayers.remove(playername);
         PlayersRecyclerviewAdapter newdapater = new PlayersRecyclerviewAdapter(this, realplayers);
         playersRecyclerView.setAdapter(newdapater);
@@ -543,10 +543,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                         for (int i = 0;
                                                 i < response.getPlayerList().getPlayerCount();
                                                 i++) {
-                                            realplayers.add(
-                                                    response.getPlayerList()
-                                                            .getPlayer(i)
-                                                            .getPlayerName());
+                                            realplayers.add(new ClientPlayer(response.getPlayerList().getPlayer(i).getPlayerId(),response.getPlayerList().getPlayer(i).getPlayerName(),response.getPlayerList().getPlayer(i).getPoints()));
                                         }
 
                                         activity.runOnUiThread(
@@ -653,11 +650,11 @@ public class GamePlayActivity extends AppCompatActivity {
     public class PlayersRecyclerviewAdapter
             extends RecyclerView.Adapter<PlayersRecyclerviewAdapter.ViewHolder> {
 
-        private ArrayList<String> players;
+        private ArrayList<ClientPlayer> players;
         private LayoutInflater layoutInflater;
         public String selectedPlayer;
 
-        PlayersRecyclerviewAdapter(Context context, ArrayList<String> players) {
+        PlayersRecyclerviewAdapter(Context context, ArrayList<ClientPlayer> players) {
             this.layoutInflater = LayoutInflater.from(context);
             this.players = players;
             selectedPlayer = null;
@@ -673,7 +670,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
-            String playername = players.get(position);
+            String playername = players.get(position).name;
             viewHolder.playername_holder.setText(playername);
         }
 

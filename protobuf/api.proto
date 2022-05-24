@@ -69,6 +69,7 @@ syntax = "proto3";
         message GrpcPlayer{
             string playerId=1;
             string playerName=2;
+            string points=3;
         }
 
         message CheatingSubmittedResult{
