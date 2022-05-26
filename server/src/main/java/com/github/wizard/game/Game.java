@@ -1,5 +1,6 @@
 package com.github.wizard.game;
 
+import com.github.wizard.Server;
 import com.github.wizard.Updater;
 import com.github.wizard.api.Card;
 import org.tinylog.Logger;
@@ -64,7 +65,7 @@ public class Game {
     public void start() {
         currentRound = Round.create(this, 1);
         proceed();
-        players.getAllPlayers(); // return all players for cheating list
+        players.getAllPlayers(); // return all players for cheating list and points
     }
 
     public void proceed() {
@@ -100,5 +101,13 @@ public class Game {
             petze.iHaveCHeatedFlag = true; // this counts as cheating :D
         }
         players.onCHeatingDiscovered(cheater);
+    }
+
+    public void endGame() {
+        players.tellAllEndGame(); // this will cause the players to show the final screen
+        players.unsubscribeAllPlayers(); // this will close all connections.
+        Server.removeGame(
+                this); // remove the reference from server so garbage collector can clean us up
+        Logger.info("game " + gameId + " has been ended successfully");
     }
 }

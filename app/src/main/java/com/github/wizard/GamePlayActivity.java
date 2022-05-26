@@ -240,6 +240,19 @@ public class GamePlayActivity extends AppCompatActivity {
         numberOfStitchesMade = 0;
     }
 
+    /**
+     * this should show the final score board and end the game session. This is the last call of the game
+     */
+    private void showGameResults(Activity activity) {
+        // TODO: 26.05.2022 Silvio, show your scoreboard whith winning player highlighted when this is called, forward to home screen when scoreboard is closed
+        Toast.makeText(
+                        activity.getApplication()
+                                .getApplicationContext(),
+                        "The game has ended! Good bye",
+                        Toast.LENGTH_SHORT)
+                .show();
+    }
+
     private void updateCardsInHandRecyclerView(ArrayList<String> cards_in_hand) {
         CardsInHandRecyclerViewAdapter newcards_adapter =
                 new CardsInHandRecyclerViewAdapter(this, cards_in_hand);
@@ -624,6 +637,10 @@ public class GamePlayActivity extends AppCompatActivity {
                                             () ->
                                                     updateRoundNumberAndPoints(
                                                             activity, response));*/
+                                            break;
+                                        case "7":
+                                            activity.runOnUiThread(
+                                                    () ->showGameResults(activity));
                                             break;
                                         default:
                                             throw new IllegalArgumentException(

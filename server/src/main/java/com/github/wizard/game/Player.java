@@ -23,6 +23,10 @@ public class Player {
     private int takenTricks = 0;
     private int trickValue = 0;
 
+    public void unsubscribe() {
+        updater.responseStreamObserver().onCompleted();
+    }
+
     public Player(String name) {
         this.name = name;
     }
@@ -208,6 +212,15 @@ public class Player {
         /** politely asks every player for his/her estimates for the upcoming round */
         public void tellAllTrumpSelected(Card trump) {
             forEach(p -> p.update(Updater.newOnTrumpSelectedResponse(trump)));
+        }
+
+        public void tellAllEndGame() {
+            forEach(p -> p.update(Updater.newEndGameResponse()));
+        }
+
+        /** This will close all connections to the players. No more calls are allowed after this! */
+        public void unsubscribeAllPlayers() {
+            forEach(p -> p.unsubscribe());
         }
 
         public Player getNextPlayer(Player currentPlayer) {

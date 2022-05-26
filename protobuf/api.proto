@@ -48,6 +48,7 @@ syntax = "proto3";
  * 4: show them what is 'Trumpf'
  * 5: request to submit your estimate
  * 6: results for the current round and updated round nr like points/roundNr
+ * 7: game ended successfully
  */
         message Response {
         string type = 1;

@@ -72,6 +72,11 @@ public class Deck {
                 .toList();
     }
 
+    /** @return the number of cards available in the total game */
+    public int getCardsAvailable() {
+        return allCards.size();
+    }
+
     private final Queue<Card> cards;
 
     public Deck() {

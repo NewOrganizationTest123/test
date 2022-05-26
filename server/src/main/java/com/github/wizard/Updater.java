@@ -92,4 +92,8 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
                 .setPlayerList(PlayersList.newBuilder().addAllPlayer(temp).build())
                 .build();
     }
+
+    public static Response newEndGameResponse() {
+        return Response.newBuilder().setType("7").build();
+    }
 }

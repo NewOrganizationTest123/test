@@ -7,6 +7,7 @@ import com.github.wizard.api.Card;
 import com.github.wizard.api.Response;
 import com.github.wizard.game.Player;
 import io.grpc.stub.StreamObserver;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +24,7 @@ class UpdaterTest {
 
     @Test
     void update() {
-        Response response = Updater.newOnRoundFinishedResponse(null, 1);
+        Response response = Updater.newOnRoundFinishedResponse(new ArrayList<>(), 1);
         mockedUpdater.update(response);
 
         verify(streamObserver).onNext(response);
@@ -95,8 +96,8 @@ class UpdaterTest {
 
     @Test
     void newOnRoundFinishedResponse() {
-        /*Response response = Updater.newOnRoundFinishedResponse(10, 4);
+        Response response = Updater.newOnRoundFinishedResponse(new ArrayList<>(), 4);
         assertEquals("6", response.getType());
-        assertEquals("10/4", response.getData());*/
+        assertEquals("/4", response.getData());
     }
 }

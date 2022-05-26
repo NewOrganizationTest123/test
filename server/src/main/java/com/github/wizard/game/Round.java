@@ -66,7 +66,14 @@ public final class Round {
             if (winner.cardsLeft() == 0) {
                 players.notifyAboutPointsAndRound(number);
 
-                // TODO: quit game if it was the last round
+                // quit game if it was the last round
+                if (players.size() * (game.getRoundNr() + 1) >= game.deck.getCardsAvailable()) {
+                    // if (players.size() * (game.getRoundNr()+1) >= 6) {//for testing with a
+                    // limited number of cards only only
+                    game.endGame();
+                    return;
+                }
+
                 game.setCurrentRound(Round.create(game, number + 1));
                 game.setNextPlayer(winner);
                 game.proceed();
