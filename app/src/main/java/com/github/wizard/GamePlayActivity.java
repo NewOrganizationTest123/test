@@ -27,9 +27,9 @@ import com.github.wizard.api.CheatingSubmittedResult;
 import com.github.wizard.api.GameActionsGrpc;
 import com.github.wizard.api.GameMove;
 import com.github.wizard.api.GameStatus;
+import com.github.wizard.api.GrpcPlayer;
 import com.github.wizard.api.Response;
 import com.github.wizard.api.StichMade;
-import com.github.wizard.api.GrpcPlayer;
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import java.lang.ref.WeakReference;
@@ -48,7 +48,7 @@ public class GamePlayActivity extends AppCompatActivity {
     public static String gameId;
     public static String playerId;
     public static String playername;
-    public static int myPoints=0;
+    public static int myPoints = 0;
     public static ArrayList<ClientPlayer> players = new ArrayList<>();
     public static PlayersRecyclerviewAdapter players_adapter;
     public static CardsInHandRecyclerViewAdapter cards_adapter;
@@ -169,9 +169,9 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     public void updatePlayersInRecyclerView(ArrayList<ClientPlayer> realplayers) {
-        //remove myself
-        for (ClientPlayer cPlayer:realplayers ) {
-            if(cPlayer.id.equals(playerId)){
+        // remove myself
+        for (ClientPlayer cPlayer : realplayers) {
+            if (cPlayer.id.equals(playerId)) {
                 realplayers.remove(cPlayer);
                 break;
             }
@@ -241,13 +241,14 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     /**
-     * this should show the final score board and end the game session. This is the last call of the game
+     * this should show the final score board and end the game session. This is the last call of the
+     * game
      */
     private void showGameResults(Activity activity) {
-        // TODO: 26.05.2022 Silvio, show your scoreboard whith winning player highlighted when this is called, forward to home screen when scoreboard is closed
+        // TODO: 26.05.2022 Silvio, show your scoreboard whith winning player highlighted when this
+        // is called, forward to home screen when scoreboard is closed
         Toast.makeText(
-                        activity.getApplication()
-                                .getApplicationContext(),
+                        activity.getApplication().getApplicationContext(),
                         "The game has ended! Good bye",
                         Toast.LENGTH_SHORT)
                 .show();
@@ -433,22 +434,19 @@ public class GamePlayActivity extends AppCompatActivity {
                                 private void updateRoundNumberAndPoints(
                                         Activity activity, GameStatus gameStatus) {
 
-                                    for (GrpcPlayer grpcPlayer: gameStatus.getPlayersList()) {
-                                        //update my points
-                                        if(playerId.equals(grpcPlayer.getPlayerId()))
-                                            myPoints= Integer.parseInt(grpcPlayer.getPoints());
-                                        //update points for other people
-                                    for (ClientPlayer cPlayer:players) {
-                                            if(cPlayer.id.equals(grpcPlayer.getPlayerId())){
-                                                cPlayer.points=grpcPlayer.getPoints();
+                                    for (GrpcPlayer grpcPlayer : gameStatus.getPlayersList()) {
+                                        // update my points
+                                        if (playerId.equals(grpcPlayer.getPlayerId()))
+                                            myPoints = Integer.parseInt(grpcPlayer.getPoints());
+                                        // update points for other people
+                                        for (ClientPlayer cPlayer : players) {
+                                            if (cPlayer.id.equals(grpcPlayer.getPlayerId())) {
+                                                cPlayer.points = grpcPlayer.getPoints();
                                             }
                                         }
                                     }
                                     ((TextView) activity.findViewById(R.id.points))
-                                            .setText(
-                                                    "You have "
-                                                            + myPoints
-                                                            + " points");
+                                            .setText("You have " + myPoints + " points");
                                     ((TextView) activity.findViewById(R.id.round))
                                             .setText("This is round " + gameStatus.getRound());
 
@@ -468,24 +466,21 @@ public class GamePlayActivity extends AppCompatActivity {
                                         Activity activity,
                                         CheatingSubmittedResult cheatingSubmittedResult) {
 
-                                    for (GrpcPlayer grpcPlayer: cheatingSubmittedResult.getPlayersList()) {
-                                        //update my points
-                                        if(playerId.equals(grpcPlayer.getPlayerId()))
-                                            myPoints= Integer.parseInt(grpcPlayer.getPoints());
-                                        //update points for other people
-                                        for (ClientPlayer cPlayer:players) {
-                                            if(cPlayer.id.equals(grpcPlayer.getPlayerId())){
-                                                cPlayer.points=grpcPlayer.getPoints();
+                                    for (GrpcPlayer grpcPlayer :
+                                            cheatingSubmittedResult.getPlayersList()) {
+                                        // update my points
+                                        if (playerId.equals(grpcPlayer.getPlayerId()))
+                                            myPoints = Integer.parseInt(grpcPlayer.getPoints());
+                                        // update points for other people
+                                        for (ClientPlayer cPlayer : players) {
+                                            if (cPlayer.id.equals(grpcPlayer.getPlayerId())) {
+                                                cPlayer.points = grpcPlayer.getPoints();
                                             }
                                         }
                                     }
 
-
                                     ((TextView) activity.findViewById(R.id.points))
-                                            .setText(
-                                                    "You have "
-                                                            + myPoints
-                                                            + " points");
+                                            .setText("You have " + myPoints + " points");
                                     Toast.makeText(
                                                     activity.getApplication()
                                                             .getApplicationContext(),
@@ -511,21 +506,20 @@ public class GamePlayActivity extends AppCompatActivity {
                                     while (matcher.find()) {
                                         currentPoints = Integer.parseInt(matcher.group());
                                     }
-                                    for (GrpcPlayer grpcPlayer: cheatingSubmittedResult.getPlayersList()) {
-                                        //update my points
-                                        if(playerId.equals(grpcPlayer.getPlayerId()))
-                                            myPoints= Integer.parseInt(grpcPlayer.getPoints());
-                                        //update points for other people
-                                        for (ClientPlayer cPlayer:players) {
-                                            if(cPlayer.id.equals(grpcPlayer.getPlayerId())){
-                                                cPlayer.points=grpcPlayer.getPoints();
+                                    for (GrpcPlayer grpcPlayer :
+                                            cheatingSubmittedResult.getPlayersList()) {
+                                        // update my points
+                                        if (playerId.equals(grpcPlayer.getPlayerId()))
+                                            myPoints = Integer.parseInt(grpcPlayer.getPoints());
+                                        // update points for other people
+                                        for (ClientPlayer cPlayer : players) {
+                                            if (cPlayer.id.equals(grpcPlayer.getPlayerId())) {
+                                                cPlayer.points = grpcPlayer.getPoints();
                                             }
                                         }
                                     }
 
-
-                                    if (currentPoints
-                                            >  myPoints ){
+                                    if (currentPoints > myPoints) {
                                         Toast.makeText(
                                                         activity.getApplication()
                                                                 .getApplicationContext(),
@@ -546,10 +540,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                     }
 
                                     ((TextView) activity.findViewById(R.id.points))
-                                            .setText(
-                                                    "You have "
-                                                            + myPoints
-                                                            + " points");
+                                            .setText("You have " + myPoints + " points");
                                 }
 
                                 private void handleResponse(Activity activity, Response response) {
@@ -600,7 +591,17 @@ public class GamePlayActivity extends AppCompatActivity {
                                         for (int i = 0;
                                                 i < response.getPlayerList().getPlayerCount();
                                                 i++) {
-                                            realplayers.add(new ClientPlayer(response.getPlayerList().getPlayer(i).getPlayerId(),response.getPlayerList().getPlayer(i).getPlayerName(),response.getPlayerList().getPlayer(i).getPoints()));
+                                            realplayers.add(
+                                                    new ClientPlayer(
+                                                            response.getPlayerList()
+                                                                    .getPlayer(i)
+                                                                    .getPlayerId(),
+                                                            response.getPlayerList()
+                                                                    .getPlayer(i)
+                                                                    .getPlayerName(),
+                                                            response.getPlayerList()
+                                                                    .getPlayer(i)
+                                                                    .getPoints()));
                                         }
 
                                         activity.runOnUiThread(
@@ -639,8 +640,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                                             activity, response));*/
                                             break;
                                         case "7":
-                                            activity.runOnUiThread(
-                                                    () ->showGameResults(activity));
+                                            activity.runOnUiThread(() -> showGameResults(activity));
                                             break;
                                         default:
                                             throw new IllegalArgumentException(
