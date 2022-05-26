@@ -133,7 +133,7 @@ public class Server implements Callable<Integer> {
     }
 
     public static void removeGame(Game game) {
-        games.remove(game);
+        games.remove(game.gameId, game);
     }
 
     class GameStarterImpl extends GameStarterGrpc.GameStarterImplBase {
