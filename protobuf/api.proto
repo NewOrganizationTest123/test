@@ -75,7 +75,8 @@ syntax = "proto3";
         message CheatingSubmittedResult{
             string cheaterId=1;
             string succesfulOrNot=2;
-            string newPoints=3;
+            //string newPoints=3;
+          repeated GrpcPlayer players=3;
         }
 
         message GameStatus{

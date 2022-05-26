@@ -169,7 +169,14 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     public void updatePlayersInRecyclerView(ArrayList<ClientPlayer> realplayers) {
-        realplayers.remove(playername);
+        //remove myself
+        for (ClientPlayer cPlayer:realplayers ) {
+            if(cPlayer.id.equals(playerId)){
+                realplayers.remove(cPlayer);
+                break;
+            }
+        }
+
         PlayersRecyclerviewAdapter newdapater = new PlayersRecyclerviewAdapter(this, realplayers);
         playersRecyclerView.setAdapter(newdapater);
     }
@@ -447,16 +454,30 @@ public class GamePlayActivity extends AppCompatActivity {
                                 private void youCheated(
                                         Activity activity,
                                         CheatingSubmittedResult cheatingSubmittedResult) {
+
+                                    for (GrpcPlayer grpcPlayer: cheatingSubmittedResult.getPlayersList()) {
+                                        //update my points
+                                        if(playerId.equals(grpcPlayer.getPlayerId()))
+                                            myPoints= Integer.parseInt(grpcPlayer.getPoints());
+                                        //update points for other people
+                                        for (ClientPlayer cPlayer:players) {
+                                            if(cPlayer.id.equals(grpcPlayer.getPlayerId())){
+                                                cPlayer.points=grpcPlayer.getPoints();
+                                            }
+                                        }
+                                    }
+
+
                                     ((TextView) activity.findViewById(R.id.points))
                                             .setText(
                                                     "You have "
-                                                            + cheatingSubmittedResult.getNewPoints()
+                                                            + myPoints
                                                             + " points");
                                     Toast.makeText(
                                                     activity.getApplication()
                                                             .getApplicationContext(),
                                                     "Your cheating was discovered!!!! You now have "
-                                                            + cheatingSubmittedResult.getNewPoints()
+                                                            + myPoints
                                                             + " Points",
                                                     Toast.LENGTH_SHORT)
                                             .show();
@@ -477,16 +498,26 @@ public class GamePlayActivity extends AppCompatActivity {
                                     while (matcher.find()) {
                                         currentPoints = Integer.parseInt(matcher.group());
                                     }
+                                    for (GrpcPlayer grpcPlayer: cheatingSubmittedResult.getPlayersList()) {
+                                        //update my points
+                                        if(playerId.equals(grpcPlayer.getPlayerId()))
+                                            myPoints= Integer.parseInt(grpcPlayer.getPoints());
+                                        //update points for other people
+                                        for (ClientPlayer cPlayer:players) {
+                                            if(cPlayer.id.equals(grpcPlayer.getPlayerId())){
+                                                cPlayer.points=grpcPlayer.getPoints();
+                                            }
+                                        }
+                                    }
+
 
                                     if (currentPoints
-                                            > Integer.parseInt(
-                                                    cheatingSubmittedResult.getNewPoints())) {
+                                            >  myPoints ){
                                         Toast.makeText(
                                                         activity.getApplication()
                                                                 .getApplicationContext(),
                                                         "Wrong assumption! You now have "
-                                                                + cheatingSubmittedResult
-                                                                        .getNewPoints()
+                                                                + myPoints
                                                                 + " Points",
                                                         Toast.LENGTH_SHORT)
                                                 .show();
@@ -495,8 +526,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                                         activity.getApplication()
                                                                 .getApplicationContext(),
                                                         "Someone cheated! You now have "
-                                                                + cheatingSubmittedResult
-                                                                        .getNewPoints()
+                                                                + myPoints
                                                                 + " Points",
                                                         Toast.LENGTH_SHORT)
                                                 .show();
@@ -505,7 +535,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                     ((TextView) activity.findViewById(R.id.points))
                                             .setText(
                                                     "You have "
-                                                            + cheatingSubmittedResult.getNewPoints()
+                                                            + myPoints
                                                             + " points");
                                 }
 

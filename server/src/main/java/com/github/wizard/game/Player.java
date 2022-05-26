@@ -173,12 +173,13 @@ public class Player {
         /** will ask all players to notify about their points and current round nr */
         public void notifyAboutPointsAndRound(int roundNumber) {
             forEach(Player::updatePoints);
-            ArrayList<GrpcPlayer> playerArrayList=new ArrayList<>();
-            for (Player p: game.players) {
-                playerArrayList.add(GrpcPlayer.newBuilder().setPlayerId(p.getPlayerId()+"").setPlayerName(p.getName()).setPoints(p.getPoints()+"").build());
-            }
-            //forEach(p -> p.update(Updater.newOnRoundFinishedResponse(p.getPoints(), roundNumber)));
-            forEach(p -> p.update(Updater.newOnRoundFinishedResponse(playerArrayList, roundNumber)));
+            // forEach(p -> p.update(Updater.newOnRoundFinishedResponse(p.getPoints(),
+            // roundNumber)));
+            forEach(
+                    p ->
+                            p.update(
+                                    Updater.newOnRoundFinishedResponse(
+                                            getGrpcPlayerList(), roundNumber)));
         }
 
         public void updateGAmeBoard(List<Card> tableCards) {
@@ -213,12 +214,25 @@ public class Player {
             return super.get((currentPlayer.playerId + 1) % size());
         }
 
+        public ArrayList<GrpcPlayer> getGrpcPlayerList() {
+            ArrayList<GrpcPlayer> playerArrayList = new ArrayList<>();
+            for (Player p : game.players) {
+                playerArrayList.add(
+                        GrpcPlayer.newBuilder()
+                                .setPlayerId(p.getPlayerId() + "")
+                                .setPlayerName(p.getName())
+                                .setPoints(p.getPoints() + "")
+                                .build());
+            }
+            return playerArrayList;
+        }
+
         public void onCHeatingDiscovered(Player cheater) {
             forEach(
                     p -> {
                         p.update(
                                 Updater.newOnCheatingSubmittedResponse(
-                                        cheater, cheater.iHaveCHeatedFlag, p.points));
+                                        cheater, cheater.iHaveCHeatedFlag, getGrpcPlayerList()));
                     });
         }
         /** will hand out random cards to all players, according to the round */

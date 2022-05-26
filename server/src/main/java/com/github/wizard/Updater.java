@@ -68,12 +68,12 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
     }
 
     public static Response newOnCheatingSubmittedResponse(
-            Player cheater, boolean succesfulOrNot, int points) {
+            Player cheater, boolean succesfulOrNot, List<GrpcPlayer> playerList) {
         return Response.newBuilder()
                 .setCheating(
                         CheatingSubmittedResult.newBuilder()
                                 .setCheaterId(cheater.getPlayerId() + "")
-                                .setNewPoints(points + "")
+                                .addAllPlayers(playerList)
                                 .setSuccesfulOrNot(succesfulOrNot + "")
                                 .build())
                 .build();
@@ -86,7 +86,7 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
                     GrpcPlayer.newBuilder()
                             .setPlayerName(p.getName())
                             .setPlayerId(p.getPlayerId() + "")
-                            .setPoints(p.getPoints()+"")
+                            .setPoints(p.getPoints() + "")
                             .build());
         return Response.newBuilder()
                 .setPlayerList(PlayersList.newBuilder().addAllPlayer(temp).build())
