@@ -3,6 +3,7 @@ package com.github.wizard.game;
 import com.github.wizard.Server;
 import com.github.wizard.Updater;
 import com.github.wizard.api.Card;
+import com.github.wizard.api.GrpcPlayer;
 import com.github.wizard.api.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -172,7 +173,12 @@ public class Player {
         /** will ask all players to notify about their points and current round nr */
         public void notifyAboutPointsAndRound(int roundNumber) {
             forEach(Player::updatePoints);
-            forEach(p -> p.update(Updater.newOnRoundFinishedResponse(p.getPoints(), roundNumber)));
+            ArrayList<GrpcPlayer> playerArrayList=new ArrayList<>();
+            for (Player p: game.players) {
+                playerArrayList.add(GrpcPlayer.newBuilder().setPlayerId(p.getPlayerId()+"").setPlayerName(p.getName()).setPoints(p.getPoints()+"").build());
+            }
+            //forEach(p -> p.update(Updater.newOnRoundFinishedResponse(p.getPoints(), roundNumber)));
+            forEach(p -> p.update(Updater.newOnRoundFinishedResponse(playerArrayList, roundNumber)));
         }
 
         public void updateGAmeBoard(List<Card> tableCards) {

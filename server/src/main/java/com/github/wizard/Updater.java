@@ -55,14 +55,14 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
         return Response.newBuilder().setType("5").build();
     }
 
-    public static Response newOnRoundFinishedResponse(int points, int round) {
+    public static Response newOnRoundFinishedResponse(List<GrpcPlayer> playerList, int round) {
         return Response.newBuilder()
                 .setType("6")
-                .setData(points + "/" + round)
+                .setData("/" + round)
                 .setGameStatus(
                         GameStatus.newBuilder()
                                 .setRound(round + "")
-                                .setMyPoints(points + "")
+                                .addAllPlayers(playerList)
                                 .build())
                 .build();
     }

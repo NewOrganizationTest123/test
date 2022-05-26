@@ -80,7 +80,8 @@ syntax = "proto3";
 
         message GameStatus{
         string round=1;
-        string myPoints=2;
+        repeated GrpcPlayer players=2;
+        //string myPoints=2;
 
 
         }

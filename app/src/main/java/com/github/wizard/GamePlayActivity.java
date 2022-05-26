@@ -29,6 +29,7 @@ import com.github.wizard.api.GameMove;
 import com.github.wizard.api.GameStatus;
 import com.github.wizard.api.Response;
 import com.github.wizard.api.StichMade;
+import com.github.wizard.api.GrpcPlayer;
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import java.lang.ref.WeakReference;
@@ -47,7 +48,8 @@ public class GamePlayActivity extends AppCompatActivity {
     public static String gameId;
     public static String playerId;
     public static String playername;
-    public static ArrayList<ClientPlayer> players = new ArrayList<>(); // todo maybe not use String here
+    public static int myPoints=0;
+    public static ArrayList<ClientPlayer> players = new ArrayList<>();
     public static PlayersRecyclerviewAdapter players_adapter;
     public static CardsInHandRecyclerViewAdapter cards_adapter;
     public static CardsInTheMiddleRecyclerViewAdapter cards_middle_adapter;
@@ -410,10 +412,22 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                 private void updateRoundNumberAndPoints(
                                         Activity activity, GameStatus gameStatus) {
+
+                                    for (GrpcPlayer grpcPlayer: gameStatus.getPlayersList()) {
+                                        //update my points
+                                        if(playerId.equals(grpcPlayer.getPlayerId()))
+                                            myPoints= Integer.parseInt(grpcPlayer.getPoints());
+                                        //update points for other people
+                                    for (ClientPlayer cPlayer:players) {
+                                            if(cPlayer.id.equals(grpcPlayer.getPlayerId())){
+                                                cPlayer.points=grpcPlayer.getPoints();
+                                            }
+                                        }
+                                    }
                                     ((TextView) activity.findViewById(R.id.points))
                                             .setText(
                                                     "You have "
-                                                            + gameStatus.getMyPoints()
+                                                            + myPoints
                                                             + " points");
                                     ((TextView) activity.findViewById(R.id.round))
                                             .setText("This is round " + gameStatus.getRound());
@@ -424,7 +438,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                                     "after round "
                                                             + gameStatus.getRound()
                                                             + " you have "
-                                                            + gameStatus.getMyPoints()
+                                                            + myPoints
                                                             + " points!",
                                                     Toast.LENGTH_SHORT)
                                             .show();
@@ -498,7 +512,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                 private void handleResponse(Activity activity, Response response) {
 
                                     if (response.getActionCase() == Response.ActionCase.CARDLIST) {
-                                        // todo new display cards
+
                                         activity.runOnUiThread(
                                                 () ->
                                                         updateGameField(
