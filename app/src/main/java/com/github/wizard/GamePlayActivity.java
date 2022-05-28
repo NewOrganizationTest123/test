@@ -1123,12 +1123,12 @@ public class GamePlayActivity extends AppCompatActivity {
         public Activity activity;
         EditText estimateInputField;
         Button estimateSend;
-        //ArrayList<String> cards;
+        // ArrayList<String> cards;
 
         public EstimateDialog(Activity activity) {
             super(activity);
             this.activity = activity;
-            //this.cards = cards;
+            // this.cards = cards;
         }
 
         @Override
