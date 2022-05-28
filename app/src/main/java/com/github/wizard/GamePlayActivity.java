@@ -103,9 +103,13 @@ public class GamePlayActivity extends AppCompatActivity {
         // findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         // findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
         cheatsView = findViewById(R.id.ExposeCheatsView);
+        cheatsView.bringToFront();
         playersRecyclerView = findViewById(R.id.playerRecyclerView);
+        playersRecyclerView.bringToFront();
         closeCheatsViewButton = findViewById(R.id.closeCheatsViewButton);
+        closeCheatsViewButton.bringToFront();
         cheatsViewTitle = findViewById(R.id.cheatingViewTitle);
+        cheatsViewTitle.bringToFront();
         hideCheatingExposingView(); // by default, the cheating-exposing view is not visible; only
         // shows up after shaking device
 
