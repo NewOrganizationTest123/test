@@ -1,5 +1,7 @@
 package com.github.wizard;
 
+import static com.github.wizard.GamePlayActivity.appendLogs;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -17,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +72,8 @@ import com.github.wizard.api.CheatingSubmittedResult;
 import com.github.wizard.api.GameActionsGrpc;
 import com.github.wizard.api.GameMove;
 import com.github.wizard.api.GameStatus;
+import com.github.wizard.api.GrpcPlayer;
+import com.github.wizard.api.Player;
 import com.github.wizard.api.Response;
 import com.github.wizard.api.StichMade;
 
@@ -91,13 +96,8 @@ public class ScoreboardActivity extends AppCompatActivity {
     public static String gameId;
     public static String playerId;
     public static String playername;
-    public static ArrayList<String> players = new ArrayList<>(); // todo maybe not use String here
-    public static com.github.wizard.GamePlayActivity.PlayersRecyclerviewAdapter players_adapter;
+    public static ArrayList<GrpcPlayer> players = new ArrayList<>(); // todo maybe not use String here
 
-    ManagedChannel channel;
-    private static final BlockingQueue<GameMove> serverWaitingQueue = new LinkedBlockingQueue<>();
-    private static RecyclerView playersRecyclerView;
-    private TextView points;
     private TextView Player1Name;
     private TextView Player2Name;
     private TextView Player3Name;
@@ -113,7 +113,7 @@ public class ScoreboardActivity extends AppCompatActivity {
     private TextView Roundcounter;
     private Button showscore;
 
-    private static void appendLogs(StringBuffer logs, String msg, Object... params) {
+    /*private static void appendLogs(StringBuffer logs, String msg, Object... params) {
         if (params.length > 0) {
             logs.append(MessageFormat.format(msg, params));
         } else {
@@ -129,7 +129,7 @@ public class ScoreboardActivity extends AppCompatActivity {
                 .setData(message)
                 .setType(type + "")
                 .build();
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,15 +155,6 @@ public class ScoreboardActivity extends AppCompatActivity {
         gameId = intent.getStringExtra(MainActivity.GAME_ID_KEY); // reuse for later requests
         playerId = intent.getStringExtra(MainActivity.PLAYER_ID_KEY);
         playername = intent.getStringExtra(MainActivity.PLAYER_NAME);
-        points = findViewById(R.id.points);
-        playersRecyclerView = findViewById(R.id.playerRecyclerView);
-
-
-        LinearLayoutManager layoutManagerPlayers = new LinearLayoutManager(this);
-        playersRecyclerView.setLayoutManager(layoutManagerPlayers);
-
-        players_adapter = new com.github.wizard.GamePlayActivity.PlayersRecyclerviewAdapter(this, players);
-        playersRecyclerView.setAdapter(players_adapter);
 
         showscore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,22 +164,40 @@ public class ScoreboardActivity extends AppCompatActivity {
         });
     }
 
-    private void replacefragment(Fragment fragment) {
+    private void replacefragment(ScoreboardFragment fragment) {
         FragmentManager fragmentm = getSupportFragmentManager();
         FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
         fragmenttrans.replace(R.id.framescoreboard, fragment);
         fragmenttrans.commit();
     }
 
-    public void updatePlayersInTable(ArrayList<String> realplayers) {
-        Player1Name.setText(realplayers.get(0));
-        Player2Name.setText(realplayers.get(1));
-        Player3Name.setText(realplayers.get(2));
-        Player4Name.setText(realplayers.get(3));
-        Player5Name.setText(realplayers.get(4));
-        Player6Name.setText(realplayers.get(5));
-        com.github.wizard.GamePlayActivity.PlayersRecyclerviewAdapter newadapter = new com.github.wizard.GamePlayActivity.PlayersRecyclerviewAdapter(this, realplayers);
-        playersRecyclerView.setAdapter(newadapter);
+    public void updatePlayersInTable(ArrayList<GrpcPlayer> realplayers) {
+        Player1Name.setText(realplayers.get(0).getPlayerName());
+        Player2Name.setText(realplayers.get(1).getPlayerName());
+        Player3Name.setText(realplayers.get(2).getPlayerName());
+        Player4Name.setText(realplayers.get(3).getPlayerName());
+        Player5Name.setText(realplayers.get(4).getPlayerName());
+        Player6Name.setText(realplayers.get(5).getPlayerName());
+
+        /* only player 4,5,6 because 3-6 players are the rules*/
+        if (realplayers.get(3).getPlayerName() == null) {
+            Player4Name.setText("");
+        }
+        if (realplayers.get(4).getPlayerName() == null) {
+            Player5Name.setText("");
+        }
+        if (realplayers.get(5).getPlayerName() == null) {
+            Player6Name.setText("");
+        }
+    }
+
+    public void updatePointsInTable(ArrayList<GrpcPlayer> realplayers) {
+        Player1Points.setText(realplayers.get(0).getPoints());
+        Player2Points.setText(realplayers.get(1).getPoints());
+        Player3Points.setText(realplayers.get(2).getPoints());
+        Player4Points.setText(realplayers.get(3).getPoints());
+        Player5Points.setText(realplayers.get(4).getPoints());
+        Player6Points.setText(realplayers.get(5).getPoints());
     }
 
 
@@ -201,7 +210,7 @@ public class ScoreboardActivity extends AppCompatActivity {
                 GameActionsGrpc.GameActionsStub asyncStub,
                 WeakReference<Activity> activityReference)
                 throws Exception {
-            return updateGameBoard(asyncStub, activityReference);
+            return updateScoreboard(asyncStub, activityReference);
         }
 
         @Override
@@ -212,7 +221,7 @@ public class ScoreboardActivity extends AppCompatActivity {
          * Bi-directional example, which can only be asynchronous. Send some chat messages, and
          * print any chat messages that are sent from the server.
          */
-        private String updateGameBoard(
+        private String updateScoreboard(
                 GameActionsGrpc.GameActionsStub asyncStub,
                 WeakReference<Activity> activityReference)
                 throws InterruptedException, RuntimeException {
@@ -241,55 +250,32 @@ public class ScoreboardActivity extends AppCompatActivity {
                              */
                             new StreamObserver<Response>() {
 
-                                private void updateRoundNumberAndPoints(
-                                        Activity activity, GameStatus gameStatus) {
-                                    ((TextView) activity.findViewById(R.id.Player1Points))
-                                            .setText(gameStatus.getMyPoints());
-                                    ((TextView) activity.findViewById(R.id.Player2Points))
-                                            .setText(gameStatus.getMyPoints());
-                                    ((TextView) activity.findViewById(R.id.Player3Points))
-                                            .setText(gameStatus.getMyPoints());
-                                    ((TextView) activity.findViewById(R.id.Player4Points))
-                                            .setText(gameStatus.getMyPoints());
-                                    ((TextView) activity.findViewById(R.id.Player5Points))
-                                            .setText(gameStatus.getMyPoints());
-                                    ((TextView) activity.findViewById(R.id.Player6Points))
-                                            .setText(gameStatus.getMyPoints());
-
-                                    ((TextView) activity.findViewById(R.id.Roundscounter))
-                                            .setText(gameStatus.getRound());
+                                @Override
+                                public void onNext(Response value) {
 
                                 }
-                            }
-        }
+
+                                @Override
+                                public void onError(Throwable t) {
+
+                                }
+
+                                @Override
+                                public void onCompleted() {
+
+                                }
+
+                                private void updateRoundAndPoints(
+                                        Activity activity, GameStatus gameStatus) {
+
+                                    updatePlayersInTable(Player.getGrpcPlayerList);
+                                    updatePointsInTable(Player.getGrpcPlayerList);
+                                    Roundcounter.setText(gameStatus.getRound());
+
+                                }
+                            });
 
 
-        public class PlayersRecyclerviewAdapter
-                extends RecyclerView.Adapter<com.github.wizard.GamePlayActivity.PlayersRecyclerviewAdapter.ViewHolder> {
-
-            private ArrayList<String> players;
-            private LayoutInflater layoutInflater;
-            public String selectedPlayer;
-
-            PlayersRecyclerviewAdapter(Context context, ArrayList<String> players) {
-                this.layoutInflater = LayoutInflater.from(context);
-                this.players = players;
-                selectedPlayer = null;
-            }
-
-            @Override
-            public com.github.wizard.GamePlayActivity.PlayersRecyclerviewAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-                View view =
-                        layoutInflater.inflate(
-                                R.layout.players_recyclerview_textfield, viewGroup, false);
-                return new com.github.wizard.GamePlayActivity.PlayersRecyclerviewAdapter.ViewHolder(view);
-            }
-
-            @Override
-            public void onBindViewHolder(com.github.wizard.GamePlayActivity.PlayersRecyclerviewAdapter.ViewHolder viewHolder, int position) {
-                String playername = players.get(position);
-                viewHolder.playername_holder.setText(playername);
-            }
         }
     }
 }
