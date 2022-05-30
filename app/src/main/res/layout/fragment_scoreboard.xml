@@ -28,11 +28,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
+                android:fontFamily="@font/macondo"
                 android:minWidth="120dp"
                 android:text="Name"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="25sp" />
+                android:textSize="29sp" />
 
             <TextView
                 android:id="@+id/space1"
@@ -48,11 +49,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
+                android:fontFamily="@font/macondo"
                 android:minWidth="120dp"
                 android:text="Points"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="25sp" />
+                android:textSize="29sp" />
 
         </TableRow>
 
@@ -67,11 +69,12 @@
                 android:id="@+id/Player1Name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="Name1"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/Space2"
@@ -86,11 +89,12 @@
                 android:id="@+id/Player1Points"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="Points1"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
         </TableRow>
 
@@ -105,11 +109,12 @@
                 android:id="@+id/Player2Name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="Name2"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/space3"
@@ -124,11 +129,12 @@
                 android:id="@+id/Player2Points"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="Points2"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
         </TableRow>
 
@@ -143,11 +149,12 @@
                 android:id="@+id/Player3Name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="Name3"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/space4"
@@ -162,11 +169,12 @@
                 android:id="@+id/Player3Points"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="Points3"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
         </TableRow>
 
@@ -189,11 +197,12 @@
                 android:id="@+id/Roundscounter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="Round:"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="25sp" />
+                android:textSize="29sp" />
 
             <TextView
                 android:id="@+id/space6"
@@ -217,31 +226,34 @@
                 android:id="@+id/Player4Name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="Name4"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/space7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="1,2,3..."
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/Player4Points"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="Points4"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
         </TableRow>
 
@@ -256,11 +268,12 @@
                 android:id="@+id/Player5Name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="Name5"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/space8"
@@ -275,11 +288,12 @@
                 android:id="@+id/Player5Points"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="Points5"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
         </TableRow>
 
@@ -293,11 +307,12 @@
                 android:id="@+id/Player6Name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="Name6"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/space9"
@@ -312,11 +327,12 @@
                 android:id="@+id/Player6Points"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/macondo"
                 android:minWidth="135dp"
                 android:text="Points6"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
         </TableRow>
 
