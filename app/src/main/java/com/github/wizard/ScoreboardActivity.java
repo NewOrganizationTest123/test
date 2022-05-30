@@ -1,95 +1,25 @@
 package com.github.wizard;
 
 import static com.github.wizard.GamePlayActivity.appendLogs;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import java.lang.ref.WeakReference;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.github.wizard.api.Card;
-import com.github.wizard.api.CardList;
-import com.github.wizard.api.CheatingSubmittedResult;
 import com.github.wizard.api.GameActionsGrpc;
 import com.github.wizard.api.GameMove;
 import com.github.wizard.api.GameStatus;
 import com.github.wizard.api.GrpcPlayer;
 import com.github.wizard.api.Player;
 import com.github.wizard.api.Response;
-import com.github.wizard.api.StichMade;
-
-import io.grpc.ManagedChannel;
-import io.grpc.stub.StreamObserver;
-
-import java.lang.ref.WeakReference;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ScoreboardActivity extends AppCompatActivity {
 
@@ -112,24 +42,6 @@ public class ScoreboardActivity extends AppCompatActivity {
     private TextView Player6Points;
     private TextView Roundcounter;
     private Button showscore;
-
-    /*private static void appendLogs(StringBuffer logs, String msg, Object... params) {
-        if (params.length > 0) {
-            logs.append(MessageFormat.format(msg, params));
-        } else {
-            logs.append(msg);
-        }
-        logs.append("\n");
-    }
-
-    private static GameMove newGameMove(int type, String message) {
-        return GameMove.newBuilder()
-                .setGameid(com.github.wizard.GamePlayActivity.gameId)
-                .setPlayerid(com.github.wizard.GamePlayActivity.playerId)
-                .setData(message)
-                .setType(type + "")
-                .build();
-    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
