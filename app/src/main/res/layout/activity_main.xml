@@ -49,7 +49,7 @@
         android:fontFamily="@font/macondo"
         android:text="@string/spiel_starten"
 
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +84,7 @@
         android:fontFamily="@font/macondo"
         android:text="@string/spiel_beitreten"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
