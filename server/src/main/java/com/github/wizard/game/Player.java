@@ -7,13 +7,15 @@ import com.github.wizard.api.GrpcPlayer;
 import com.github.wizard.api.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+
 import org.tinylog.Logger;
 
 public class Player {
     private final String name;
     private byte playerId;
     Game game;
-    boolean iHaveCHeatedFlag = false; // TODO: implement cheating, set to true if I have cheated
+    boolean iHaveCHeatedFlag = false;
 
     private Updater updater;
     private final ArrayList<Card> cards = new ArrayList<>();
@@ -21,7 +23,6 @@ public class Player {
 
     private int estimate = -1;
     private int takenTricks = 0;
-    private int trickValue = 0;
 
     public void unsubscribe() {
         updater.responseStreamObserver().onCompleted();
@@ -65,7 +66,6 @@ public class Player {
 
     public void takeTrick(int value) {
         takenTricks++;
-        trickValue += value;
     }
 
     public int getTakeTrick() {
@@ -78,7 +78,6 @@ public class Player {
 
         if (estimate == -1) {
             takenTricks = 0;
-            trickValue = 0;
             return;
         }
 
@@ -93,7 +92,6 @@ public class Player {
 
         estimate = -1;
         takenTricks = 0;
-        trickValue = 0;
     }
 
     public void giveMeCards(List<Card> newCards) {
