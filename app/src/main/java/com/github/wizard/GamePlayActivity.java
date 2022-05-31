@@ -10,17 +10,23 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.wizard.api.Card;
 import com.github.wizard.api.CardList;
 import com.github.wizard.api.CheatingSubmittedResult;
@@ -29,8 +35,10 @@ import com.github.wizard.api.GameMove;
 import com.github.wizard.api.GameStatus;
 import com.github.wizard.api.Response;
 import com.github.wizard.api.StichMade;
+
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
+
 import java.lang.ref.WeakReference;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -67,6 +75,9 @@ public class GamePlayActivity extends AppCompatActivity {
     private RecyclerView cardsInTheMiddleRecyclerView;
     private TextView whosTurnIsItText;
     private int numberOfStitchesMade = 0;
+    private Button showscore;
+    private FrameLayout scoreboardframe;
+    private int i;
 
     private static void appendLogs(StringBuffer logs, String msg, Object... params) {
         if (params.length > 0) {
@@ -98,6 +109,8 @@ public class GamePlayActivity extends AppCompatActivity {
                 .execute(); // fire up the streaming service
 
         points = findViewById(R.id.points);
+        showscore = findViewById(R.id.btnscoreboard);
+        scoreboardframe = findViewById(R.id.framescoreboard);
         whosTurnIsItText = findViewById(R.id.whosTurnIsItTextview);
         // findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         // findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
@@ -146,7 +159,37 @@ public class GamePlayActivity extends AppCompatActivity {
         ArrayList<String> cardsMiddleList = new ArrayList<>();
         cards_middle_adapter = new CardsInTheMiddleRecyclerViewAdapter(this, cardsMiddleList);
         cardsInTheMiddleRecyclerView.setAdapter(cards_middle_adapter);
+        showscore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showScoreBoard(new ScoreboardFragment());
+            }
+        });
     }
+
+    public void showScoreBoard(ScoreboardFragment fragment) {
+        if (scoreboardframe.getVisibility() == View.VISIBLE){
+            scoreboardframe.setVisibility(View.GONE);
+            FragmentManager fragmentm = getSupportFragmentManager();
+            FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
+            fragmenttrans.replace(R.id.framescoreboard, fragment);
+            fragmenttrans.commit();
+        }else
+        scoreboardframe.setVisibility(View.VISIBLE);
+        FragmentManager fragmentm = getSupportFragmentManager();
+        FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
+        fragmenttrans.replace(R.id.framescoreboard, fragment);
+        fragmenttrans.commit();
+    }
+
+    /*public void hideScoreBoard(ScoreboardFragment fragment) {
+        scoreboardframe.setVisibility(View.GONE);
+        FragmentManager fragmentm = getSupportFragmentManager();
+        FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
+        //fragmenttrans.replace(R.id.framescoreboard, fragment);
+        fragmenttrans.hide(fragment);
+        fragmenttrans.commit();
+    }*/
 
     public void showCheatingExposingView() {
         cheatsView.setVisibility(View.VISIBLE);
@@ -206,7 +249,8 @@ public class GamePlayActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onAccuracyChanged(Sensor sensor, int i) {}
+                public void onAccuracyChanged(Sensor sensor, int i) {
+                }
             };
 
     private void playCard(String cardnum) {
@@ -269,7 +313,8 @@ public class GamePlayActivity extends AppCompatActivity {
         }
 
         @Override
-        public void doWhenDone(WeakReference<Activity> activityReference) {}
+        public void doWhenDone(WeakReference<Activity> activityReference) {
+        }
 
         /**
          * Bi-directional example, which can only be asynchronous. Send some chat messages, and
@@ -313,25 +358,25 @@ public class GamePlayActivity extends AppCompatActivity {
                                         updateNumberOfStichesTextview();
 
                                         Toast.makeText(
-                                                        activity.getApplication()
-                                                                .getApplicationContext(),
-                                                        "You have made this stich!",
-                                                        Toast.LENGTH_SHORT)
+                                                activity.getApplication()
+                                                        .getApplicationContext(),
+                                                "You have made this stich!",
+                                                Toast.LENGTH_SHORT)
                                                 .show();
                                         ((TextView) activity.findViewById(R.id.stiche_made))
                                                 .setText(stichmade.getTotalstichebyplayer());
 
                                     } else // someone else made the stich
-                                    Toast.makeText(
-                                                        activity.getApplication()
-                                                                .getApplicationContext(),
-                                                        "player "
-                                                                + stichmade.getPlayerName()
-                                                                + " has made this stich. They have"
-                                                                + " made a total of "
-                                                                + stichmade.getTotalstichebyplayer()
-                                                                + " stich",
-                                                        Toast.LENGTH_SHORT)
+                                        Toast.makeText(
+                                                activity.getApplication()
+                                                        .getApplicationContext(),
+                                                "player "
+                                                        + stichmade.getPlayerName()
+                                                        + " has made this stich. They have"
+                                                        + " made a total of "
+                                                        + stichmade.getTotalstichebyplayer()
+                                                        + " stich",
+                                                Toast.LENGTH_SHORT)
                                                 .show();
                                 }
 
@@ -397,10 +442,10 @@ public class GamePlayActivity extends AppCompatActivity {
                                     }
 
                                     Toast.makeText(
-                                                    activity.getApplication()
-                                                            .getApplicationContext(),
-                                                    "trumpf is: " + response.getData(),
-                                                    Toast.LENGTH_SHORT)
+                                            activity.getApplication()
+                                                    .getApplicationContext(),
+                                            "trumpf is: " + response.getData(),
+                                            Toast.LENGTH_SHORT)
                                             .show();
                                 }
 
@@ -419,14 +464,14 @@ public class GamePlayActivity extends AppCompatActivity {
                                             .setText("This is round " + gameStatus.getRound());
 
                                     Toast.makeText(
-                                                    activity.getApplication()
-                                                            .getApplicationContext(),
-                                                    "after round "
-                                                            + gameStatus.getRound()
-                                                            + " you have "
-                                                            + gameStatus.getMyPoints()
-                                                            + " points!",
-                                                    Toast.LENGTH_SHORT)
+                                            activity.getApplication()
+                                                    .getApplicationContext(),
+                                            "after round "
+                                                    + gameStatus.getRound()
+                                                    + " you have "
+                                                    + gameStatus.getMyPoints()
+                                                    + " points!",
+                                            Toast.LENGTH_SHORT)
                                             .show();
                                 }
 
@@ -439,12 +484,12 @@ public class GamePlayActivity extends AppCompatActivity {
                                                             + cheatingSubmittedResult.getNewPoints()
                                                             + " points");
                                     Toast.makeText(
-                                                    activity.getApplication()
-                                                            .getApplicationContext(),
-                                                    "Your cheating was discovered!!!! You now have "
-                                                            + cheatingSubmittedResult.getNewPoints()
-                                                            + " Points",
-                                                    Toast.LENGTH_SHORT)
+                                            activity.getApplication()
+                                                    .getApplicationContext(),
+                                            "Your cheating was discovered!!!! You now have "
+                                                    + cheatingSubmittedResult.getNewPoints()
+                                                    + " Points",
+                                            Toast.LENGTH_SHORT)
                                             .show();
                                 }
 
@@ -466,25 +511,25 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                     if (currentPoints
                                             > Integer.parseInt(
-                                                    cheatingSubmittedResult.getNewPoints())) {
+                                            cheatingSubmittedResult.getNewPoints())) {
                                         Toast.makeText(
-                                                        activity.getApplication()
-                                                                .getApplicationContext(),
-                                                        "Wrong assumption! You now have "
-                                                                + cheatingSubmittedResult
-                                                                        .getNewPoints()
-                                                                + " Points",
-                                                        Toast.LENGTH_SHORT)
+                                                activity.getApplication()
+                                                        .getApplicationContext(),
+                                                "Wrong assumption! You now have "
+                                                        + cheatingSubmittedResult
+                                                        .getNewPoints()
+                                                        + " Points",
+                                                Toast.LENGTH_SHORT)
                                                 .show();
                                     } else {
                                         Toast.makeText(
-                                                        activity.getApplication()
-                                                                .getApplicationContext(),
-                                                        "Someone cheated! You now have "
-                                                                + cheatingSubmittedResult
-                                                                        .getNewPoints()
-                                                                + " Points",
-                                                        Toast.LENGTH_SHORT)
+                                                activity.getApplication()
+                                                        .getApplicationContext(),
+                                                "Someone cheated! You now have "
+                                                        + cheatingSubmittedResult
+                                                        .getNewPoints()
+                                                        + " Points",
+                                                Toast.LENGTH_SHORT)
                                                 .show();
                                     }
 
@@ -541,8 +586,8 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                         ArrayList realplayers = new ArrayList<>();
                                         for (int i = 0;
-                                                i < response.getPlayerList().getPlayerCount();
-                                                i++) {
+                                             i < response.getPlayerList().getPlayerCount();
+                                             i++) {
                                             realplayers.add(
                                                     response.getPlayerList()
                                                             .getPlayer(i)
@@ -885,7 +930,7 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("NONEJESTER"):
                     viewHolder.card_holder.setImageResource(R.drawable.n_01);
                     break;
-                    // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
+                // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
                 default:
                     break;
             }
@@ -1091,7 +1136,7 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("NONEJESTER"):
                     viewHolder.card_holder.setImageResource(R.drawable.n_01);
                     break;
-                    // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
+                // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
                 default:
                     break;
             }
