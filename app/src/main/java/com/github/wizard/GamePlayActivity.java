@@ -77,7 +77,8 @@ public class GamePlayActivity extends AppCompatActivity {
     private int numberOfStitchesMade = 0;
     private Button showscore;
     private FrameLayout scoreboardframe;
-    private int i;
+    private Button homebutton;
+    private Button endgame; //ONLY for testcases
 
     private static void appendLogs(StringBuffer logs, String msg, Object... params) {
         if (params.length > 0) {
@@ -111,6 +112,8 @@ public class GamePlayActivity extends AppCompatActivity {
         points = findViewById(R.id.points);
         showscore = findViewById(R.id.btnscoreboard);
         scoreboardframe = findViewById(R.id.framescoreboard);
+        endgame = findViewById(R.id.btnendgame);
+        homebutton = findViewById(R.id.btnhomescreen);
         whosTurnIsItText = findViewById(R.id.whosTurnIsItTextview);
         // findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         // findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
@@ -159,12 +162,48 @@ public class GamePlayActivity extends AppCompatActivity {
         ArrayList<String> cardsMiddleList = new ArrayList<>();
         cards_middle_adapter = new CardsInTheMiddleRecyclerViewAdapter(this, cardsMiddleList);
         cardsInTheMiddleRecyclerView.setAdapter(cards_middle_adapter);
+
         showscore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showScoreBoard(new ScoreboardFragment());
             }
         });
+        endgame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EndofGame(new ScoreboardFragment());
+            }
+        });
+        homebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                backtohome();
+            }
+        });
+    }
+    /* just for testcase*/
+    public void EndofGame(ScoreboardFragment fragment){
+        scoreboardframe.setVisibility(View.VISIBLE);
+        FragmentManager fragmentm = getSupportFragmentManager();
+        FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
+        fragmenttrans.replace(R.id.framescoreboard, fragment);
+        fragmenttrans.commit();
+        showscore.setVisibility(View.GONE);
+        endgame.setVisibility(View.GONE);
+        playersRecyclerView.setVisibility(View.GONE);
+        cardsInHandRecyclerView.setVisibility(View.GONE);
+        cardsInTheMiddleRecyclerView.setVisibility(View.GONE);
+        hideCheatingExposingView();
+        homebutton.setVisibility(View.VISIBLE);
+        whosTurnIsItText.setVisibility(View.GONE);
+        cheatsViewTitle.setVisibility(View.GONE);
+        points.setVisibility(View.GONE);
+    }
+    /*just for test cases*/
+    public void backtohome(){
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        startActivity(intent);
     }
 
     public void showScoreBoard(ScoreboardFragment fragment) {
