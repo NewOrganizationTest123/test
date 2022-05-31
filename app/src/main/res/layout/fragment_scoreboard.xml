@@ -32,7 +32,7 @@
                 android:text="Name"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="26sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/space1"
@@ -53,7 +53,7 @@
                 android:text="Points"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="26sp" />
+                android:textSize="24sp" />
 
         </TableRow>
 
@@ -201,7 +201,7 @@
                 android:text="Round:"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="26sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/space6"
