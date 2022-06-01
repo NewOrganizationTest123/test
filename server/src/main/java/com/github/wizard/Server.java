@@ -35,6 +35,7 @@ public class Server implements Callable<Integer> {
     private int gameCounter = 0;
     private io.grpc.Server grpcServer;
     public static final int MAX_PLAYERS = 6;
+    public static final int GAME_MOVE_TIMEOUT=60000;
 
     @Option(
             names = {"-p", "--port"},
