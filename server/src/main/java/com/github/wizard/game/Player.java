@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import org.tinylog.Logger;
 
 public class Player {
@@ -21,7 +20,7 @@ public class Player {
 
     private Updater updater;
     private final ArrayList<Card> cards = new ArrayList<>();
-    private Timer timer = new Timer(playerId+"");
+    private Timer timer = new Timer(playerId + "");
     private int points;
 
     private int estimate = -1;
@@ -66,7 +65,7 @@ public class Player {
     public void makeEstimate(int estimate) {
         this.estimate = estimate;
         timer.cancel();
-        timer=new Timer(playerId+"");//we need a new timer after cancel();
+        timer = new Timer(playerId + ""); // we need a new timer after cancel();
     }
 
     public void takeTrick(int value) {
@@ -154,37 +153,47 @@ public class Player {
         Logger.debug(response);
         updater.update(response);
     }
-    public void updateWithTimeout(Response response, TimerTask timerTask,long timeout){
+
+    public void updateWithTimeout(Response response, TimerTask timerTask, long timeout) {
         update(response);
-        timer.schedule(timerTask,timeout+playerId*10+5);//to avoid race conditions if multiple players forget to play and account for round-trip time
+        timer.schedule(
+                timerTask,
+                timeout
+                        + playerId * 10
+                        + 5); // to avoid race conditions if multiple players forget to play and
+        // account for round-trip time
     }
 
-    /**
-     *Will create some number according to some criterion that might be the estimate
-     */
-    public void makeRandomEstimate(){
-        int estimate=0;
-        //count High cards
-        for (Card c:cards) {
-            if(c.getValue().getNumber()>10) {//we should be able to make a stich with anything greater 8, this includes wizzards
+    /** Will create some number according to some criterion that might be the estimate */
+    public void makeRandomEstimate() {
+        int estimate = 0;
+        // count High cards
+        for (Card c : cards) {
+            if (c.getValue().getNumber()
+                    > 10) { // we should be able to make a stich with anything greater 8, this
+                // includes wizzards
                 estimate++;
                 continue;
             }
-            if(game.getCurrentRound().getTrump().equals(c.getColor())&&c.getValue().getNumber()>7){//should also be able to win with a trumpf
+            if (game.getCurrentRound().getTrump().equals(c.getColor())
+                    && c.getValue().getNumber() > 7) { // should also be able to win with a trumpf
                 estimate++;
                 continue;
             }
         }
         Random rand = new Random();
-        estimate+=rand.nextInt(game.getRoundNr()-estimate-1>0?game.getRoundNr()-estimate-1:1);//add some random amount to make it interesting
+        estimate +=
+                rand.nextInt(
+                        game.getRoundNr() - estimate - 1 > 0
+                                ? game.getRoundNr() - estimate - 1
+                                : 1); // add some random amount to make it interesting
 
-        this.estimate=estimate;
+        this.estimate = estimate;
 
-       updater.update(Updater.newRandomEstimateCalcuatedResponse(estimate+""));
-        Logger.info("Estimate for "+name+" was chosen randomly");
-        if (game.allEstimatesSubmitted()) game.playFirstCard();//continue the gameplay
+        updater.update(Updater.newRandomEstimateCalcuatedResponse(estimate + ""));
+        Logger.info("Estimate for " + name + " was chosen randomly");
+        if (game.allEstimatesSubmitted()) game.playFirstCard(); // continue the gameplay
     }
-
 
     public static class Players extends ArrayList<Player> {
 
@@ -235,14 +244,17 @@ public class Player {
          */
         public void getAllEstimates() {
             forEach(p -> p.estimate = -1); // reset all estimates
-            forEach(p -> p.updateWithTimeout(Updater.newGetEstimateResponse(),
-                    new TimerTask() {
-                        public void run() {
-                           p.makeRandomEstimate();
-                           //todo lock game session while making estimate
-                        }
-                    }
-                    ,Server.GAME_MOVE_TIMEOUT));
+            forEach(
+                    p ->
+                            p.updateWithTimeout(
+                                    Updater.newGetEstimateResponse(),
+                                    new TimerTask() {
+                                        public void run() {
+                                            p.makeRandomEstimate();
+                                            // todo lock game session while making estimate
+                                        }
+                                    },
+                                    Server.GAME_MOVE_TIMEOUT));
         }
 
         public void getAllPlayers() {

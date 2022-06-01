@@ -56,7 +56,7 @@ public class Trick {
                 .orElse(-1);
     }
 
-    public Player getWinningPlayer() { // todo do not ignore trump
+    public Player getWinningPlayer() {
         Card.Color firstColor =
                 getCards().get(0).getColor(); // as only cards of similar color and wizards count
 

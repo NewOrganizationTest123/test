@@ -646,9 +646,11 @@ public class GamePlayActivity extends AppCompatActivity {
                                             activity.runOnUiThread(() -> showGameResults(activity));
                                             break;
                                         case "8":
-                                            activity.runOnUiThread(() -> randomEstimateReceived(activity,response));
+                                            activity.runOnUiThread(
+                                                    () ->
+                                                            randomEstimateReceived(
+                                                                    activity, response));
                                             break;
-
 
                                         default:
                                             throw new IllegalArgumentException(
@@ -720,7 +722,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
         Toast.makeText(
                         activity.getApplication().getApplicationContext(),
-                        "Your estimate"+response.getData()+" was choosen randomly. Good luck!",
+                        "Your estimate" + response.getData() + " was choosen randomly. Good luck!",
                         Toast.LENGTH_SHORT)
                 .show();
         updateEstimateTextview(response.getData());
@@ -1194,7 +1196,7 @@ public class GamePlayActivity extends AppCompatActivity {
         Button estimateSend;
         ProgressBar submitEstimateTimeoutProgressBar;
         CountDownTimer countDownTimer;
-        int progress=0;
+        int progress = 0;
 
         public EstimateDialog(Activity activity) {
             super(activity);
@@ -1206,7 +1208,7 @@ public class GamePlayActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
 
             estimateSend = findViewById(R.id.dialogEnterButton);
-            submitEstimateTimeoutProgressBar=findViewById(R.id.submitEstimateTimeoutProgressBar);
+            submitEstimateTimeoutProgressBar = findViewById(R.id.submitEstimateTimeoutProgressBar);
 
             estimateSend.setOnClickListener(
                     e -> {
@@ -1219,24 +1221,28 @@ public class GamePlayActivity extends AppCompatActivity {
                             dismiss();
                         }
                     });
-            submitEstimateTimeoutProgressBar.setProgress(progress);//initial progress
-                  countDownTimer= new CountDownTimer(60000,1000){
-                @Override
-                public void onTick(long l) {
-                    submitEstimateTimeoutProgressBar.setProgress((int)progress*100/(60000/1000));
-                    progress++;
-                }
+            submitEstimateTimeoutProgressBar.setProgress(progress); // initial progress
+            countDownTimer =
+                    new CountDownTimer(60000, 1000) {
+                        @Override
+                        public void onTick(long l) {
+                            submitEstimateTimeoutProgressBar.setProgress(
+                                    (int) progress * 100 / (60000 / 1000));
+                            progress++;
+                        }
 
-                @Override
-                public void onFinish() {
-                    submitEstimateTimeoutProgressBar.setProgress(100);
-                    Log.i("Wizzard","Client timer submit estimate timed out, waiting for server to calculate new estimate...");
-                    //estimateSend.setEnabled(false);
-                    dismiss();
-                }
-            };
-                    countDownTimer.start();
-
+                        @Override
+                        public void onFinish() {
+                            submitEstimateTimeoutProgressBar.setProgress(100);
+                            Log.i(
+                                    "Wizzard",
+                                    "Client timer submit estimate timed out, waiting for server to"
+                                            + " calculate new estimate...");
+                            // estimateSend.setEnabled(false);
+                            dismiss();
+                        }
+                    };
+            countDownTimer.start();
         }
     }
 }

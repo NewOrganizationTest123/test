@@ -96,8 +96,8 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
     public static Response newEndGameResponse() {
         return Response.newBuilder().setType("7").build();
     }
+
     public static Response newRandomEstimateCalcuatedResponse(String randomEstimate) {
         return Response.newBuilder().setType("8").setData(randomEstimate).build();
     }
-
 }
