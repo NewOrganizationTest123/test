@@ -422,7 +422,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                                     "You have "
                                                             + gameStatus.getMyPoints()
                                                             + " points");
-                                    int roundNr = Integer.parseInt(gameStatus.getRound())+1;
+                                    int roundNr = Integer.parseInt(gameStatus.getRound()) + 1;
                                     ((TextView) activity.findViewById(R.id.round))
                                             .setText("This is round " + roundNr);
 
