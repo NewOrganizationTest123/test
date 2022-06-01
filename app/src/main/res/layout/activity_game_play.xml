@@ -55,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Trump is"
+        android:text="Wait for Trump..."
         android:textColor="#FFFFFF"
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -120,7 +120,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Round 0"
+        android:text="Round 1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/points" />
 
