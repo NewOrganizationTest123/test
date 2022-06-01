@@ -345,7 +345,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                                         Toast.LENGTH_SHORT)
                                                 .show();
                                         ((TextView) activity.findViewById(R.id.stiche_made))
-                                                .setText(stichmade.getTotalstichebyplayer());
+                                                .setText("You have already made "+stichmade.getTotalstichebyplayer()+" Stiche");
 
                                     } else // someone else made the stich
                                     Toast.makeText(
@@ -436,6 +436,9 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                 private void updateRoundNumberAndPoints(
                                         Activity activity, GameStatus gameStatus) {
+                                    //reset stich counter to 0 when new round starts
+                                    ((TextView) activity.findViewById(R.id.stiche_made))
+                                            .setText("You have already made 0 Stiche");
 
                                     for (GrpcPlayer grpcPlayer : gameStatus.getPlayersList()) {
                                         // update my points

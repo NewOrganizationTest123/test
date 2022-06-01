@@ -42,7 +42,7 @@ syntax = "proto3";
 /**
  * legacy
  * 0: general ok-response
- * 1: player who made 'Stich' and value of it
+ * 1: player who made 'Stich'
  * 2: request to play card
  * 3: request to update the game field
  * 4: show them what is 'Trumpf'

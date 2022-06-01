@@ -7,6 +7,7 @@ import com.github.wizard.api.GameStatus;
 import com.github.wizard.api.GrpcPlayer;
 import com.github.wizard.api.PlayersList;
 import com.github.wizard.api.Response;
+import com.github.wizard.api.StichMade;
 import com.github.wizard.game.Player;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
@@ -19,13 +20,16 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
         responseStreamObserver.onNext(response);
     }
 
-    public static Response newOnTrickTakenResponse(Player player, int value) {
+    public static Response newOnTrickTakenResponse(Player player) {
         return Response.newBuilder()
                 .setType("1")
                 .setData(
                         String.format(
-                                "Player %s has made this trick with value %s",
-                                player.getName(), value))
+                                "Player %s has made this trick",
+                                player.getName()))
+                .setStichMade(
+                        StichMade.newBuilder().setPlayerid(player.getPlayerId()+"").setPlayerName(player.getName()).setTotalstichebyplayer(player.getTakeTrick()+"").build()
+                )
                 .build();
     }
 

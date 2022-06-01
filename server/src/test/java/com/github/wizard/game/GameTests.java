@@ -132,7 +132,7 @@ public class GameTests {
         verify(trickMocked).getValue();
         verify(mocked_player1).cardsLeft();
 
-        verify(mocked_player2).update(Updater.newOnTrickTakenResponse(new Player("mock1"), 12));
+        verify(mocked_player2).update(Updater.newOnTrickTakenResponse(new Player("mock1")));
         verify(mocked_player2).update(Updater.newOnGameBoardUpdate(null, null));
     }
 

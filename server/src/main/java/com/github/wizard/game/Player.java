@@ -235,7 +235,7 @@ public class Player {
 
         public void finishTrick(Player winningPlayer, int value) {
             winningPlayer.takeTrick(value);
-            forEach(p -> p.update(Updater.newOnTrickTakenResponse(winningPlayer, value)));
+            forEach(p -> p.update(Updater.newOnTrickTakenResponse(winningPlayer)));
         }
 
         /**
