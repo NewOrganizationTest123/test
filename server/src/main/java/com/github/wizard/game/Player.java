@@ -175,7 +175,7 @@ public class Player {
                 estimate++;
                 continue;
             }
-            if (game.getCurrentRound().getTrump().equals(c.getColor())
+            if (game.getCurrentRound().getTrump().getColor().equals(c.getColor())
                     && c.getValue().getNumber() > 7) { // should also be able to win with a trumpf
                 estimate++;
                 continue;
