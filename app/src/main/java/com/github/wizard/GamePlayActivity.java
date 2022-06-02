@@ -67,6 +67,7 @@ public class GamePlayActivity extends AppCompatActivity {
     private RecyclerView cardsInTheMiddleRecyclerView;
     private TextView whosTurnIsItText;
     private int numberOfStitchesMade = 0;
+    private ArrayList<String> cards;
 
     private static void appendLogs(StringBuffer logs, String msg, Object... params) {
         if (params.length > 0) {
@@ -102,9 +103,13 @@ public class GamePlayActivity extends AppCompatActivity {
         // findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
         // findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
         cheatsView = findViewById(R.id.ExposeCheatsView);
+        cheatsView.bringToFront();
         playersRecyclerView = findViewById(R.id.playerRecyclerView);
+        playersRecyclerView.bringToFront();
         closeCheatsViewButton = findViewById(R.id.closeCheatsViewButton);
+        closeCheatsViewButton.bringToFront();
         cheatsViewTitle = findViewById(R.id.cheatingViewTitle);
+        cheatsViewTitle.bringToFront();
         hideCheatingExposingView(); // by default, the cheating-exposing view is not visible; only
         // shows up after shaking device
 
@@ -361,6 +366,8 @@ public class GamePlayActivity extends AppCompatActivity {
                                         cards_in_middle.add(cardname);
                                     }
                                     updateCardsInMiddleRecyclerView(cards_in_middle);
+
+                                    cards = cards_in_hand;
                                 }
 
                                 private void showTrump(Activity activity, Response response) {
@@ -415,8 +422,9 @@ public class GamePlayActivity extends AppCompatActivity {
                                                     "You have "
                                                             + gameStatus.getMyPoints()
                                                             + " points");
+                                    int roundNr = Integer.parseInt(gameStatus.getRound()) + 1;
                                     ((TextView) activity.findViewById(R.id.round))
-                                            .setText("This is round " + gameStatus.getRound());
+                                            .setText("This is round " + roundNr);
 
                                     Toast.makeText(
                                                     activity.getApplication()
@@ -1116,15 +1124,27 @@ public class GamePlayActivity extends AppCompatActivity {
         public Activity activity;
         EditText estimateInputField;
         Button estimateSend;
+        // ArrayList<String> cards;
 
         public EstimateDialog(Activity activity) {
             super(activity);
             this.activity = activity;
+            // this.cards = cards;
         }
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+
+            RecyclerView cardsRecyclerView = findViewById(R.id.cardsInEstimateDialog);
+            ArrayList<String> cardsList = new ArrayList<>();
+            LinearLayoutManager layoutManagerCardsEstimate =
+                    new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            cardsRecyclerView.setLayoutManager(layoutManagerCardsEstimate);
+
+            CardsInTheMiddleRecyclerViewAdapter estimateCardsAdapter =
+                    new CardsInTheMiddleRecyclerViewAdapter(getContext(), cards);
+            cardsRecyclerView.setAdapter(estimateCardsAdapter);
 
             estimateSend = findViewById(R.id.dialogEnterButton);
             estimateSend.setOnClickListener(
