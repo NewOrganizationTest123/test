@@ -12,6 +12,8 @@ import static org.mockito.Mockito.when;
 
 import com.github.wizard.Updater;
 import com.github.wizard.api.Card;
+import java.util.Timer;
+import java.util.TimerTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -117,23 +119,25 @@ public class GameTests {
         player2.takeTrick(0);
 
         Round round = new Round(game_withMockedPlayers, trickMocked, 1);
-        game_withMockedPlayers.setCurrentRound(round);
-
-        when(trickMocked.getWinningPlayer()).thenReturn(mocked_player1);
         when(trickMocked.getCardsPlayed()).thenReturn(2);
-        when(trickMocked.getValue()).thenReturn(12);
-        when(mocked_player1.cardsLeft()).thenReturn(0);
-        when(mocked_player1.getName()).thenReturn("mock1");
-        when(mocked_player2.getName()).thenReturn("mock2");
-
         round.playCard(mock(Card.class), mocked_player1);
 
-        verify(trickMocked).getWinningPlayer();
-        verify(trickMocked).getValue();
-        verify(mocked_player1).cardsLeft();
+        new Timer()
+                .schedule(
+                        new TimerTask() {
+                            @Override
+                            public void run() {
+                                verify(trickMocked).getWinningPlayer();
+                                verify(trickMocked).getValue();
+                                verify(mocked_player1).cardsLeft();
 
-        verify(mocked_player2).update(Updater.newOnTrickTakenResponse(new Player("mock1")));
-        verify(mocked_player2).update(Updater.newOnGameBoardUpdate(null, null));
+                                verify(mocked_player2)
+                                        .update(Updater.newOnTrickTakenResponse(new Player(null)));
+                                verify(mocked_player2)
+                                        .update(Updater.newOnGameBoardUpdate(null, null));
+                            }
+                        },
+                        3000);
     }
 
     @Test
@@ -143,8 +147,8 @@ public class GameTests {
 
         round.playCard(mock(Card.class), mocked_player1);
 
-        // verify(mocked_player2).update(Updater.newCardPlayRequestResponse()); not applicable any
-        // more
+        //        verify(mocked_player2).update(Updater.newCardPlayRequestResponse());not applicable
+        // any more
         verify(mocked_player2).update(Updater.newOnGameBoardUpdate(null, null));
     }
 
