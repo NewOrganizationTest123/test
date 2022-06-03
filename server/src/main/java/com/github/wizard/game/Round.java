@@ -1,7 +1,11 @@
 package com.github.wizard.game;
 
+import com.github.wizard.Updater;
 import com.github.wizard.api.Card;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.tinylog.Logger;
 
 public final class Round {
@@ -59,30 +63,43 @@ public final class Round {
         cardsInTheMiddle.playCard(card, player);
 
         if (cardsInTheMiddle.getCardsPlayed() == players.size()) {
-            Player winner = cardsInTheMiddle.getWinningPlayer();
-            players.finishTrick(winner, cardsInTheMiddle.getValue()); // notify other players
 
-            if (winner.cardsLeft() == 0) {
-                players.notifyAboutPointsAndRound(number);
+            players.updateGAmeBoard(cardsInTheMiddle.getCards());
 
-                // quit game if it was the last round
-                if (players.size() * (game.getRoundNr() + 1) >= game.deck.getCardsAvailable()) {
-                    // if (players.size() * (game.getRoundNr()+1) >= 6) {//for testing with a
-                    // limited number of cards only only
-                    game.endGame();
-                    return;
-                }
+            new Timer()
+                    .schedule(
+                            new TimerTask() {
+                                @Override
+                                public void run() {
+                                    Player winner = cardsInTheMiddle.getWinningPlayer();
+                                    players.finishTrick(
+                                            winner,
+                                            cardsInTheMiddle.getValue()); // notify other players
 
-                game.setCurrentRound(Round.create(game, number + 1));
-                game.setNextPlayer(winner);
-                game.proceed();
-                return;
-            } else {
-                cardsInTheMiddle.reset();
-                players.updateGAmeBoard(cardsInTheMiddle.getCards());
-                // winner.update(Updater.newCardPlayRequestResponse());
-                winner.playCardRequestWithTimeout(); // request to start next trick
-            }
+                                    if (winner.cardsLeft() == 0) {
+                                        players.notifyAboutPointsAndRound(number);
+
+                                        // quit game if it was the last round
+                                        if (players.size() * (game.getRoundNr() + 1) >= game.deck.getCardsAvailable()) {
+                                            // if (players.size() * (game.getRoundNr()+1) >= 6) {//for testing with a
+                                            // limited number of cards only only
+                                            game.endGame();
+                                            return;
+                                        }
+
+                                        game.setCurrentRound(Round.create(game, number + 1));
+                                        game.setNextPlayer(winner);
+                                        game.proceed();
+                                        return;
+                                    } else {
+                                        cardsInTheMiddle.reset();
+                                        players.updateGAmeBoard(cardsInTheMiddle.getCards());
+                                        // winner.update(Updater.newCardPlayRequestResponse());
+                                        winner.playCardRequestWithTimeout(); // request to start next trick
+                                    }
+                                }
+                            },
+                            3000);
         } else {
             players.updateGAmeBoard(cardsInTheMiddle.getCards());
             Player nextPlayer = players.getNextPlayer(player);
