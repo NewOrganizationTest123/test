@@ -88,7 +88,7 @@ public class Player {
     }
 
     private void playRandomCard() {
-        List<Card> possibleCards = new ArrayList<>();
+        ArrayList<Card> possibleCards = new ArrayList<>();
         // cards.stream().filter(card -> {card.getColor().equals()})
 
         Random random = new Random();
@@ -97,20 +97,19 @@ public class Player {
             if (game.getCurrentRound().getCardsInTheMiddle().getCards().size() == 0)
                 // we can play any color we want, we cant cheat:(
                 possibleCards = cards;
-            else
-                possibleCards =
-                        cards.stream()
-                                .filter(
-                                        card ->
-                                                !card.getColor()
-                                                        .equals(
-                                                                game.getCurrentRound()
-                                                                        .getCardsInTheMiddle()
-                                                                        .getCards()
-                                                                        .get(0)
-                                                                        .getColor()))
-                                .toList();
-            ;
+            else {
+                for (Card card : cards) {
+                    if (!card.getColor()
+                            .equals(
+                                    game.getCurrentRound()
+                                            .getCardsInTheMiddle()
+                                            .getCards()
+                                            .get(0)
+                                            .getColor())) {
+                        possibleCards.add(card);
+                    }
+                }
+            }
 
         } else {
             // do not cheat
@@ -120,18 +119,18 @@ public class Player {
                 possibleCards = cards;
             } else {
                 // we can only play cards with the same color
-                possibleCards =
-                        cards.stream()
-                                .filter(
-                                        card ->
-                                                card.getColor()
-                                                        .equals(
-                                                                game.getCurrentRound()
-                                                                        .getCardsInTheMiddle()
-                                                                        .getCards()
-                                                                        .get(0)
-                                                                        .getColor()))
-                                .toList();
+                for (Card card1 : cards) {
+                    if (card1.getColor()
+                            .equals(
+                                    game.getCurrentRound()
+                                            .getCardsInTheMiddle()
+                                            .getCards()
+                                            .get(0)
+                                            .getColor())) {
+                        possibleCards.add(card1);
+                    }
+                }
+
                 // wizzards and jesters always allowed
                 possibleCards.addAll(
                         cards.stream()

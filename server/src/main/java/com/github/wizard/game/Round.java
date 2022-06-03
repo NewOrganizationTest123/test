@@ -1,11 +1,9 @@
 package com.github.wizard.game;
 
-import com.github.wizard.Updater;
 import com.github.wizard.api.Card;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import org.tinylog.Logger;
 
 public final class Round {
@@ -80,8 +78,10 @@ public final class Round {
                                         players.notifyAboutPointsAndRound(number);
 
                                         // quit game if it was the last round
-                                        if (players.size() * (game.getRoundNr() + 1) >= game.deck.getCardsAvailable()) {
-                                            // if (players.size() * (game.getRoundNr()+1) >= 6) {//for testing with a
+                                        if (players.size() * (game.getRoundNr() + 1)
+                                                >= game.deck.getCardsAvailable()) {
+                                            // if (players.size() * (game.getRoundNr()+1) >= 6)
+                                            // {//for testing with a
                                             // limited number of cards only only
                                             game.endGame();
                                             return;
@@ -95,7 +95,8 @@ public final class Round {
                                         cardsInTheMiddle.reset();
                                         players.updateGAmeBoard(cardsInTheMiddle.getCards());
                                         // winner.update(Updater.newCardPlayRequestResponse());
-                                        winner.playCardRequestWithTimeout(); // request to start next trick
+                                        winner.playCardRequestWithTimeout(); // request to start
+                                        // next trick
                                     }
                                 }
                             },
