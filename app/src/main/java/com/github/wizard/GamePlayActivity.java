@@ -72,6 +72,9 @@ public class GamePlayActivity extends AppCompatActivity {
     private RecyclerView cardsInTheMiddleRecyclerView;
     private TextView whosTurnIsItText;
     private int numberOfStitchesMade = 0;
+    private CountDownTimer cardPlayTimer;
+    private int cardPlayTimerProgress;
+    private CardsInHandRecyclerViewAdapter playcardadapter;
 
     private static void appendLogs(StringBuffer logs, String msg, Object... params) {
         if (params.length > 0) {
@@ -104,8 +107,6 @@ public class GamePlayActivity extends AppCompatActivity {
 
         points = findViewById(R.id.points);
         whosTurnIsItText = findViewById(R.id.whosTurnIsItTextview);
-        // findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
-        // findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
         cheatsView = findViewById(R.id.ExposeCheatsView);
         playersRecyclerView = findViewById(R.id.playerRecyclerView);
         closeCheatsViewButton = findViewById(R.id.closeCheatsViewButton);
@@ -222,6 +223,8 @@ public class GamePlayActivity extends AppCompatActivity {
             };
 
     private void playCard(String cardnum) {
+        ProgressBar cardPlayTimeout = findViewById(R.id.cardPlayTimeout);
+        cardPlayTimeout.setVisibility(View.INVISIBLE);
         whosTurnIsItText.setText("Please wait for your turn!");
         serverWaitingQueue.add(newGameMove(2, cardnum));
     }
@@ -271,10 +274,31 @@ public class GamePlayActivity extends AppCompatActivity {
 
     private void allowPlayingCard() {
         // TODO: only allow playing Card when CardPlayRequest
-        CardsInHandRecyclerViewAdapter playcardadapter =
-                (CardsInHandRecyclerViewAdapter) cardsInHandRecyclerView.getAdapter();
+        playcardadapter = (CardsInHandRecyclerViewAdapter) cardsInHandRecyclerView.getAdapter();
         playcardadapter.activatePlayingCard();
         whosTurnIsItText.setText("Its your turn!");
+        ProgressBar cardPlayTimeout = findViewById(R.id.cardPlayTimeout);
+        cardPlayTimeout.setVisibility(View.VISIBLE);
+        cardPlayTimerProgress = 0;
+        cardPlayTimeout.setProgress(cardPlayTimerProgress);
+
+        cardPlayTimer =
+                new CountDownTimer(60000, 1000) {
+                    @Override
+                    public void onTick(long l) {
+                        cardPlayTimeout.setProgress(
+                                (int) cardPlayTimerProgress * 100 / (60000 / 1000));
+                        cardPlayTimerProgress++;
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        cardPlayTimeout.setProgress(100);
+                        Log.i("Wizzard", "Client timer play card timed out");
+                        cardPlayTimeout.setVisibility(View.INVISIBLE);
+                    }
+                };
+        cardPlayTimer.start();
     }
 
     public void updateNumberOfStichesTextview() {
@@ -345,7 +369,10 @@ public class GamePlayActivity extends AppCompatActivity {
                                                         Toast.LENGTH_SHORT)
                                                 .show();
                                         ((TextView) activity.findViewById(R.id.stiche_made))
-                                                .setText("You have already made "+stichmade.getTotalstichebyplayer()+" Stiche");
+                                                .setText(
+                                                        "You have already made "
+                                                                + stichmade.getTotalstichebyplayer()
+                                                                + " Stiche");
 
                                     } else // someone else made the stich
                                     Toast.makeText(
@@ -436,7 +463,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                 private void updateRoundNumberAndPoints(
                                         Activity activity, GameStatus gameStatus) {
-                                    //reset stich counter to 0 when new round starts
+                                    // reset stich counter to 0 when new round starts
                                     ((TextView) activity.findViewById(R.id.stiche_made))
                                             .setText("You have already made 0 Stiche");
 
@@ -654,6 +681,10 @@ public class GamePlayActivity extends AppCompatActivity {
                                                             randomEstimateReceived(
                                                                     activity, response));
                                             break;
+                                        case "9":
+                                            activity.runOnUiThread(
+                                                    () -> randomCardPlayed(activity));
+                                            break;
 
                                         default:
                                             throw new IllegalArgumentException(
@@ -719,6 +750,13 @@ public class GamePlayActivity extends AppCompatActivity {
 
             return logs.toString();
         }
+    }
+
+    private void randomCardPlayed(Activity activity) {
+        playcardadapter.endPlayingCard();
+        ProgressBar cardPlayTimeout = findViewById(R.id.cardPlayTimeout);
+        cardPlayTimeout.setVisibility(View.INVISIBLE);
+        whosTurnIsItText.setText("Please wait for your turn!");
     }
 
     private void randomEstimateReceived(Activity activity, Response response) {
@@ -796,6 +834,10 @@ public class GamePlayActivity extends AppCompatActivity {
 
         public void activatePlayingCard() {
             allowPlayingCard = true;
+        }
+
+        public void endPlayingCard() {
+            allowPlayingCard = false;
         }
 
         @Override

@@ -1,7 +1,6 @@
 package com.github.wizard.game;
 
 import com.github.wizard.Server;
-import com.github.wizard.Updater;
 import com.github.wizard.api.Card;
 import org.tinylog.Logger;
 
@@ -84,7 +83,8 @@ public class Game {
         if (nextPlayer == null)
             nextPlayer =
                     players.getNextPlayer(players.get(0)); // the host shall start the first round
-        nextPlayer.update(Updater.newCardPlayRequestResponse());
+        // nextPlayer.update(Updater.newCardPlayRequestResponse());
+        nextPlayer.playCardRequestWithTimeout();
         Logger.info(
                 "asking player {} to play the first card after all estimates were received",
                 nextPlayer.getPlayerId());

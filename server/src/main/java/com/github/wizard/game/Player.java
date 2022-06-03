@@ -76,6 +76,137 @@ public class Player {
         return takenTricks;
     }
 
+    public void playCardRequestWithTimeout() {
+        updateWithTimeout(
+                Updater.newCardPlayRequestResponse(),
+                new TimerTask() {
+                    public void run() {
+                        playRandomCard();
+                    }
+                },
+                Server.GAME_MOVE_TIMEOUT);
+    }
+
+    private void playRandomCard() {
+        List<Card> possibleCards = new ArrayList<>();
+        // cards.stream().filter(card -> {card.getColor().equals()})
+
+        Random random = new Random();
+        if (random.nextInt(15) > 10) { // randomly select if we should cheat
+            // cheat
+            if (game.getCurrentRound().getCardsInTheMiddle().getCards().size() == 0)
+                // we can play any color we want, we cant cheat:(
+                possibleCards = cards;
+            else
+                possibleCards =
+                        cards.stream()
+                                .filter(
+                                        card ->
+                                                !card.getColor()
+                                                        .equals(
+                                                                game.getCurrentRound()
+                                                                        .getCardsInTheMiddle()
+                                                                        .getCards()
+                                                                        .get(0)
+                                                                        .getColor()))
+                                .toList();
+            ;
+
+        } else {
+            // do not cheat
+
+            if (game.getCurrentRound().getCardsInTheMiddle().getCards().size() == 0) {
+                // we can play any color we want
+                possibleCards = cards;
+            } else {
+                // we can only play cards with the same color
+                possibleCards =
+                        cards.stream()
+                                .filter(
+                                        card ->
+                                                card.getColor()
+                                                        .equals(
+                                                                game.getCurrentRound()
+                                                                        .getCardsInTheMiddle()
+                                                                        .getCards()
+                                                                        .get(0)
+                                                                        .getColor()))
+                                .toList();
+                // wizzards and jesters always allowed
+                possibleCards.addAll(
+                        cards.stream()
+                                .filter(
+                                        card ->
+                                                card.getColor()
+                                                        .equals(
+                                                                game.getCurrentRound()
+                                                                        .getCardsInTheMiddle()
+                                                                        .trump
+                                                                        .getColor()))
+                                .toList());
+
+                if (possibleCards.size() == 0)
+                    possibleCards = cards; // if we do not have a color we can play any card we want
+            }
+        }
+        updater.update(
+                Updater.newRandomCardPlayedResponse()); // inform client to disable the card play
+        possibleCards.sort(
+                (o1, o2) -> {
+                    // card is lower if it has lower value or is not trump and the other card is
+                    if (((o1.getValue().getNumber() < o2.getValue().getNumber())
+                                    || (!o1.getColor()
+                                                    .equals(
+                                                            game.getCurrentRound()
+                                                                    .getTrump()
+                                                                    .getColor())
+                                            && o2.getColor()
+                                                    .equals(
+                                                            game.getCurrentRound()
+                                                                    .getTrump()
+                                                                    .getColor())))
+                            && (!(!o2.getColor()
+                                            .equals(game.getCurrentRound().getTrump().getColor())
+                                    && o1.getColor()
+                                            .equals(game.getCurrentRound().getTrump().getColor()))))
+                        return -1;
+                    else if (o1.getValue().getNumber() > o2.getValue().getNumber()
+                            || (!o2.getColor().equals(game.getCurrentRound().getTrump().getColor())
+                                    && o1.getColor()
+                                            .equals(game.getCurrentRound().getTrump().getColor())))
+                        return 1;
+                    else // must be equal
+                    return 0;
+                });
+        int indexOfCardToPlay;
+        if (estimate - takenTricks
+                > 1) // there are still more than one trick left to make-> select highest card
+        indexOfCardToPlay = possibleCards.size() - 1;
+        else if (estimate - takenTricks == 1) // if there is only one trick left randomly select it
+        indexOfCardToPlay = random.nextInt(possibleCards.size());
+        else
+            indexOfCardToPlay =
+                    0; // more tricks made than estimated or perfectly right just now ->select
+        // lowest card
+
+        timer.schedule(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        playCard(indexOfCardToPlay);
+                    }
+                },
+                100);
+
+        // updater.update(Updater.newOnGameBoardUpdate(cards,game.getCurrentRound().getCardsInTheMiddle().getCards()));
+        Logger.info("Playing random card for " + getName());
+    }
+
+    public void clearCardPlayTimeout() {
+        timer.cancel();
+        timer = new Timer();
+    }
+
     public void updatePoints() {
         Logger.debug("estimate for player {}: {}", playerId, estimate);
         Logger.debug("taken tricks for player {}: {}", playerId, takenTricks);
@@ -132,6 +263,7 @@ public class Player {
      * @param index
      */
     public void playCard(int index) {
+        clearCardPlayTimeout();
         try {
             Card card = cards.remove(index);
             game.playCard(card, this);
@@ -251,7 +383,6 @@ public class Player {
                                     new TimerTask() {
                                         public void run() {
                                             p.makeRandomEstimate();
-                                            // todo lock game session while making estimate
                                         }
                                     },
                                     Server.GAME_MOVE_TIMEOUT));

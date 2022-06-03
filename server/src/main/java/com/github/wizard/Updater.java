@@ -23,13 +23,13 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
     public static Response newOnTrickTakenResponse(Player player) {
         return Response.newBuilder()
                 .setType("1")
-                .setData(
-                        String.format(
-                                "Player %s has made this trick",
-                                player.getName()))
+                .setData(String.format("Player %s has made this trick", player.getName()))
                 .setStichMade(
-                        StichMade.newBuilder().setPlayerid(player.getPlayerId()+"").setPlayerName(player.getName()).setTotalstichebyplayer(player.getTakeTrick()+"").build()
-                )
+                        StichMade.newBuilder()
+                                .setPlayerid(player.getPlayerId() + "")
+                                .setPlayerName(player.getName())
+                                .setTotalstichebyplayer(player.getTakeTrick() + "")
+                                .build())
                 .build();
     }
 
@@ -103,5 +103,9 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
 
     public static Response newRandomEstimateCalcuatedResponse(String randomEstimate) {
         return Response.newBuilder().setType("8").setData(randomEstimate).build();
+    }
+
+    public static Response newRandomCardPlayedResponse() {
+        return Response.newBuilder().setType("9").build();
     }
 }

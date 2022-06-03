@@ -1,6 +1,5 @@
 package com.github.wizard.game;
 
-import com.github.wizard.Updater;
 import com.github.wizard.api.Card;
 import java.util.Random;
 import org.tinylog.Logger;
@@ -81,12 +80,14 @@ public final class Round {
             } else {
                 cardsInTheMiddle.reset();
                 players.updateGAmeBoard(cardsInTheMiddle.getCards());
-                winner.update(Updater.newCardPlayRequestResponse()); // request to start next trick
+                // winner.update(Updater.newCardPlayRequestResponse());
+                winner.playCardRequestWithTimeout(); // request to start next trick
             }
         } else {
             players.updateGAmeBoard(cardsInTheMiddle.getCards());
             Player nextPlayer = players.getNextPlayer(player);
-            nextPlayer.update(Updater.newCardPlayRequestResponse());
+            // nextPlayer.update(Updater.newCardPlayRequestResponse());
+            nextPlayer.playCardRequestWithTimeout();
             Logger.info("asking player {} to play", nextPlayer.getPlayerId());
         }
         // players.updateGAmeBoard(cardsInTheMiddle.getCards()); //-> moved because Gameboard needs

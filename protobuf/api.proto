@@ -50,6 +50,7 @@ syntax = "proto3";
  * 6: results for the current round and updated round nr like points/roundNr
  * 7: game ended successfully
  * 8: your estimate was chosen randomly
+ * 9: random card was played
  */
         message Response {
         string type = 1;

@@ -143,7 +143,8 @@ public class GameTests {
 
         round.playCard(mock(Card.class), mocked_player1);
 
-        verify(mocked_player2).update(Updater.newCardPlayRequestResponse());
+        // verify(mocked_player2).update(Updater.newCardPlayRequestResponse()); not applicable any
+        // more
         verify(mocked_player2).update(Updater.newOnGameBoardUpdate(null, null));
     }
 
