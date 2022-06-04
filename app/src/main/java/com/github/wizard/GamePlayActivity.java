@@ -182,7 +182,7 @@ public class GamePlayActivity extends AppCompatActivity {
         serverWaitingQueue.add(newGameMove(3, playername));
     }
 
-    public void updatePlayersInRecyclerView(ArrayList<ClientPlayer> realplayers) {
+    public void updatePlayersInRecyclerView(List<ClientPlayer> realplayers) {
         players = realplayers; // include myself for scoreboard
         // remove myself
         for (ClientPlayer cPlayer : realplayers) {
@@ -696,7 +696,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                                                     activity, response));
                                             break;
                                         case "9":
-                                            activity.runOnUiThread(() -> randomCardPlayed());
+                                            activity.runOnUiThread(GamePlayActivity.this::randomCardPlayed);
                                             break;
 
                                         default:

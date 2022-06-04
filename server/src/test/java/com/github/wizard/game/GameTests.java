@@ -115,8 +115,8 @@ public class GameTests {
         player1.makeEstimate(0);
         player2.makeEstimate(1);
 
-        player1.takeTrick(0);
-        player2.takeTrick(0);
+        player1.takeTrick();
+        player2.takeTrick();
 
         Round round = new Round(game_withMockedPlayers, trickMocked, 1);
         when(trickMocked.getCardsPlayed()).thenReturn(2);

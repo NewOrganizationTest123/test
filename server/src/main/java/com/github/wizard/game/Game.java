@@ -83,7 +83,6 @@ public class Game {
         if (nextPlayer == null)
             nextPlayer =
                     players.getNextPlayer(players.get(0)); // the host shall start the first round
-        // nextPlayer.update(Updater.newCardPlayRequestResponse());
         nextPlayer.playCardRequestWithTimeout();
         Logger.info(
                 "asking player {} to play the first card after all estimates were received",

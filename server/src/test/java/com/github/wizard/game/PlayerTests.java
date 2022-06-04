@@ -75,8 +75,8 @@ public class PlayerTests {
     @Test
     public void updatePointsCorrectPrediction() {
         player.makeEstimate(2);
-        player.takeTrick(0);
-        player.takeTrick(0);
+        player.takeTrick();
+        player.takeTrick();
 
         player.updatePoints();
 
@@ -85,8 +85,8 @@ public class PlayerTests {
 
     @Test
     public void updatePointsWithoutPrediction() {
-        player.takeTrick(0);
-        player.takeTrick(1);
+        player.takeTrick();
+        player.takeTrick();
 
         player.updatePoints();
 
@@ -96,8 +96,8 @@ public class PlayerTests {
     @Test
     public void updatePointsIncorrectPrediction() {
         player.makeEstimate(4);
-        player.takeTrick(0);
-        player.takeTrick(0);
+        player.takeTrick();
+        player.takeTrick();
 
         player.updatePoints();
 

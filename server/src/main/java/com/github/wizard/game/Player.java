@@ -66,10 +66,10 @@ public class Player {
     public void makeEstimate(int estimate) {
         this.estimate = estimate;
         timer.cancel();
-        timer = new Timer(playerId + ""); // we need a new timer after cancel();
+        timer = new Timer(playerId + ""); // we need a new timer after cancel
     }
 
-    public void takeTrick(int value) {
+    public void takeTrick() {
         takenTricks++;
     }
 
@@ -304,12 +304,10 @@ public class Player {
                     > 10) { // we should be able to make a stich with anything greater 8, this
                 // includes wizzards
                 estimate++;
-                continue;
-            }
-            if (game.getCurrentRound().getTrump().getColor().equals(c.getColor())
-                    && c.getValue().getNumber() > 7) { // should also be able to win with a trumpf
+                            }
+            else if (game.getCurrentRound().getTrump().getColor().equals(c.getColor())
+                    && c.getValue().getNumber() > 7&&c.getValue().getNumber() <=10) { // should also be able to win with a trumpf
                 estimate++;
-                continue;
             }
         }
 
@@ -364,8 +362,8 @@ public class Player {
             forEach(p -> p.update(Updater.newOnGameBoardUpdate(p.getCards(), tableCards)));
         }
 
-        public void finishTrick(Player winningPlayer, int value) {
-            winningPlayer.takeTrick(value);
+        public void finishTrick(Player winningPlayer) {
+            winningPlayer.takeTrick();
             forEach(p -> p.update(Updater.newOnTrickTakenResponse(winningPlayer)));
         }
 

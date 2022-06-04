@@ -71,8 +71,7 @@ public final class Round {
                                 public void run() {
                                     Player winner = cardsInTheMiddle.getWinningPlayer();
                                     players.finishTrick(
-                                            winner,
-                                            cardsInTheMiddle.getValue()); // notify other players
+                                            winner); // notify other players
 
                                     if (winner.cardsLeft() == 0) {
                                         players.notifyAboutPointsAndRound(number);
