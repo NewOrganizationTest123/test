@@ -69,6 +69,10 @@ public class Player {
         timer = new Timer(playerId + ""); // we need a new timer after cancel
     }
 
+    public int getEstimate() {
+        return estimate;
+    }
+
     public void takeTrick() {
         takenTricks++;
     }
@@ -91,9 +95,9 @@ public class Player {
     /**
      * this will return a list of all playable cards, cheating is decided randomly
      * @param cheatingFactor how likely it is that the player tries to cheat. Value between 0 and 100
-     * @return an onordered list of the requested cards
+     * @return an Unordered list of the requested cards, duplicates are possible
      */
-    private List<Card> getPossibleCards(int cheatingFactor){
+    public List<Card> getPossibleCards(int cheatingFactor){
         ArrayList<Card> possibleCards = new ArrayList<>();
 
         if (random.nextInt(100) >(100- cheatingFactor)) { // randomly select if we should cheat
@@ -143,8 +147,7 @@ public class Player {
                                                 card.getColor()
                                                         .equals(
                                                                 game.getCurrentRound()
-                                                                        .getCardsInTheMiddle()
-                                                                        .trump
+                                                                        .getTrump()
                                                                         .getColor()))
                                 .toList());
 
@@ -160,7 +163,7 @@ public class Player {
      * @param possibleCards a list of the possible cards
      * @return list ordered from lowest to highest
      */
-    private List<Card> sortPossibleCards(List<Card> possibleCards){
+    public List<Card> sortPossibleCards(List<Card> possibleCards){
         possibleCards.sort(
                 (o1, o2) -> {
                     // card is lower if it has lower value or is not trump and the other card is
@@ -191,6 +194,18 @@ public class Player {
         return possibleCards;
     }
 
+    public int selectCardToPlay(List<Card> possibleCards){
+        if (estimate - takenTricks
+                > 1) // there are still more than one trick left to make-> select highest card
+            return possibleCards.size() - 1;
+        else if (estimate - takenTricks == 1) // if there is only one trick left randomly select it
+            return  random.nextInt(possibleCards.size());
+        else
+            return
+                    0; // more tricks made than estimated or perfectly right just now ->select
+        // lowest card
+    }
+
 
     private void playRandomCard() {
         List<Card> possibleCards=getPossibleCards(25);
@@ -199,16 +214,7 @@ public class Player {
                 Updater.newRandomCardPlayedResponse()); // inform client to disable the card play
         possibleCards=sortPossibleCards(possibleCards);
 
-        int indexOfCardToPlay;
-        if (estimate - takenTricks
-                > 1) // there are still more than one trick left to make-> select highest card
-            indexOfCardToPlay = possibleCards.size() - 1;
-        else if (estimate - takenTricks == 1) // if there is only one trick left randomly select it
-            indexOfCardToPlay = random.nextInt(possibleCards.size());
-        else
-            indexOfCardToPlay =
-                    0; // more tricks made than estimated or perfectly right just now ->select
-        // lowest card
+        int indexOfCardToPlay=selectCardToPlay(possibleCards);
 
         timer.schedule(
                 new TimerTask() {
