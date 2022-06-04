@@ -88,13 +88,17 @@ public class Player {
                 Server.GAME_MOVE_TIMEOUT);
     }
 
-    private void playRandomCard() {
+    /**
+     * this will return a list of all playable cards, cheating is decided randomly
+     * @param cheatingFactor how likely it is that the player tries to cheat. Value between 0 and 100
+     * @return an onordered list of the requested cards
+     */
+    private List<Card> getPossibleCards(int cheatingFactor){
         ArrayList<Card> possibleCards = new ArrayList<>();
-        // cards.stream().filter(card -> {card.getColor().equals()})
 
-        if (random.nextInt(15) > 10) { // randomly select if we should cheat
+        if (random.nextInt(100) >(100- cheatingFactor)) { // randomly select if we should cheat
             // cheat
-            if (game.getCurrentRound().getCardsInTheMiddle().getCards().size() == 0)
+            if (game.getCurrentRound().getCardsInTheMiddle().getCards().isEmpty())
                 // we can play any color we want, we cant cheat:(
                 possibleCards = cards;
             else {
@@ -114,7 +118,7 @@ public class Player {
         } else {
             // do not cheat
 
-            if (game.getCurrentRound().getCardsInTheMiddle().getCards().size() == 0) {
+            if (game.getCurrentRound().getCardsInTheMiddle().getCards().isEmpty()) {
                 // we can play any color we want
                 possibleCards = cards;
             } else {
@@ -144,45 +148,63 @@ public class Player {
                                                                         .getColor()))
                                 .toList());
 
-                if (possibleCards.size() == 0)
+                if (possibleCards.isEmpty())
                     possibleCards = cards; // if we do not have a color we can play any card we want
             }
         }
-        updater.update(
-                Updater.newRandomCardPlayedResponse()); // inform client to disable the card play
+        return possibleCards;
+    }
+
+    /**
+     * sorts a list of card depending on their value for the current round
+     * @param possibleCards a list of the possible cards
+     * @return list ordered from lowest to highest
+     */
+    private List<Card> sortPossibleCards(List<Card> possibleCards){
         possibleCards.sort(
                 (o1, o2) -> {
                     // card is lower if it has lower value or is not trump and the other card is
                     if (((o1.getValue().getNumber() < o2.getValue().getNumber())
-                                    || (!o1.getColor()
-                                                    .equals(
-                                                            game.getCurrentRound()
-                                                                    .getTrump()
-                                                                    .getColor())
-                                            && o2.getColor()
-                                                    .equals(
-                                                            game.getCurrentRound()
-                                                                    .getTrump()
-                                                                    .getColor())))
+                            || (!o1.getColor()
+                            .equals(
+                                    game.getCurrentRound()
+                                            .getTrump()
+                                            .getColor())
+                            && o2.getColor()
+                            .equals(
+                                    game.getCurrentRound()
+                                            .getTrump()
+                                            .getColor())))
                             && (!(!o2.getColor()
-                                            .equals(game.getCurrentRound().getTrump().getColor())
-                                    && o1.getColor()
-                                            .equals(game.getCurrentRound().getTrump().getColor()))))
+                            .equals(game.getCurrentRound().getTrump().getColor())
+                            && o1.getColor()
+                            .equals(game.getCurrentRound().getTrump().getColor()))))
                         return -1;
                     else if (o1.getValue().getNumber() > o2.getValue().getNumber()
                             || (!o2.getColor().equals(game.getCurrentRound().getTrump().getColor())
-                                    && o1.getColor()
-                                            .equals(game.getCurrentRound().getTrump().getColor())))
+                            && o1.getColor()
+                            .equals(game.getCurrentRound().getTrump().getColor())))
                         return 1;
                     else // must be equal
-                    return 0;
+                        return 0;
                 });
+        return possibleCards;
+    }
+
+
+    private void playRandomCard() {
+        List<Card> possibleCards=getPossibleCards(25);
+
+        updater.update(
+                Updater.newRandomCardPlayedResponse()); // inform client to disable the card play
+        possibleCards=sortPossibleCards(possibleCards);
+
         int indexOfCardToPlay;
         if (estimate - takenTricks
                 > 1) // there are still more than one trick left to make-> select highest card
-        indexOfCardToPlay = possibleCards.size() - 1;
+            indexOfCardToPlay = possibleCards.size() - 1;
         else if (estimate - takenTricks == 1) // if there is only one trick left randomly select it
-        indexOfCardToPlay = random.nextInt(possibleCards.size());
+            indexOfCardToPlay = random.nextInt(possibleCards.size());
         else
             indexOfCardToPlay =
                     0; // more tricks made than estimated or perfectly right just now ->select
@@ -197,7 +219,6 @@ public class Player {
                 },
                 100);
 
-        // updater.update(Updater.newOnGameBoardUpdate(cards,game.getCurrentRound().getCardsInTheMiddle().getCards()));
         Logger.info("Playing random card for " + getName());
     }
 
@@ -297,29 +318,29 @@ public class Player {
 
     /** Will create some number according to some criterion that might be the estimate */
     public void makeRandomEstimate() {
-        int estimate = 0;
+        int randomEstimate = 0;
         // count High cards
         for (Card c : cards) {
             if (c.getValue().getNumber()
                     > 10) { // we should be able to make a stich with anything greater 8, this
                 // includes wizzards
-                estimate++;
+                randomEstimate++;
                             }
             else if (game.getCurrentRound().getTrump().getColor().equals(c.getColor())
                     && c.getValue().getNumber() > 7&&c.getValue().getNumber() <=10) { // should also be able to win with a trumpf
-                estimate++;
+                randomEstimate++;
             }
         }
 
-        estimate +=
+        randomEstimate +=
                 random.nextInt(
-                        game.getRoundNr() - estimate - 1 > 0
-                                ? game.getRoundNr() - estimate - 1
+                        game.getRoundNr() - randomEstimate - 1 > 0
+                                ? game.getRoundNr() - randomEstimate - 1
                                 : 1); // add some random amount to make it interesting
 
-        this.estimate = estimate;
+        this.estimate = randomEstimate;
 
-        updater.update(Updater.newRandomEstimateCalcuatedResponse(estimate + ""));
+        updater.update(Updater.newRandomEstimateCalcuatedResponse(randomEstimate + ""));
         Logger.info("Estimate for " + name + " was chosen randomly");
         if (game.allEstimatesSubmitted()) game.playFirstCard(); // continue the gameplay
     }
@@ -348,8 +369,6 @@ public class Player {
         /** will ask all players to notify about their points and current round nr */
         public void notifyAboutPointsAndRound(int roundNumber) {
             forEach(Player::updatePoints);
-            // forEach(p -> p.update(Updater.newOnRoundFinishedResponse(p.getPoints(),
-            // roundNumber)));
             forEach(
                     p ->
                             p.update(
@@ -400,14 +419,14 @@ public class Player {
 
         /** This will close all connections to the players. No more calls are allowed after this! */
         public void unsubscribeAllPlayers() {
-            forEach(p -> p.unsubscribe());
+            forEach(Player::unsubscribe);
         }
 
         public Player getNextPlayer(Player currentPlayer) {
             return super.get((currentPlayer.playerId + 1) % size());
         }
 
-        public ArrayList<GrpcPlayer> getGrpcPlayerList() {
+        public List<GrpcPlayer> getGrpcPlayerList() {
             ArrayList<GrpcPlayer> playerArrayList = new ArrayList<>();
             for (Player p : game.players) {
                 playerArrayList.add(
