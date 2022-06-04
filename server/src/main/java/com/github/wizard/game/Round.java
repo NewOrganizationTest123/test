@@ -70,8 +70,7 @@ public final class Round {
                                 @Override
                                 public void run() {
                                     Player winner = cardsInTheMiddle.getWinningPlayer();
-                                    players.finishTrick(
-                                            winner); // notify other players
+                                    players.finishTrick(winner); // notify other players
 
                                     if (winner.cardsLeft() == 0) {
                                         players.notifyAboutPointsAndRound(number);

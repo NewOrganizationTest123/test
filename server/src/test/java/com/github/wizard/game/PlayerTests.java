@@ -145,11 +145,12 @@ public class PlayerTests {
                 () -> player.playCard(1),
                 "I wanted to play a card I did not have");
     }
+
     @Test
-    @RepeatedTest(50)//run this multiple times to cover all random scenarios
-    public void testMakeRandomEstimate(){
+    @RepeatedTest(50) // run this multiple times to cover all random scenarios
+    public void testMakeRandomEstimate() {
         when(game.getRoundNr()).thenReturn(1);
-        Updater mockUpdater=mock(Updater.class);
+        Updater mockUpdater = mock(Updater.class);
         player.setUpdater(mockUpdater);
 
         assertFalse(player.estimateSubmitted());
@@ -158,100 +159,127 @@ public class PlayerTests {
     }
 
     @Test
-    @RepeatedTest(10)//run this multiple times to cover all random scenarios
-    public void testMakeRandomEstimateWizzards(){
+    @RepeatedTest(10) // run this multiple times to cover all random scenarios
+    public void testMakeRandomEstimateWizzards() {
         when(game.getRoundNr()).thenReturn(2);
-        ArrayList<Card> wizzards=new ArrayList<>();
-        wizzards.add(Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.WIZARD).build());
-        wizzards.add(Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.WIZARD).build());
-        Trick mockedTrick=mock(Trick.class);
+        ArrayList<Card> wizzards = new ArrayList<>();
+        wizzards.add(
+                Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.WIZARD).build());
+        wizzards.add(
+                Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.WIZARD).build());
+        Trick mockedTrick = mock(Trick.class);
 
         player.giveMeCards(wizzards);
 
-        Updater mockUpdater=mock(Updater.class);
+        Updater mockUpdater = mock(Updater.class);
         player.setUpdater(mockUpdater);
 
         assertFalse(player.estimateSubmitted());
         player.makeRandomEstimate();
         assertTrue(player.estimateSubmitted());
-        assertTrue(player.getEstimate()>=2);//every wizzard counts at least one
+        assertTrue(player.getEstimate() >= 2); // every wizzard counts at least one
     }
 
     @Test
-    @RepeatedTest(10)//run this multiple times to cover all random scenarios
-    public void testMakeRandomEstimateTrumpf(){
+    @RepeatedTest(10) // run this multiple times to cover all random scenarios
+    public void testMakeRandomEstimateTrumpf() {
         when(game.getRoundNr()).thenReturn(2);
-        ArrayList<Card> cardArrayList=new ArrayList<>();
-        cardArrayList.add(Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.NINE).build());
-        cardArrayList.add(Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.TEN).build());
-        Round mockedRound=mock(Round.class);
+        ArrayList<Card> cardArrayList = new ArrayList<>();
+        cardArrayList.add(
+                Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.NINE).build());
+        cardArrayList.add(
+                Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.TEN).build());
+        Round mockedRound = mock(Round.class);
         when(game.getCurrentRound()).thenReturn(mockedRound);
-        when(mockedRound.getTrump()).thenReturn(Card.newBuilder().setValue(Card.Value.EIGHT).setColor(Card.Color.RED).build());//red is trump
+        when(mockedRound.getTrump())
+                .thenReturn(
+                        Card.newBuilder()
+                                .setValue(Card.Value.EIGHT)
+                                .setColor(Card.Color.RED)
+                                .build()); // red is trump
         player.giveMeCards(cardArrayList);
 
-        Updater mockUpdater=mock(Updater.class);
+        Updater mockUpdater = mock(Updater.class);
         player.setUpdater(mockUpdater);
 
         assertFalse(player.estimateSubmitted());
         player.makeRandomEstimate();
         assertTrue(player.estimateSubmitted());
-        assertTrue(player.getEstimate()>=2);//every wizzard counts at least one
+        assertTrue(player.getEstimate() >= 2); // every wizzard counts at least one
     }
+
     @Test
-    @RepeatedTest(10)//run this multiple times to cover all random scenarios
-    public void testGetPossibleCardsAndSortNoCheating(){
+    @RepeatedTest(10) // run this multiple times to cover all random scenarios
+    public void testGetPossibleCardsAndSortNoCheating() {
         when(game.getRoundNr()).thenReturn(3);
-        ArrayList<Card> cardArrayList=new ArrayList<>();
-        cardArrayList.add(Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.NINE).build());
-        cardArrayList.add(Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.TEN).build());
-        cardArrayList.add(Card.newBuilder().setColor(Card.Color.GREEN).setValue(Card.Value.TEN).build());
-        Round mockedRound=mock(Round.class);
+        ArrayList<Card> cardArrayList = new ArrayList<>();
+        cardArrayList.add(
+                Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.NINE).build());
+        cardArrayList.add(
+                Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.TEN).build());
+        cardArrayList.add(
+                Card.newBuilder().setColor(Card.Color.GREEN).setValue(Card.Value.TEN).build());
+        Round mockedRound = mock(Round.class);
         when(game.getCurrentRound()).thenReturn(mockedRound);
-        Trick mockedTrick=mock(Trick.class);
+        Trick mockedTrick = mock(Trick.class);
         when(mockedRound.getCardsInTheMiddle()).thenReturn(mockedTrick);
-        ArrayList<Card> playedCards=new ArrayList<>();
-        playedCards.add(Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.THIRTEEN).build());//as red is on the table we need to play red
-        when(mockedRound.getTrump()).thenReturn(Card.newBuilder().setValue(Card.Value.EIGHT).setColor(Card.Color.RED).build());//red is trump
+        ArrayList<Card> playedCards = new ArrayList<>();
+        playedCards.add(
+                Card.newBuilder()
+                        .setColor(Card.Color.RED)
+                        .setValue(Card.Value.THIRTEEN)
+                        .build()); // as red is on the table we need to play red
+        when(mockedRound.getTrump())
+                .thenReturn(
+                        Card.newBuilder()
+                                .setValue(Card.Value.EIGHT)
+                                .setColor(Card.Color.RED)
+                                .build()); // red is trump
         when(mockedTrick.getCards()).thenReturn(playedCards);
         player.giveMeCards(cardArrayList);
 
-        List<Card> possibleCards=player.getPossibleCards(0);
-        //red cards are allowed but not green ones
+        List<Card> possibleCards = player.getPossibleCards(0);
+        // red cards are allowed but not green ones
         assertTrue(possibleCards.contains(cardArrayList.get(0)));
         assertTrue(possibleCards.contains(cardArrayList.get(1)));
         assertFalse(possibleCards.contains(cardArrayList.get(2)));
 
         player.sortPossibleCards(possibleCards);
         assertTrue(possibleCards.get(0).equals(cardArrayList.get(0)));
-        assertTrue(possibleCards.get(possibleCards.size()-1).equals(cardArrayList.get(1)));
-        player.makeEstimate(10);//this will result in us always playing the higher card
-        assertEquals(possibleCards.size()-1,player.selectCardToPlay(possibleCards));
-
+        assertTrue(possibleCards.get(possibleCards.size() - 1).equals(cardArrayList.get(1)));
+        player.makeEstimate(10); // this will result in us always playing the higher card
+        assertEquals(possibleCards.size() - 1, player.selectCardToPlay(possibleCards));
     }
+
     @Test
-    @RepeatedTest(50)//run this multiple times to cover all random scenarios
-    public void testGetPossibleCardsCheating(){
+    @RepeatedTest(50) // run this multiple times to cover all random scenarios
+    public void testGetPossibleCardsCheating() {
         when(game.getRoundNr()).thenReturn(3);
-        ArrayList<Card> cardArrayList=new ArrayList<>();
-        cardArrayList.add(Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.NINE).build());
-        cardArrayList.add(Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.TEN).build());
-        cardArrayList.add(Card.newBuilder().setColor(Card.Color.GREEN).setValue(Card.Value.TEN).build());
-        Round mockedRound=mock(Round.class);
+        ArrayList<Card> cardArrayList = new ArrayList<>();
+        cardArrayList.add(
+                Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.NINE).build());
+        cardArrayList.add(
+                Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.TEN).build());
+        cardArrayList.add(
+                Card.newBuilder().setColor(Card.Color.GREEN).setValue(Card.Value.TEN).build());
+        Round mockedRound = mock(Round.class);
         when(game.getCurrentRound()).thenReturn(mockedRound);
-        Trick mockedTrick=mock(Trick.class);
+        Trick mockedTrick = mock(Trick.class);
         when(mockedRound.getCardsInTheMiddle()).thenReturn(mockedTrick);
-        ArrayList<Card> playedCards=new ArrayList<>();
-        playedCards.add(Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.THIRTEEN).build());//as red is on the table we need to play red
+        ArrayList<Card> playedCards = new ArrayList<>();
+        playedCards.add(
+                Card.newBuilder()
+                        .setColor(Card.Color.RED)
+                        .setValue(Card.Value.THIRTEEN)
+                        .build()); // as red is on the table we need to play red
         when(mockedTrick.getCards()).thenReturn(playedCards);
         player.giveMeCards(cardArrayList);
 
-        List<Card> possibleCards=player.getPossibleCards(101);
-        //red cards are allowed but not green ones, we wanted to cheat therefor we will get only the green one.
+        List<Card> possibleCards = player.getPossibleCards(101);
+        // red cards are allowed but not green ones, we wanted to cheat therefor we will get only
+        // the green one.
         assertFalse(possibleCards.contains(cardArrayList.get(0)));
         assertFalse(possibleCards.contains(cardArrayList.get(1)));
         assertTrue(possibleCards.contains(cardArrayList.get(2)));
     }
-
-
-
 }

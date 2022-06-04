@@ -696,7 +696,8 @@ public class GamePlayActivity extends AppCompatActivity {
                                                                     activity, response));
                                             break;
                                         case "9":
-                                            activity.runOnUiThread(GamePlayActivity.this::randomCardPlayed);
+                                            activity.runOnUiThread(
+                                                    GamePlayActivity.this::randomCardPlayed);
                                             break;
 
                                         default:
