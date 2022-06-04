@@ -128,7 +128,6 @@ public class GameTests {
                             @Override
                             public void run() {
                                 verify(trickMocked).getWinningPlayer();
-                                verify(trickMocked).getValue();
                                 verify(mocked_player1).cardsLeft();
 
                                 verify(mocked_player2)

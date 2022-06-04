@@ -33,28 +33,6 @@ public class Trick {
     public int getCardsPlayed() {
         return getCards().size();
     }
-    /**
-     * should return the value for a given Trick
-     *
-     * @return
-     */
-    public int getValue() {
-        Card.Color firstColor =
-                getCards().get(0).getColor(); // as only cards of similar color and wizards count
-
-        return getCards().stream()
-                .map(
-                        card -> {
-                            if (card.getColor() != firstColor
-                                    || card.getValue() == Card.Value.WIZARD
-                                    || card.getValue() == Card.Value.JESTER) {
-                                return 0;
-                            }
-                            return card.getValue().getNumber();
-                        })
-                .reduce(Integer::sum)
-                .orElse(-1);
-    }
 
     public Player getWinningPlayer() {
         Card.Color firstColor =

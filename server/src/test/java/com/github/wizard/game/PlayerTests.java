@@ -28,7 +28,7 @@ public class PlayerTests {
     // @Mock private StreamObserver<Response> responseObserverMock;
 
     @BeforeEach
-    public void init() {
+    void init() {
         player = new Player("player_name");
         card1 = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.SEVEN).build();
         card2 = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.TWO).build();
@@ -39,21 +39,21 @@ public class PlayerTests {
     }
 
     @Test
-    public void testAddPoints() {
+    void testAddPoints() {
         assertEquals(0, player.getPoints());
         player.addPoints(30);
         assertEquals(30, player.getPoints());
     }
 
     @Test
-    public void testSubtractPoints() {
+    void testSubtractPoints() {
         assertEquals(0, player.getPoints());
         player.subtractPoints(10);
         assertEquals(-10, player.getPoints());
     }
 
     @Test
-    public void testGiveMeCards() {
+    void testGiveMeCards() {
         assertEquals(0, player.getCards().size());
         when(game.getRoundNr()).thenReturn(2);
 
@@ -63,7 +63,7 @@ public class PlayerTests {
     }
 
     @Test
-    public void testPlayCard() {
+    void testPlayCard() {
         when(game.getRoundNr()).thenReturn(2);
         player.giveMeCards(cards);
         assertTrue(player.getCards().contains(card1));
@@ -74,7 +74,7 @@ public class PlayerTests {
     }
 
     @Test
-    public void updatePointsCorrectPrediction() {
+    void updatePointsCorrectPrediction() {
         player.makeEstimate(2);
         player.takeTrick();
         player.takeTrick();
@@ -85,7 +85,7 @@ public class PlayerTests {
     }
 
     @Test
-    public void updatePointsWithoutPrediction() {
+    void updatePointsWithoutPrediction() {
         player.takeTrick();
         player.takeTrick();
 
@@ -95,7 +95,7 @@ public class PlayerTests {
     }
 
     @Test
-    public void updatePointsIncorrectPrediction() {
+    void updatePointsIncorrectPrediction() {
         player.makeEstimate(4);
         player.takeTrick();
         player.takeTrick();
@@ -106,21 +106,21 @@ public class PlayerTests {
     }
 
     @Test
-    public void isNotSubscribed() {
+    void isNotSubscribed() {
         player.setUpdater(null);
 
         assertFalse(player.isSubscribed());
     }
 
     @Test
-    public void isSubscribed() {
+    void isSubscribed() {
         player.setUpdater(mock(Updater.class));
 
         assertTrue(player.isSubscribed());
     }
 
     @Test
-    public void giveInvalidCardAmount() {
+    void giveInvalidCardAmount() {
         List<Card> cardsMock = mock(ArrayList.class);
         when(game.getRoundNr()).thenReturn(4);
         when(cardsMock.size()).thenReturn(3);
@@ -132,7 +132,7 @@ public class PlayerTests {
     }
 
     @Test
-    public void playInvalidCard() {
+    void playInvalidCard() {
         when(game.getRoundNr()).thenReturn(1);
 
         Card yellow1 =
@@ -146,9 +146,8 @@ public class PlayerTests {
                 "I wanted to play a card I did not have");
     }
 
-    @Test
     @RepeatedTest(50) // run this multiple times to cover all random scenarios
-    public void testMakeRandomEstimate() {
+    void testMakeRandomEstimate() {
         when(game.getRoundNr()).thenReturn(1);
         Updater mockUpdater = mock(Updater.class);
         player.setUpdater(mockUpdater);
@@ -158,16 +157,14 @@ public class PlayerTests {
         assertTrue(player.estimateSubmitted());
     }
 
-    @Test
     @RepeatedTest(10) // run this multiple times to cover all random scenarios
-    public void testMakeRandomEstimateWizzards() {
+    void testMakeRandomEstimateWizzards() {
         when(game.getRoundNr()).thenReturn(2);
         ArrayList<Card> wizzards = new ArrayList<>();
         wizzards.add(
                 Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.WIZARD).build());
         wizzards.add(
                 Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.WIZARD).build());
-        Trick mockedTrick = mock(Trick.class);
 
         player.giveMeCards(wizzards);
 
@@ -180,9 +177,8 @@ public class PlayerTests {
         assertTrue(player.getEstimate() >= 2); // every wizzard counts at least one
     }
 
-    @Test
     @RepeatedTest(10) // run this multiple times to cover all random scenarios
-    public void testMakeRandomEstimateTrumpf() {
+    void testMakeRandomEstimateTrumpf() {
         when(game.getRoundNr()).thenReturn(2);
         ArrayList<Card> cardArrayList = new ArrayList<>();
         cardArrayList.add(
@@ -208,9 +204,8 @@ public class PlayerTests {
         assertTrue(player.getEstimate() >= 2); // every wizzard counts at least one
     }
 
-    @Test
     @RepeatedTest(10) // run this multiple times to cover all random scenarios
-    public void testGetPossibleCardsAndSortNoCheating() {
+    void testGetPossibleCardsAndSortNoCheating() {
         when(game.getRoundNr()).thenReturn(3);
         ArrayList<Card> cardArrayList = new ArrayList<>();
         cardArrayList.add(
@@ -245,15 +240,14 @@ public class PlayerTests {
         assertFalse(possibleCards.contains(cardArrayList.get(2)));
 
         player.sortPossibleCards(possibleCards);
-        assertTrue(possibleCards.get(0).equals(cardArrayList.get(0)));
-        assertTrue(possibleCards.get(possibleCards.size() - 1).equals(cardArrayList.get(1)));
+        assertEquals(possibleCards.get(0), cardArrayList.get(0));
+        assertEquals(possibleCards.get(possibleCards.size() - 1), cardArrayList.get(1));
         player.makeEstimate(10); // this will result in us always playing the higher card
         assertEquals(possibleCards.size() - 1, player.selectCardToPlay(possibleCards));
     }
 
-    @Test
     @RepeatedTest(50) // run this multiple times to cover all random scenarios
-    public void testGetPossibleCardsCheating() {
+    void testGetPossibleCardsCheating() {
         when(game.getRoundNr()).thenReturn(3);
         ArrayList<Card> cardArrayList = new ArrayList<>();
         cardArrayList.add(
