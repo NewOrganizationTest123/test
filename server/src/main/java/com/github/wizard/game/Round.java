@@ -80,9 +80,6 @@ public final class Round {
                                         // quit game if it was the last round
                                         if (players.size() * (game.getRoundNr() + 1)
                                                 >= game.deck.getCardsAvailable()) {
-                                            // if (players.size() * (game.getRoundNr()+1) >= 6)
-                                            // {//for testing with a
-                                            // limited number of cards only only
                                             game.endGame();
                                             return;
                                         }
@@ -94,7 +91,6 @@ public final class Round {
                                     } else {
                                         cardsInTheMiddle.reset();
                                         players.updateGAmeBoard(cardsInTheMiddle.getCards());
-                                        // winner.update(Updater.newCardPlayRequestResponse());
                                         winner.playCardRequestWithTimeout(); // request to start
                                         // next trick
                                     }
@@ -104,12 +100,8 @@ public final class Round {
         } else {
             players.updateGAmeBoard(cardsInTheMiddle.getCards());
             Player nextPlayer = players.getNextPlayer(player);
-            // nextPlayer.update(Updater.newCardPlayRequestResponse());
             nextPlayer.playCardRequestWithTimeout();
             Logger.info("asking player {} to play", nextPlayer.getPlayerId());
         }
-        // players.updateGAmeBoard(cardsInTheMiddle.getCards()); //-> moved because Gameboard needs
-        // to be updated before making a CardPlayRequest
-
     }
 }

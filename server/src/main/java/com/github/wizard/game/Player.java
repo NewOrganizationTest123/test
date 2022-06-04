@@ -17,6 +17,7 @@ public class Player {
     private byte playerId;
     Game game;
     boolean iHaveCHeatedFlag = false;
+    private static Random random = new Random();
 
     private Updater updater;
     private final ArrayList<Card> cards = new ArrayList<>();
@@ -91,7 +92,6 @@ public class Player {
         ArrayList<Card> possibleCards = new ArrayList<>();
         // cards.stream().filter(card -> {card.getColor().equals()})
 
-        Random random = new Random();
         if (random.nextInt(15) > 10) { // randomly select if we should cheat
             // cheat
             if (game.getCurrentRound().getCardsInTheMiddle().getCards().size() == 0)
@@ -312,9 +312,9 @@ public class Player {
                 continue;
             }
         }
-        Random rand = new Random();
+
         estimate +=
-                rand.nextInt(
+                random.nextInt(
                         game.getRoundNr() - estimate - 1 > 0
                                 ? game.getRoundNr() - estimate - 1
                                 : 1); // add some random amount to make it interesting

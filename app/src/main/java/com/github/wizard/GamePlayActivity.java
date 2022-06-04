@@ -38,6 +38,7 @@ import io.grpc.stub.StreamObserver;
 import java.lang.ref.WeakReference;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -51,8 +52,8 @@ public class GamePlayActivity extends AppCompatActivity {
     public static String gameId;
     public static String playerId;
     public static String playername;
-    public static int myPoints = 0;
-    public static ArrayList<ClientPlayer> players = new ArrayList<>();
+    private static int myPoints = 0;
+    private static List<ClientPlayer> players = new ArrayList<>();
     public static PlayersRecyclerviewAdapter players_adapter;
     public static CardsInHandRecyclerViewAdapter cards_adapter;
     public static CardsInTheMiddleRecyclerViewAdapter cards_middle_adapter;
@@ -72,7 +73,7 @@ public class GamePlayActivity extends AppCompatActivity {
     private RecyclerView cardsInTheMiddleRecyclerView;
     private TextView whosTurnIsItText;
     private int numberOfStitchesMade = 0;
-    private CountDownTimer cardPlayTimer;
+
     private int cardPlayTimerProgress;
     private CardsInHandRecyclerViewAdapter playcardadapter;
     private ArrayList<String> cards;
@@ -93,6 +94,10 @@ public class GamePlayActivity extends AppCompatActivity {
                 .setData(message)
                 .setType(type + "")
                 .build();
+    }
+
+    public static List<ClientPlayer> getPlayers() {
+        return players;
     }
 
     @Override
@@ -178,14 +183,14 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     public void updatePlayersInRecyclerView(ArrayList<ClientPlayer> realplayers) {
+        players = realplayers; // include myself for scoreboard
         // remove myself
         for (ClientPlayer cPlayer : realplayers) {
-            if (cPlayer.id.equals(playerId)) {
+            if (cPlayer.getId().equals(playerId)) {
                 realplayers.remove(cPlayer);
                 break;
             }
         }
-
         PlayersRecyclerviewAdapter newdapater = new PlayersRecyclerviewAdapter(this, realplayers);
         playersRecyclerView.setAdapter(newdapater);
     }
@@ -279,6 +284,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     private void allowPlayingCard() {
         // TODO: only allow playing Card when CardPlayRequest
+        CountDownTimer cardPlayTimer;
         playcardadapter = (CardsInHandRecyclerViewAdapter) cardsInHandRecyclerView.getAdapter();
         playcardadapter.activatePlayingCard();
         whosTurnIsItText.setText("Its your turn!");
@@ -291,8 +297,7 @@ public class GamePlayActivity extends AppCompatActivity {
                 new CountDownTimer(60000, 1000) {
                     @Override
                     public void onTick(long l) {
-                        cardPlayTimeout.setProgress(
-                                (int) cardPlayTimerProgress * 100 / (60000 / 1000));
+                        cardPlayTimeout.setProgress(cardPlayTimerProgress * 100 / (60000 / 1000));
                         cardPlayTimerProgress++;
                     }
 
@@ -480,8 +485,8 @@ public class GamePlayActivity extends AppCompatActivity {
                                             myPoints = Integer.parseInt(grpcPlayer.getPoints());
                                         // update points for other people
                                         for (ClientPlayer cPlayer : players) {
-                                            if (cPlayer.id.equals(grpcPlayer.getPlayerId())) {
-                                                cPlayer.points = grpcPlayer.getPoints();
+                                            if (cPlayer.getId().equals(grpcPlayer.getPlayerId())) {
+                                                cPlayer.setPoints(grpcPlayer.getPoints());
                                             }
                                         }
                                     }
@@ -515,8 +520,8 @@ public class GamePlayActivity extends AppCompatActivity {
                                             myPoints = Integer.parseInt(grpcPlayer.getPoints());
                                         // update points for other people
                                         for (ClientPlayer cPlayer : players) {
-                                            if (cPlayer.id.equals(grpcPlayer.getPlayerId())) {
-                                                cPlayer.points = grpcPlayer.getPoints();
+                                            if (cPlayer.getId().equals(grpcPlayer.getPlayerId())) {
+                                                cPlayer.setPoints(grpcPlayer.getPoints());
                                             }
                                         }
                                     }
@@ -555,8 +560,8 @@ public class GamePlayActivity extends AppCompatActivity {
                                             myPoints = Integer.parseInt(grpcPlayer.getPoints());
                                         // update points for other people
                                         for (ClientPlayer cPlayer : players) {
-                                            if (cPlayer.id.equals(grpcPlayer.getPlayerId())) {
-                                                cPlayer.points = grpcPlayer.getPoints();
+                                            if (cPlayer.getId().equals(grpcPlayer.getPlayerId())) {
+                                                cPlayer.setPoints(grpcPlayer.getPoints());
                                             }
                                         }
                                     }
@@ -691,8 +696,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                                                     activity, response));
                                             break;
                                         case "9":
-                                            activity.runOnUiThread(
-                                                    () -> randomCardPlayed(activity));
+                                            activity.runOnUiThread(() -> randomCardPlayed());
                                             break;
 
                                         default:
@@ -761,7 +765,7 @@ public class GamePlayActivity extends AppCompatActivity {
         }
     }
 
-    private void randomCardPlayed(Activity activity) {
+    private void randomCardPlayed() {
         playcardadapter.endPlayingCard();
         ProgressBar cardPlayTimeout = findViewById(R.id.cardPlayTimeout);
         cardPlayTimeout.setVisibility(View.INVISIBLE);
@@ -781,11 +785,11 @@ public class GamePlayActivity extends AppCompatActivity {
     public class PlayersRecyclerviewAdapter
             extends RecyclerView.Adapter<PlayersRecyclerviewAdapter.ViewHolder> {
 
-        private ArrayList<ClientPlayer> players;
+        private List<ClientPlayer> players;
         private LayoutInflater layoutInflater;
         public String selectedPlayer;
 
-        PlayersRecyclerviewAdapter(Context context, ArrayList<ClientPlayer> players) {
+        PlayersRecyclerviewAdapter(Context context, List<ClientPlayer> players) {
             this.layoutInflater = LayoutInflater.from(context);
             this.players = players;
             selectedPlayer = null;
@@ -801,8 +805,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
-            String playername = players.get(position).name;
-            viewHolder.playername_holder.setText(playername);
+            viewHolder.playername_holder.setText(players.get(position).getName());
         }
 
         @Override
@@ -1293,7 +1296,7 @@ public class GamePlayActivity extends AppCompatActivity {
                         @Override
                         public void onTick(long l) {
                             submitEstimateTimeoutProgressBar.setProgress(
-                                    (int) progress * 100 / (60000 / 1000));
+                                    progress * 100 / (60000 / 1000));
                             progress++;
                         }
 
@@ -1304,7 +1307,6 @@ public class GamePlayActivity extends AppCompatActivity {
                                     "Wizzard",
                                     "Client timer submit estimate timed out, waiting for server to"
                                             + " calculate new estimate...");
-                            // estimateSend.setEnabled(false);
                             dismiss();
                         }
                     };
