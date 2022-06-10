@@ -7,6 +7,7 @@ import com.github.wizard.api.GameStatus;
 import com.github.wizard.api.GrpcPlayer;
 import com.github.wizard.api.PlayersList;
 import com.github.wizard.api.Response;
+import com.github.wizard.api.StichMade;
 import com.github.wizard.game.Player;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
@@ -19,13 +20,16 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
         responseStreamObserver.onNext(response);
     }
 
-    public static Response newOnTrickTakenResponse(Player player, int value) {
+    public static Response newOnTrickTakenResponse(Player player) {
         return Response.newBuilder()
                 .setType("1")
-                .setData(
-                        String.format(
-                                "Player %s has made this trick with value %s",
-                                player.getName(), value))
+                .setData(String.format("Player %s has made this trick", player.getName()))
+                .setStichMade(
+                        StichMade.newBuilder()
+                                .setPlayerid(player.getPlayerId() + "")
+                                .setPlayerName(player.getName())
+                                .setTotalstichebyplayer(player.getTakeTrick() + "")
+                                .build())
                 .build();
     }
 
@@ -55,25 +59,25 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
         return Response.newBuilder().setType("5").build();
     }
 
-    public static Response newOnRoundFinishedResponse(int points, int round) {
+    public static Response newOnRoundFinishedResponse(List<GrpcPlayer> playerList, int round) {
         return Response.newBuilder()
                 .setType("6")
-                .setData(points + "/" + round)
+                .setData("/" + round)
                 .setGameStatus(
                         GameStatus.newBuilder()
                                 .setRound(round + "")
-                                .setMyPoints(points + "")
+                                .addAllPlayers(playerList)
                                 .build())
                 .build();
     }
 
     public static Response newOnCheatingSubmittedResponse(
-            Player cheater, boolean succesfulOrNot, int points) {
+            Player cheater, boolean succesfulOrNot, List<GrpcPlayer> playerList) {
         return Response.newBuilder()
                 .setCheating(
                         CheatingSubmittedResult.newBuilder()
                                 .setCheaterId(cheater.getPlayerId() + "")
-                                .setNewPoints(points + "")
+                                .addAllPlayers(playerList)
                                 .setSuccesfulOrNot(succesfulOrNot + "")
                                 .build())
                 .build();
@@ -86,9 +90,22 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
                     GrpcPlayer.newBuilder()
                             .setPlayerName(p.getName())
                             .setPlayerId(p.getPlayerId() + "")
+                            .setPoints(p.getPoints() + "")
                             .build());
         return Response.newBuilder()
                 .setPlayerList(PlayersList.newBuilder().addAllPlayer(temp).build())
                 .build();
+    }
+
+    public static Response newEndGameResponse() {
+        return Response.newBuilder().setType("7").build();
+    }
+
+    public static Response newRandomEstimateCalcuatedResponse(String randomEstimate) {
+        return Response.newBuilder().setType("8").setData(randomEstimate).build();
+    }
+
+    public static Response newRandomCardPlayedResponse() {
+        return Response.newBuilder().setType("9").build();
     }
 }

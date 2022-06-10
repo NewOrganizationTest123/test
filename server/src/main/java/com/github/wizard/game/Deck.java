@@ -11,25 +11,15 @@ import java.util.stream.Stream;
 
 public class Deck {
 
-    public static final Card wizard;
-    public static final Card jester;
-
     public static final List<Card.Color> validColors;
     public static final List<Card.Value> validNumbers;
 
     public static final List<Card> allCards;
 
     static {
-        wizard = Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.WIZARD).build();
-
-        jester = Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.JESTER).build();
-
         validColors =
                 Arrays.stream(Card.Color.values())
-                        .filter(
-                                color ->
-                                        color != Card.Color.UNRECOGNIZED
-                                                && color != Card.Color.NONE)
+                        .filter(color -> color != Card.Color.UNRECOGNIZED)
                         .toList();
 
         validNumbers =
@@ -59,17 +49,26 @@ public class Deck {
     }
 
     private static List<Card> generateWizards() {
-        return IntStream.range(0, 4).mapToObj(i -> wizard).toList();
+        return validColors.stream()
+                .map(color -> Card.newBuilder().setColor(color).setValue(Card.Value.WIZARD).build())
+                .toList();
     }
 
     private static List<Card> generateJesters() {
-        return IntStream.range(0, 4).mapToObj(i -> jester).toList();
+        return validColors.stream()
+                .map(color -> Card.newBuilder().setColor(color).setValue(Card.Value.JESTER).build())
+                .toList();
     }
 
     private static List<Card> generateAllCards() {
         return Stream.of(generateJesters(), generateWizards(), generateNumberedCards())
                 .flatMap(List::stream)
                 .toList();
+    }
+
+    /** @return the number of cards available in the total game */
+    public int getCardsAvailable() {
+        return allCards.size();
     }
 
     private final Queue<Card> cards;

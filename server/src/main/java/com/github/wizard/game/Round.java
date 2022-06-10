@@ -1,6 +1,5 @@
 package com.github.wizard.game;
 
-import com.github.wizard.Updater;
 import com.github.wizard.api.Card;
 import java.util.Random;
 import java.util.Timer;
@@ -71,14 +70,18 @@ public final class Round {
                                 @Override
                                 public void run() {
                                     Player winner = cardsInTheMiddle.getWinningPlayer();
-                                    players.finishTrick(
-                                            winner,
-                                            cardsInTheMiddle.getValue()); // notify other players
+                                    players.finishTrick(winner); // notify other players
 
                                     if (winner.cardsLeft() == 0) {
                                         players.notifyAboutPointsAndRound(number);
 
-                                        // TODO: quit game if it was the last round
+                                        // quit game if it was the last round
+                                        if (players.size() * (game.getRoundNr() + 1)
+                                                >= game.deck.getCardsAvailable()) {
+                                            game.endGame();
+                                            return;
+                                        }
+
                                         game.setCurrentRound(Round.create(game, number + 1));
                                         game.setNextPlayer(winner);
                                         game.proceed();
@@ -86,11 +89,8 @@ public final class Round {
                                     } else {
                                         cardsInTheMiddle.reset();
                                         players.updateGAmeBoard(cardsInTheMiddle.getCards());
-                                        winner.update(
-                                                Updater.newCardPlayRequestResponse()); // request
-                                        // to start
-                                        // next
-                                        // trick
+                                        winner.playCardRequestWithTimeout(); // request to start
+                                        // next trick
                                     }
                                 }
                             },
@@ -98,11 +98,8 @@ public final class Round {
         } else {
             players.updateGAmeBoard(cardsInTheMiddle.getCards());
             Player nextPlayer = players.getNextPlayer(player);
-            nextPlayer.update(Updater.newCardPlayRequestResponse());
+            nextPlayer.playCardRequestWithTimeout();
             Logger.info("asking player {} to play", nextPlayer.getPlayerId());
         }
-        // players.updateGAmeBoard(cardsInTheMiddle.getCards()); //-> moved because Gameboard needs
-        // to be updated before making a CardPlayRequest
-
     }
 }
