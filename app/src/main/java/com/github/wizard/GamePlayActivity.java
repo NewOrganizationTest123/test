@@ -10,7 +10,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,30 +19,29 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.github.wizard.api.Card;
 import com.github.wizard.api.CardList;
 import com.github.wizard.api.CheatingSubmittedResult;
 import com.github.wizard.api.GameActionsGrpc;
 import com.github.wizard.api.GameMove;
 import com.github.wizard.api.GameStatus;
+import com.github.wizard.api.GrpcPlayer;
 import com.github.wizard.api.Response;
 import com.github.wizard.api.StichMade;
-
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
-
 import java.lang.ref.WeakReference;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -55,7 +55,8 @@ public class GamePlayActivity extends AppCompatActivity {
     public static String gameId;
     public static String playerId;
     public static String playername;
-    public static ArrayList<String> players = new ArrayList<>(); // todo maybe not use String here
+    private static int myPoints = 0;
+    private static List<ClientPlayer> players = new ArrayList<>();
     public static PlayersRecyclerviewAdapter players_adapter;
     public static CardsInHandRecyclerViewAdapter cards_adapter;
     public static CardsInTheMiddleRecyclerViewAdapter cards_middle_adapter;
@@ -75,6 +76,11 @@ public class GamePlayActivity extends AppCompatActivity {
     private RecyclerView cardsInTheMiddleRecyclerView;
     private TextView whosTurnIsItText;
     private int numberOfStitchesMade = 0;
+
+    private int cardPlayTimerProgress;
+    private CardsInHandRecyclerViewAdapter playcardadapter;
+    private ArrayList<String> cards;
+
     private Button showscore;
     private FrameLayout scoreboardframe;
     private Button homebutton;
@@ -98,6 +104,10 @@ public class GamePlayActivity extends AppCompatActivity {
                 .build();
     }
 
+    public static List<ClientPlayer> getPlayers() {
+        return players;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,12 +125,14 @@ public class GamePlayActivity extends AppCompatActivity {
         endgame = findViewById(R.id.btnendgame);
         homebutton = findViewById(R.id.btnhomescreen);
         whosTurnIsItText = findViewById(R.id.whosTurnIsItTextview);
-        // findViewById(R.id.button_estimate).setOnClickListener(this::submitEstimate);
-        // findViewById(R.id.button_play_card).setOnClickListener(this::playCard);
         cheatsView = findViewById(R.id.ExposeCheatsView);
+        cheatsView.bringToFront();
         playersRecyclerView = findViewById(R.id.playerRecyclerView);
+        playersRecyclerView.bringToFront();
         closeCheatsViewButton = findViewById(R.id.closeCheatsViewButton);
+        closeCheatsViewButton.bringToFront();
         cheatsViewTitle = findViewById(R.id.cheatingViewTitle);
+        cheatsViewTitle.bringToFront();
         hideCheatingExposingView(); // by default, the cheating-exposing view is not visible; only
         // shows up after shaking device
 
@@ -182,12 +194,13 @@ public class GamePlayActivity extends AppCompatActivity {
             }
         });
     }
+
     /* just for testcase*/
-    public void EndofGame(ScoreboardFragment fragment){
+    public void EndofGame( ScoreboardFragment scoreboardfragment) {
         scoreboardframe.setVisibility(View.VISIBLE);
         FragmentManager fragmentm = getSupportFragmentManager();
         FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
-        fragmenttrans.replace(R.id.framescoreboard, fragment);
+        fragmenttrans.replace(R.id.framescoreboard, scoreboardfragment);
         fragmenttrans.commit();
         showscore.setVisibility(View.GONE);
         endgame.setVisibility(View.GONE);
@@ -200,35 +213,30 @@ public class GamePlayActivity extends AppCompatActivity {
         cheatsViewTitle.setVisibility(View.GONE);
         points.setVisibility(View.GONE);
     }
+
     /*just for test cases*/
-    public void backtohome(){
+    public void backtohome() {
         Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
     }
 
     public void showScoreBoard(ScoreboardFragment fragment) {
-        if (scoreboardframe.getVisibility() == View.VISIBLE){
+        if (scoreboardframe.getVisibility() == View.VISIBLE) {
             scoreboardframe.setVisibility(View.GONE);
             FragmentManager fragmentm = getSupportFragmentManager();
             FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
             fragmenttrans.replace(R.id.framescoreboard, fragment);
             fragmenttrans.commit();
-        }else
-        scoreboardframe.setVisibility(View.VISIBLE);
-        FragmentManager fragmentm = getSupportFragmentManager();
-        FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
-        fragmenttrans.replace(R.id.framescoreboard, fragment);
-        fragmenttrans.commit();
+            endgame.setVisibility(View.GONE);
+        } else {
+            scoreboardframe.setVisibility(View.VISIBLE);
+            endgame.setVisibility(View.VISIBLE);
+            FragmentManager fragmentm = getSupportFragmentManager();
+            FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
+            fragmenttrans.replace(R.id.framescoreboard, fragment);
+            fragmenttrans.commit();
+        }
     }
-
-    /*public void hideScoreBoard(ScoreboardFragment fragment) {
-        scoreboardframe.setVisibility(View.GONE);
-        FragmentManager fragmentm = getSupportFragmentManager();
-        FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
-        //fragmenttrans.replace(R.id.framescoreboard, fragment);
-        fragmenttrans.hide(fragment);
-        fragmenttrans.commit();
-    }*/
 
     public void showCheatingExposingView() {
         cheatsView.setVisibility(View.VISIBLE);
@@ -248,8 +256,15 @@ public class GamePlayActivity extends AppCompatActivity {
         serverWaitingQueue.add(newGameMove(3, playername));
     }
 
-    public void updatePlayersInRecyclerView(ArrayList<String> realplayers) {
-        realplayers.remove(playername);
+    public void updatePlayersInRecyclerView(List<ClientPlayer> realplayers) {
+        players = realplayers; // include myself for scoreboard
+        // remove myself
+        for (ClientPlayer cPlayer : realplayers) {
+            if (cPlayer.getId().equals(playerId)) {
+                realplayers.remove(cPlayer);
+                break;
+            }
+        }
         PlayersRecyclerviewAdapter newdapater = new PlayersRecyclerviewAdapter(this, realplayers);
         playersRecyclerView.setAdapter(newdapater);
     }
@@ -288,11 +303,12 @@ public class GamePlayActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onAccuracyChanged(Sensor sensor, int i) {
-                }
+                public void onAccuracyChanged(Sensor sensor, int i) {}
             };
 
     private void playCard(String cardnum) {
+        ProgressBar cardPlayTimeout = findViewById(R.id.cardPlayTimeout);
+        cardPlayTimeout.setVisibility(View.INVISIBLE);
         whosTurnIsItText.setText("Please wait for your turn!");
         serverWaitingQueue.add(newGameMove(2, cardnum));
     }
@@ -314,6 +330,22 @@ public class GamePlayActivity extends AppCompatActivity {
         numberOfStitchesMade = 0;
     }
 
+    /**
+     * this should show the final score board and end the game session. This is the last call of the
+     * game
+     */
+    private void showGameResults(Activity activity) {
+        // TODO: 26.05.2022 Silvio, show your scoreboard whith winning player highlighted when this
+        // is called, forward to home screen when scoreboard is closed
+        /*Toast.makeText(
+                        activity.getApplication().getApplicationContext(),
+                        "The game has ended! Good bye",
+                        Toast.LENGTH_SHORT)
+                .show();*/
+        ScoreboardFragment score = new ScoreboardFragment();
+        score.winningplayerhighlighted();
+    }
+
     private void updateCardsInHandRecyclerView(ArrayList<String> cards_in_hand) {
         CardsInHandRecyclerViewAdapter newcards_adapter =
                 new CardsInHandRecyclerViewAdapter(this, cards_in_hand);
@@ -328,10 +360,31 @@ public class GamePlayActivity extends AppCompatActivity {
 
     private void allowPlayingCard() {
         // TODO: only allow playing Card when CardPlayRequest
-        CardsInHandRecyclerViewAdapter playcardadapter =
-                (CardsInHandRecyclerViewAdapter) cardsInHandRecyclerView.getAdapter();
+        CountDownTimer cardPlayTimer;
+        playcardadapter = (CardsInHandRecyclerViewAdapter) cardsInHandRecyclerView.getAdapter();
         playcardadapter.activatePlayingCard();
         whosTurnIsItText.setText("Its your turn!");
+        ProgressBar cardPlayTimeout = findViewById(R.id.cardPlayTimeout);
+        cardPlayTimeout.setVisibility(View.VISIBLE);
+        cardPlayTimerProgress = 0;
+        cardPlayTimeout.setProgress(cardPlayTimerProgress);
+
+        cardPlayTimer =
+                new CountDownTimer(60000, 1000) {
+                    @Override
+                    public void onTick(long l) {
+                        cardPlayTimeout.setProgress(cardPlayTimerProgress * 100 / (60000 / 1000));
+                        cardPlayTimerProgress++;
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        cardPlayTimeout.setProgress(100);
+                        Log.i("Wizzard", "Client timer play card timed out");
+                        cardPlayTimeout.setVisibility(View.INVISIBLE);
+                    }
+                };
+        cardPlayTimer.start();
     }
 
     public void updateNumberOfStichesTextview() {
@@ -352,8 +405,7 @@ public class GamePlayActivity extends AppCompatActivity {
         }
 
         @Override
-        public void doWhenDone(WeakReference<Activity> activityReference) {
-        }
+        public void doWhenDone(WeakReference<Activity> activityReference) {}
 
         /**
          * Bi-directional example, which can only be asynchronous. Send some chat messages, and
@@ -397,25 +449,28 @@ public class GamePlayActivity extends AppCompatActivity {
                                         updateNumberOfStichesTextview();
 
                                         Toast.makeText(
-                                                activity.getApplication()
-                                                        .getApplicationContext(),
-                                                "You have made this stich!",
-                                                Toast.LENGTH_SHORT)
+                                                        activity.getApplication()
+                                                                .getApplicationContext(),
+                                                        "You have made this stich!",
+                                                        Toast.LENGTH_SHORT)
                                                 .show();
                                         ((TextView) activity.findViewById(R.id.stiche_made))
-                                                .setText(stichmade.getTotalstichebyplayer());
+                                                .setText(
+                                                        "You have already made "
+                                                                + stichmade.getTotalstichebyplayer()
+                                                                + " Stiche");
 
                                     } else // someone else made the stich
-                                        Toast.makeText(
-                                                activity.getApplication()
-                                                        .getApplicationContext(),
-                                                "player "
-                                                        + stichmade.getPlayerName()
-                                                        + " has made this stich. They have"
-                                                        + " made a total of "
-                                                        + stichmade.getTotalstichebyplayer()
-                                                        + " stich",
-                                                Toast.LENGTH_SHORT)
+                                    Toast.makeText(
+                                                        activity.getApplication()
+                                                                .getApplicationContext(),
+                                                        "player "
+                                                                + stichmade.getPlayerName()
+                                                                + " has made this stich. They have"
+                                                                + " made a total of "
+                                                                + stichmade.getTotalstichebyplayer()
+                                                                + " stich",
+                                                        Toast.LENGTH_SHORT)
                                                 .show();
                                 }
 
@@ -445,6 +500,8 @@ public class GamePlayActivity extends AppCompatActivity {
                                         cards_in_middle.add(cardname);
                                     }
                                     updateCardsInMiddleRecyclerView(cards_in_middle);
+
+                                    cards = cards_in_hand;
                                 }
 
                                 private void showTrump(Activity activity, Response response) {
@@ -481,10 +538,10 @@ public class GamePlayActivity extends AppCompatActivity {
                                     }
 
                                     Toast.makeText(
-                                            activity.getApplication()
-                                                    .getApplicationContext(),
-                                            "trumpf is: " + response.getData(),
-                                            Toast.LENGTH_SHORT)
+                                                    activity.getApplication()
+                                                            .getApplicationContext(),
+                                                    "trumpf is: " + response.getData(),
+                                                    Toast.LENGTH_SHORT)
                                             .show();
                                 }
 
@@ -494,41 +551,66 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                 private void updateRoundNumberAndPoints(
                                         Activity activity, GameStatus gameStatus) {
+                                    // reset stich counter to 0 when new round starts
+                                    ((TextView) activity.findViewById(R.id.stiche_made))
+                                            .setText("You have already made 0 Stiche");
+
+                                    for (GrpcPlayer grpcPlayer : gameStatus.getPlayersList()) {
+                                        // update my points
+                                        if (playerId.equals(grpcPlayer.getPlayerId()))
+                                            myPoints = Integer.parseInt(grpcPlayer.getPoints());
+                                        // update points for other people
+                                        for (ClientPlayer cPlayer : players) {
+                                            if (cPlayer.getId().equals(grpcPlayer.getPlayerId())) {
+                                                cPlayer.setPoints(grpcPlayer.getPoints());
+                                            }
+                                        }
+                                    }
                                     ((TextView) activity.findViewById(R.id.points))
-                                            .setText(
-                                                    "You have "
-                                                            + gameStatus.getMyPoints()
-                                                            + " points");
+                                            .setText("You have " + myPoints + " points");
+
+                                    int roundNr = Integer.parseInt(gameStatus.getRound()) + 1;
                                     ((TextView) activity.findViewById(R.id.round))
-                                            .setText("This is round " + gameStatus.getRound());
+                                            .setText("This is round " + roundNr);
 
                                     Toast.makeText(
-                                            activity.getApplication()
-                                                    .getApplicationContext(),
-                                            "after round "
-                                                    + gameStatus.getRound()
-                                                    + " you have "
-                                                    + gameStatus.getMyPoints()
-                                                    + " points!",
-                                            Toast.LENGTH_SHORT)
+                                                    activity.getApplication()
+                                                            .getApplicationContext(),
+                                                    "after round "
+                                                            + gameStatus.getRound()
+                                                            + " you have "
+                                                            + myPoints
+                                                            + " points!",
+                                                    Toast.LENGTH_SHORT)
                                             .show();
                                 }
 
                                 private void youCheated(
                                         Activity activity,
                                         CheatingSubmittedResult cheatingSubmittedResult) {
+
+                                    for (GrpcPlayer grpcPlayer :
+                                            cheatingSubmittedResult.getPlayersList()) {
+                                        // update my points
+                                        if (playerId.equals(grpcPlayer.getPlayerId()))
+                                            myPoints = Integer.parseInt(grpcPlayer.getPoints());
+                                        // update points for other people
+                                        for (ClientPlayer cPlayer : players) {
+                                            if (cPlayer.getId().equals(grpcPlayer.getPlayerId())) {
+                                                cPlayer.setPoints(grpcPlayer.getPoints());
+                                            }
+                                        }
+                                    }
+
                                     ((TextView) activity.findViewById(R.id.points))
-                                            .setText(
-                                                    "You have "
-                                                            + cheatingSubmittedResult.getNewPoints()
-                                                            + " points");
+                                            .setText("You have " + myPoints + " points");
                                     Toast.makeText(
-                                            activity.getApplication()
-                                                    .getApplicationContext(),
-                                            "Your cheating was discovered!!!! You now have "
-                                                    + cheatingSubmittedResult.getNewPoints()
-                                                    + " Points",
-                                            Toast.LENGTH_SHORT)
+                                                    activity.getApplication()
+                                                            .getApplicationContext(),
+                                                    "Your cheating was discovered!!!! You now have "
+                                                            + myPoints
+                                                            + " Points",
+                                                    Toast.LENGTH_SHORT)
                                             .show();
                                 }
 
@@ -547,42 +629,47 @@ public class GamePlayActivity extends AppCompatActivity {
                                     while (matcher.find()) {
                                         currentPoints = Integer.parseInt(matcher.group());
                                     }
+                                    for (GrpcPlayer grpcPlayer :
+                                            cheatingSubmittedResult.getPlayersList()) {
+                                        // update my points
+                                        if (playerId.equals(grpcPlayer.getPlayerId()))
+                                            myPoints = Integer.parseInt(grpcPlayer.getPoints());
+                                        // update points for other people
+                                        for (ClientPlayer cPlayer : players) {
+                                            if (cPlayer.getId().equals(grpcPlayer.getPlayerId())) {
+                                                cPlayer.setPoints(grpcPlayer.getPoints());
+                                            }
+                                        }
+                                    }
 
-                                    if (currentPoints
-                                            > Integer.parseInt(
-                                            cheatingSubmittedResult.getNewPoints())) {
+                                    if (currentPoints > myPoints) {
                                         Toast.makeText(
-                                                activity.getApplication()
-                                                        .getApplicationContext(),
-                                                "Wrong assumption! You now have "
-                                                        + cheatingSubmittedResult
-                                                        .getNewPoints()
-                                                        + " Points",
-                                                Toast.LENGTH_SHORT)
+                                                        activity.getApplication()
+                                                                .getApplicationContext(),
+                                                        "Wrong assumption! You now have "
+                                                                + myPoints
+                                                                + " Points",
+                                                        Toast.LENGTH_SHORT)
                                                 .show();
                                     } else {
                                         Toast.makeText(
-                                                activity.getApplication()
-                                                        .getApplicationContext(),
-                                                "Someone cheated! You now have "
-                                                        + cheatingSubmittedResult
-                                                        .getNewPoints()
-                                                        + " Points",
-                                                Toast.LENGTH_SHORT)
+                                                        activity.getApplication()
+                                                                .getApplicationContext(),
+                                                        "Someone cheated! You now have "
+                                                                + myPoints
+                                                                + " Points",
+                                                        Toast.LENGTH_SHORT)
                                                 .show();
                                     }
 
                                     ((TextView) activity.findViewById(R.id.points))
-                                            .setText(
-                                                    "You have "
-                                                            + cheatingSubmittedResult.getNewPoints()
-                                                            + " points");
+                                            .setText("You have " + myPoints + " points");
                                 }
 
                                 private void handleResponse(Activity activity, Response response) {
 
                                     if (response.getActionCase() == Response.ActionCase.CARDLIST) {
-                                        // todo new display cards
+
                                         activity.runOnUiThread(
                                                 () ->
                                                         updateGameField(
@@ -625,12 +712,19 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                         ArrayList realplayers = new ArrayList<>();
                                         for (int i = 0;
-                                             i < response.getPlayerList().getPlayerCount();
-                                             i++) {
+                                                i < response.getPlayerList().getPlayerCount();
+                                                i++) {
                                             realplayers.add(
-                                                    response.getPlayerList()
-                                                            .getPlayer(i)
-                                                            .getPlayerName());
+                                                    new ClientPlayer(
+                                                            response.getPlayerList()
+                                                                    .getPlayer(i)
+                                                                    .getPlayerId(),
+                                                            response.getPlayerList()
+                                                                    .getPlayer(i)
+                                                                    .getPlayerName(),
+                                                            response.getPlayerList()
+                                                                    .getPlayer(i)
+                                                                    .getPoints()));
                                         }
 
                                         activity.runOnUiThread(
@@ -668,6 +762,20 @@ public class GamePlayActivity extends AppCompatActivity {
                                                     updateRoundNumberAndPoints(
                                                             activity, response));*/
                                             break;
+                                        case "7":
+                                            activity.runOnUiThread(() -> showGameResults(activity));
+                                            break;
+                                        case "8":
+                                            activity.runOnUiThread(
+                                                    () ->
+                                                            randomEstimateReceived(
+                                                                    activity, response));
+                                            break;
+                                        case "9":
+                                            activity.runOnUiThread(
+                                                    GamePlayActivity.this::randomCardPlayed);
+                                            break;
+
                                         default:
                                             throw new IllegalArgumentException(
                                                     "type not implemented");
@@ -734,14 +842,31 @@ public class GamePlayActivity extends AppCompatActivity {
         }
     }
 
+    private void randomCardPlayed() {
+        playcardadapter.endPlayingCard();
+        ProgressBar cardPlayTimeout = findViewById(R.id.cardPlayTimeout);
+        cardPlayTimeout.setVisibility(View.INVISIBLE);
+        whosTurnIsItText.setText("Please wait for your turn!");
+    }
+
+    private void randomEstimateReceived(Activity activity, Response response) {
+
+        Toast.makeText(
+                        activity.getApplication().getApplicationContext(),
+                        "Your estimate" + response.getData() + " was choosen randomly. Good luck!",
+                        Toast.LENGTH_SHORT)
+                .show();
+        updateEstimateTextview(response.getData());
+    }
+
     public class PlayersRecyclerviewAdapter
             extends RecyclerView.Adapter<PlayersRecyclerviewAdapter.ViewHolder> {
 
-        private ArrayList<String> players;
+        private List<ClientPlayer> players;
         private LayoutInflater layoutInflater;
         public String selectedPlayer;
 
-        PlayersRecyclerviewAdapter(Context context, ArrayList<String> players) {
+        PlayersRecyclerviewAdapter(Context context, List<ClientPlayer> players) {
             this.layoutInflater = LayoutInflater.from(context);
             this.players = players;
             selectedPlayer = null;
@@ -757,8 +882,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
-            String playername = players.get(position);
-            viewHolder.playername_holder.setText(playername);
+            viewHolder.playername_holder.setText(players.get(position).getName());
         }
 
         @Override
@@ -799,6 +923,10 @@ public class GamePlayActivity extends AppCompatActivity {
 
         public void activatePlayingCard() {
             allowPlayingCard = true;
+        }
+
+        public void endPlayingCard() {
+            allowPlayingCard = false;
         }
 
         @Override
@@ -969,7 +1097,7 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("NONEJESTER"):
                     viewHolder.card_holder.setImageResource(R.drawable.n_01);
                     break;
-                // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
+                    // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
                 default:
                     break;
             }
@@ -1175,7 +1303,7 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("NONEJESTER"):
                     viewHolder.card_holder.setImageResource(R.drawable.n_01);
                     break;
-                // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
+                    // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
                 default:
                     break;
             }
@@ -1200,17 +1328,34 @@ public class GamePlayActivity extends AppCompatActivity {
         public Activity activity;
         EditText estimateInputField;
         Button estimateSend;
+        ProgressBar submitEstimateTimeoutProgressBar;
+        CountDownTimer countDownTimer;
+        int progress = 0;
+        // ArrayList<String> cards;
 
         public EstimateDialog(Activity activity) {
             super(activity);
             this.activity = activity;
+            // this.cards = cards;
         }
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
+            RecyclerView cardsRecyclerView = findViewById(R.id.cardsInEstimateDialog);
+            ArrayList<String> cardsList = new ArrayList<>();
+            LinearLayoutManager layoutManagerCardsEstimate =
+                    new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            cardsRecyclerView.setLayoutManager(layoutManagerCardsEstimate);
+
+            CardsInTheMiddleRecyclerViewAdapter estimateCardsAdapter =
+                    new CardsInTheMiddleRecyclerViewAdapter(getContext(), cards);
+            cardsRecyclerView.setAdapter(estimateCardsAdapter);
+
             estimateSend = findViewById(R.id.dialogEnterButton);
+            submitEstimateTimeoutProgressBar = findViewById(R.id.submitEstimateTimeoutProgressBar);
+
             estimateSend.setOnClickListener(
                     e -> {
                         estimateInputField = findViewById(R.id.dialogEstimateInput);
@@ -1222,6 +1367,27 @@ public class GamePlayActivity extends AppCompatActivity {
                             dismiss();
                         }
                     });
+            submitEstimateTimeoutProgressBar.setProgress(progress); // initial progress
+            countDownTimer =
+                    new CountDownTimer(60000, 1000) {
+                        @Override
+                        public void onTick(long l) {
+                            submitEstimateTimeoutProgressBar.setProgress(
+                                    progress * 100 / (60000 / 1000));
+                            progress++;
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            submitEstimateTimeoutProgressBar.setProgress(100);
+                            Log.i(
+                                    "Wizzard",
+                                    "Client timer submit estimate timed out, waiting for server to"
+                                            + " calculate new estimate...");
+                            dismiss();
+                        }
+                    };
+            countDownTimer.start();
         }
     }
 }
