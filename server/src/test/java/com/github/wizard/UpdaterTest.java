@@ -46,7 +46,7 @@ class UpdaterTest {
         assertEquals("Please play a card", response.getData());
     }
 
-    Card wizard = Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.WIZARD).build();
+    Card wizard = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.WIZARD).build();
 
     Card red1 = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.ONE).build();
 
@@ -60,7 +60,7 @@ class UpdaterTest {
 
     Card green5 = Card.newBuilder().setColor(Card.Color.GREEN).setValue(Card.Value.FIVE).build();
 
-    Card jester = Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.JESTER).build();
+    Card jester = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.JESTER).build();
 
     @Test
     void newOnGameBoardUpdate() {

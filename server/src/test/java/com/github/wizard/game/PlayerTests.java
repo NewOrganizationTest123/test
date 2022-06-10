@@ -162,9 +162,9 @@ public class PlayerTests {
         when(game.getRoundNr()).thenReturn(2);
         ArrayList<Card> wizzards = new ArrayList<>();
         wizzards.add(
-                Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.WIZARD).build());
+                Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.WIZARD).build());
         wizzards.add(
-                Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.WIZARD).build());
+                Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.WIZARD).build());
 
         player.giveMeCards(wizzards);
 
