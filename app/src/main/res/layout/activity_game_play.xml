@@ -27,12 +27,13 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/macondo"
         android:text="End Game"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.518"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.202" />
+        app:layout_constraintVertical_bias="0.862" />
 
     <FrameLayout
         android:id="@+id/framescoreboard"
@@ -85,9 +86,8 @@
         style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:text="Please wait for your turn!"
-        app:layout_constraintBottom_toTopOf="@+id/editTextN_card"
+        app:layout_constraintBottom_toTopOf="@+id/cardPlayTimeout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -108,7 +108,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Trump is"
+        android:text="Wait for Trump..."
         android:textColor="#FFFFFF"
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -173,7 +173,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Round 0"
+        android:text="Round 1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/points" />
 
@@ -244,4 +244,20 @@
         app:layout_constraintBottom_toTopOf="@+id/cardsInHandRecyclerview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/cardPlayTimeout"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="invisible"
+        app:trackColor="#BCBCBC"
+        app:indicatorColor="#FFFFFF"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
