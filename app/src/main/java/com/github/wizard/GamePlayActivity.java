@@ -1015,13 +1015,30 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("GREENTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_12);
                     break;
-                case ("NONEWIZARD"):
+                case ("REDWIZARD"):
+                    viewHolder.card_holder.setImageResource(R.drawable.z_04);
+                    break;
+                case ("YELLOWWIZARD"):
+                    viewHolder.card_holder.setImageResource(R.drawable.z_03);
+                    break;
+                case ("GREENWIZARD"):
+                    viewHolder.card_holder.setImageResource(R.drawable.z_02);
+                    break;
+                case ("BLUEWIZARD"):
                     viewHolder.card_holder.setImageResource(R.drawable.z_01);
                     break;
-                case ("NONEJESTER"):
+                case ("REDJESTER"):
+                    viewHolder.card_holder.setImageResource(R.drawable.n_02);
+                    break;
+                case ("YELLOWJESTER"):
+                    viewHolder.card_holder.setImageResource(R.drawable.n_03);
+                    break;
+                case ("BLUEJESTER"):
                     viewHolder.card_holder.setImageResource(R.drawable.n_01);
                     break;
-                    // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
+                case ("GREENJESTER"):
+                    viewHolder.card_holder.setImageResource(R.drawable.n_04);
+                    break;
                 default:
                     break;
             }
@@ -1221,13 +1238,30 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("GREENTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_12);
                     break;
-                case ("NONEWIZARD"):
+                case ("REDWIZARD"):
+                    viewHolder.card_holder.setImageResource(R.drawable.z_04);
+                    break;
+                case ("YELLOWWIZARD"):
+                    viewHolder.card_holder.setImageResource(R.drawable.z_03);
+                    break;
+                case ("GREENWIZARD"):
+                    viewHolder.card_holder.setImageResource(R.drawable.z_02);
+                    break;
+                case ("BLUEWIZARD"):
                     viewHolder.card_holder.setImageResource(R.drawable.z_01);
                     break;
-                case ("NONEJESTER"):
+                case ("REDJESTER"):
+                    viewHolder.card_holder.setImageResource(R.drawable.n_02);
+                    break;
+                case ("YELLOWJESTER"):
+                    viewHolder.card_holder.setImageResource(R.drawable.n_03);
+                    break;
+                case ("BLUEJESTER"):
                     viewHolder.card_holder.setImageResource(R.drawable.n_01);
                     break;
-                    // TODO: add the other Wizards&Jesters after the Naming Bug is Fixed
+                case ("GREENJESTER"):
+                    viewHolder.card_holder.setImageResource(R.drawable.n_04);
+                    break;
                 default:
                     break;
             }
