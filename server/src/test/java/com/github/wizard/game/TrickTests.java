@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 public class TrickTests {
     Trick redTrumpTrick;
 
-    Card wizard = Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.WIZARD).build();
+    Card wizard = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.WIZARD).build();
 
     Card red1 = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.ONE).build();
 
@@ -27,7 +27,7 @@ public class TrickTests {
 
     Card green5 = Card.newBuilder().setColor(Card.Color.GREEN).setValue(Card.Value.FIVE).build();
 
-    Card jester = Card.newBuilder().setColor(Card.Color.NONE).setValue(Card.Value.JESTER).build();
+    Card jester = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.JESTER).build();
 
     Player player1 = new Player("1");
     Player player2 = new Player("2");

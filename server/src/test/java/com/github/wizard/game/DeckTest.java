@@ -44,8 +44,10 @@ class DeckTest {
         List<Card> yellowCards = getCardsFromColor(cards, Card.Color.YELLOW);
         List<Card> greenCards = getCardsFromColor(cards, Card.Color.GREEN);
         List<Card> blueCards = getCardsFromColor(cards, Card.Color.BLUE);
-        List<Card> jesters = cards.stream().filter(card -> card == Deck.jester).toList();
-        List<Card> wizards = cards.stream().filter(card -> card == Deck.wizard).toList();
+        List<Card> jesters =
+                cards.stream().filter(card -> card.getValue() == Card.Value.JESTER).toList();
+        List<Card> wizards =
+                cards.stream().filter(card -> card.getValue() == Card.Value.WIZARD).toList();
 
         assertColoredCards(redCards);
         assertColoredCards(yellowCards);
