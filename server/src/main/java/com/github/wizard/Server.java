@@ -31,10 +31,11 @@ import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Option;
 
 public class Server implements Callable<Integer> {
-    private final Map<Integer, Game> games = new HashMap<>();
+    private static final Map<Integer, Game> games = new HashMap<>();
     private int gameCounter = 0;
     private io.grpc.Server grpcServer;
     public static final int MAX_PLAYERS = 6;
+    public static final int GAME_MOVE_TIMEOUT = 60000;
 
     @Option(
             names = {"-p", "--port"},
@@ -130,6 +131,10 @@ public class Server implements Callable<Integer> {
         if (grpcServer != null) {
             grpcServer.awaitTermination();
         }
+    }
+
+    public static void removeGame(Game game) {
+        games.remove(game.gameId, game);
     }
 
     class GameStarterImpl extends GameStarterGrpc.GameStarterImplBase {
@@ -273,7 +278,6 @@ public class Server implements Callable<Integer> {
                     switch (gameMove.getType()) {
                         case "0" -> { // player subscribed
                             Logger.info("request to subscribe new player");
-                            // TODO: 22.04.2022 check
                             if (newGame
                                     .allPlayersSubscribed()) { // see if we are the last, then start
                                 // handing out cards
@@ -322,6 +326,7 @@ public class Server implements Callable<Integer> {
                 public void onCompleted() {
                     // client will terminate subscription
                     responseObserver.onCompleted();
+                    Logger.info("gameplay completed");
                 }
             };
         }

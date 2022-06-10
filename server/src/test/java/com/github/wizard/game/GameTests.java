@@ -115,8 +115,8 @@ public class GameTests {
         player1.makeEstimate(0);
         player2.makeEstimate(1);
 
-        player1.takeTrick(0);
-        player2.takeTrick(0);
+        player1.takeTrick();
+        player2.takeTrick();
 
         Round round = new Round(game_withMockedPlayers, trickMocked, 1);
         when(trickMocked.getCardsPlayed()).thenReturn(2);
@@ -128,13 +128,10 @@ public class GameTests {
                             @Override
                             public void run() {
                                 verify(trickMocked).getWinningPlayer();
-                                verify(trickMocked).getValue();
                                 verify(mocked_player1).cardsLeft();
 
                                 verify(mocked_player2)
-                                        .update(
-                                                Updater.newOnTrickTakenResponse(
-                                                        new Player(null), 12));
+                                        .update(Updater.newOnTrickTakenResponse(new Player(null)));
                                 verify(mocked_player2)
                                         .update(Updater.newOnGameBoardUpdate(null, null));
                             }
@@ -149,7 +146,8 @@ public class GameTests {
 
         round.playCard(mock(Card.class), mocked_player1);
 
-        verify(mocked_player2).update(Updater.newCardPlayRequestResponse());
+        //        verify(mocked_player2).update(Updater.newCardPlayRequestResponse());not applicable
+        // any more
         verify(mocked_player2).update(Updater.newOnGameBoardUpdate(null, null));
     }
 

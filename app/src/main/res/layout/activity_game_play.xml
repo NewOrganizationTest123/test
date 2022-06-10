@@ -32,9 +32,8 @@
         style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:text="Please wait for your turn!"
-        app:layout_constraintBottom_toTopOf="@+id/editTextN_card"
+        app:layout_constraintBottom_toTopOf="@+id/cardPlayTimeout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -191,4 +190,20 @@
         app:layout_constraintBottom_toTopOf="@+id/cardsInHandRecyclerview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/cardPlayTimeout"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="invisible"
+        app:trackColor="#BCBCBC"
+        app:indicatorColor="#FFFFFF"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
