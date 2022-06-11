@@ -62,8 +62,8 @@ public class GamePlayActivity extends AppCompatActivity {
     private static final BlockingQueue<GameMove> serverWaitingQueue = new LinkedBlockingQueue<>();
     private SensorManager sensorManager;
     private double deviceAcceleration;
-    private double deviceAcceleration_before;
-    private double deviceAcceleration_now;
+    private double deviceAccelerationBefore;
+    private double deviceAccelerationNow;
     private View cheatsView;
     private RecyclerView playersRecyclerView;
     private Button closeCheatsViewButton;
@@ -144,8 +144,8 @@ public class GamePlayActivity extends AppCompatActivity {
                         sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                         SensorManager.SENSOR_DELAY_NORMAL);
         deviceAcceleration = 10;
-        deviceAcceleration_before = SensorManager.GRAVITY_EARTH;
-        deviceAcceleration_now = SensorManager.GRAVITY_EARTH;
+        deviceAccelerationBefore = SensorManager.GRAVITY_EARTH;
+        deviceAccelerationNow = SensorManager.GRAVITY_EARTH;
 
         LinearLayoutManager layoutManagerPlayers = new LinearLayoutManager(this);
         playersRecyclerView.setLayoutManager(layoutManagerPlayers);
@@ -225,10 +225,10 @@ public class GamePlayActivity extends AppCompatActivity {
                     double x_axis = sensorEvent.values[0];
                     double y_axis = sensorEvent.values[1];
                     double z_axis = sensorEvent.values[2];
-                    deviceAcceleration_before = deviceAcceleration_now;
-                    deviceAcceleration_now =
+                    deviceAccelerationBefore = deviceAccelerationNow;
+                    deviceAccelerationNow =
                             Math.sqrt(x_axis * x_axis + y_axis * y_axis + z_axis * z_axis);
-                    double delta = deviceAcceleration_now - deviceAcceleration_before;
+                    double delta = deviceAccelerationNow - deviceAccelerationBefore;
                     deviceAcceleration = deviceAcceleration * 0.9 + delta;
 
                     if (deviceAcceleration > 10) {
