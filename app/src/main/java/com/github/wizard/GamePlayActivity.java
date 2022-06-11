@@ -228,9 +228,15 @@ public class GamePlayActivity extends AppCompatActivity {
             fragmenttrans.replace(R.id.framescoreboard, fragment);
             fragmenttrans.commit();
             endgame.setVisibility(View.GONE);
+            whosTurnIsItText.setVisibility(View.VISIBLE);
+            cardsInHandRecyclerView.setVisibility(View.VISIBLE);
+            cardsInTheMiddleRecyclerView.setVisibility(View.VISIBLE);
         } else {
             scoreboardframe.setVisibility(View.VISIBLE);
             endgame.setVisibility(View.VISIBLE);
+            whosTurnIsItText.setVisibility(View.INVISIBLE);
+            cardsInHandRecyclerView.setVisibility(View.INVISIBLE);
+            cardsInTheMiddleRecyclerView.setVisibility(View.INVISIBLE);
             FragmentManager fragmentm = getSupportFragmentManager();
             FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
             fragmenttrans.replace(R.id.framescoreboard, fragment);
