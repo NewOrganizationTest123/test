@@ -132,9 +132,7 @@ public class GamePlayActivity extends AppCompatActivity {
         hideCheatingExposingView(); // by default, the cheating-exposing view is not visible; only
         // shows up after shaking device
 
-        closeCheatsViewButton.setOnClickListener(
-                e -> hideCheatingExposingView()
-                );
+        closeCheatsViewButton.setOnClickListener(e -> hideCheatingExposingView());
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         Objects.requireNonNull(sensorManager)
@@ -667,8 +665,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                         case "1":
                                             break;
                                         case "2":
-                                            activity.runOnUiThread(
-                                                    () -> makeCardPlayRequest());
+                                            activity.runOnUiThread(() -> makeCardPlayRequest());
                                             break;
                                         case "3":
                                             break;
@@ -677,8 +674,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                                     () -> showTrump(activity, response));
                                             break;
                                         case "5":
-                                            activity.runOnUiThread(
-                                                    () -> makeEstimate());
+                                            activity.runOnUiThread(() -> makeEstimate());
                                             break;
                                         case "6":
                                             break;
