@@ -391,8 +391,8 @@ public class GamePlayActivity extends AppCompatActivity {
                                                                 + stichmade.getTotalstichebyplayer()
                                                                 + " Stiche");
 
-                                    } else // someone else made the stich
-                                    Toast.makeText(
+                                    } else { // someone else made the stich
+                                        Toast.makeText(
                                                         activity.getApplication()
                                                                 .getApplicationContext(),
                                                         "player "
@@ -403,16 +403,14 @@ public class GamePlayActivity extends AppCompatActivity {
                                                                 + " stich",
                                                         Toast.LENGTH_SHORT)
                                                 .show();
+                                    }
                                 }
 
-                                private void makeCardPlayRequest(
-                                        Activity activity, Response response) {
+                                private void makeCardPlayRequest() {
                                     allowPlayingCard();
                                 }
 
                                 private void updateGameField(Activity activity, CardList cardList) {
-                                    // update cards in hand
-                                    StringBuilder builderHand = new StringBuilder();
 
                                     ArrayList<String> cardsInHand = new ArrayList<>();
                                     for (Card c : cardList.getHandList()) {
@@ -476,7 +474,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                             .show();
                                 }
 
-                                private void makeEstimate(Activity activity, Response response) {
+                                private void makeEstimate() {
                                     openEstimateDialog();
                                 }
 
@@ -641,7 +639,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                     } else if (response.getActionCase()
                                             == Response.ActionCase.PLAYERLIST) {
 
-                                        ArrayList realplayers = new ArrayList<>();
+                                        ArrayList<ClientPlayer> realplayers = new ArrayList<>();
                                         for (int i = 0;
                                                 i < response.getPlayerList().getPlayerCount();
                                                 i++) {
@@ -667,17 +665,12 @@ public class GamePlayActivity extends AppCompatActivity {
                                         case "0":
                                             break;
                                         case "1":
-                                            /*activity.runOnUiThread(
-                                            () -> showStich(activity, response));*/
-                                            // todo remove
                                             break;
                                         case "2":
                                             activity.runOnUiThread(
-                                                    () -> makeCardPlayRequest(activity, response));
+                                                    () -> makeCardPlayRequest());
                                             break;
-                                        case "3": // todo remove
-                                            /* activity.runOnUiThread(
-                                            () -> updateGameField(activity, response));*/
+                                        case "3":
                                             break;
                                         case "4":
                                             activity.runOnUiThread(
@@ -685,13 +678,9 @@ public class GamePlayActivity extends AppCompatActivity {
                                             break;
                                         case "5":
                                             activity.runOnUiThread(
-                                                    () -> makeEstimate(activity, response));
+                                                    () -> makeEstimate());
                                             break;
                                         case "6":
-                                            /* activity.runOnUiThread(
-                                            () ->
-                                                    updateRoundNumberAndPoints(
-                                                            activity, response));*/
                                             break;
                                         case "7":
                                             activity.runOnUiThread(() -> showGameResults(activity));
@@ -795,12 +784,10 @@ public class GamePlayActivity extends AppCompatActivity {
 
         private List<ClientPlayer> players;
         private LayoutInflater layoutInflater;
-        public String selectedPlayer;
 
         PlayersRecyclerviewAdapter(Context context, List<ClientPlayer> players) {
             this.layoutInflater = LayoutInflater.from(context);
             this.players = players;
-            selectedPlayer = null;
         }
 
         @Override
@@ -841,15 +828,12 @@ public class GamePlayActivity extends AppCompatActivity {
             extends RecyclerView.Adapter<CardsInHandRecyclerViewAdapter.ViewHolder> {
         private ArrayList<String> cards;
         private LayoutInflater layoutInflater;
-        public String selectedCard;
-        public int counter = 0;
+        private int counter = 0;
         private boolean allowPlayingCard = false;
-        // public boolean isActivated = false;
 
         CardsInHandRecyclerViewAdapter(Context context, ArrayList<String> cards) {
             this.layoutInflater = LayoutInflater.from(context);
             this.cards = cards;
-            selectedCard = null;
         }
 
         public void activatePlayingCard() {
@@ -1296,12 +1280,10 @@ public class GamePlayActivity extends AppCompatActivity {
         ProgressBar submitEstimateTimeoutProgressBar;
         CountDownTimer countDownTimer;
         int progress = 0;
-        // ArrayList<String> cards;
 
         public EstimateDialog(Activity activity) {
             super(activity);
             this.activity = activity;
-            // this.cards = cards;
         }
 
         @Override
@@ -1309,7 +1291,6 @@ public class GamePlayActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
 
             RecyclerView cardsRecyclerView = findViewById(R.id.cardsInEstimateDialog);
-            ArrayList<String> cardsList = new ArrayList<>();
             LinearLayoutManager layoutManagerCardsEstimate =
                     new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
             cardsRecyclerView.setLayoutManager(layoutManagerCardsEstimate);
