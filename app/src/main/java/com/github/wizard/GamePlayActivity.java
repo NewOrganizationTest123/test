@@ -49,14 +49,14 @@ import java.util.regex.Pattern;
 
 public class GamePlayActivity extends AppCompatActivity {
 
-    public static String gameId;
-    public static String playerId;
-    public static String playername;
+    private static String gameId;
+    private static String playerId;
+    private static String playername;
     private static int myPoints = 0;
     private static List<ClientPlayer> players = new ArrayList<>();
-    public static PlayersRecyclerviewAdapter players_adapter;
-    public static CardsInHandRecyclerViewAdapter cards_adapter;
-    public static CardsInTheMiddleRecyclerViewAdapter cards_middle_adapter;
+    private static PlayersRecyclerviewAdapter players_adapter;
+    private static CardsInHandRecyclerViewAdapter cards_adapter;
+    private static CardsInTheMiddleRecyclerViewAdapter cards_middle_adapter;
 
     ManagedChannel channel;
     private static final BlockingQueue<GameMove> serverWaitingQueue = new LinkedBlockingQueue<>();
@@ -78,6 +78,14 @@ public class GamePlayActivity extends AppCompatActivity {
     private CardsInHandRecyclerViewAdapter playcardadapter;
     private ArrayList<String> cards;
 
+    public static String getGameId() {
+        return gameId;
+    }
+
+    public static String getPlayerId() {
+        return playerId;
+    }
+
     private static void appendLogs(StringBuffer logs, String msg, Object... params) {
         if (params.length > 0) {
             logs.append(MessageFormat.format(msg, params));
@@ -89,8 +97,8 @@ public class GamePlayActivity extends AppCompatActivity {
 
     private static GameMove newGameMove(int type, String message) {
         return GameMove.newBuilder()
-                .setGameid(GamePlayActivity.gameId)
-                .setPlayerid(GamePlayActivity.playerId)
+                .setGameid(GamePlayActivity.getGameId())
+                .setPlayerid(GamePlayActivity.getPlayerId())
                 .setData(message)
                 .setType(type + "")
                 .build();
@@ -367,7 +375,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                 private void showStich(Activity activity, StichMade stichmade) {
                                     if (stichmade
                                             .getPlayerid()
-                                            .equals(playerId)) { // I made the stich
+                                            .equals(getPlayerId())) { // I made the stich
 
                                         numberOfStitchesMade++;
                                         updateNumberOfStichesTextview();
@@ -481,7 +489,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                     for (GrpcPlayer grpcPlayer : gameStatus.getPlayersList()) {
                                         // update my points
-                                        if (playerId.equals(grpcPlayer.getPlayerId()))
+                                        if (getPlayerId().equals(grpcPlayer.getPlayerId()))
                                             myPoints = Integer.parseInt(grpcPlayer.getPoints());
                                         // update points for other people
                                         for (ClientPlayer cPlayer : players) {
@@ -516,7 +524,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                     for (GrpcPlayer grpcPlayer :
                                             cheatingSubmittedResult.getPlayersList()) {
                                         // update my points
-                                        if (playerId.equals(grpcPlayer.getPlayerId()))
+                                        if (getPlayerId().equals(grpcPlayer.getPlayerId()))
                                             myPoints = Integer.parseInt(grpcPlayer.getPoints());
                                         // update points for other people
                                         for (ClientPlayer cPlayer : players) {
@@ -556,7 +564,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                     for (GrpcPlayer grpcPlayer :
                                             cheatingSubmittedResult.getPlayersList()) {
                                         // update my points
-                                        if (playerId.equals(grpcPlayer.getPlayerId()))
+                                        if (getPlayerId().equals(grpcPlayer.getPlayerId()))
                                             myPoints = Integer.parseInt(grpcPlayer.getPoints());
                                         // update points for other people
                                         for (ClientPlayer cPlayer : players) {
@@ -616,7 +624,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                             == Response.ActionCase.CHEATING) {
                                         if (response.getCheating()
                                                 .getCheaterId()
-                                                .equals(playerId)) { // I have cheated
+                                                .equals(getPlayerId())) { // I have cheated
                                             activity.runOnUiThread(
                                                     () ->
                                                             youCheated(
