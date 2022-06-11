@@ -904,7 +904,9 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("BLUETWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_12);
                     break;
-
+                case ("BLUETHIRTEEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_13);
+                    break;
                 case ("REDONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_01);
                     break;
@@ -941,7 +943,9 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("REDTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_12);
                     break;
-
+                case ("REDTHIRTEEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_13);
+                    break;
                 case ("YELLOWONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_01);
                     break;
@@ -978,7 +982,9 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("YELLOWTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_12);
                     break;
-
+                case ("YELLOWTHIRTEEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_13);
+                    break;
                 case ("GREENONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_01);
                     break;
@@ -1014,6 +1020,9 @@ public class GamePlayActivity extends AppCompatActivity {
                     break;
                 case ("GREENTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_12);
+                    break;
+                case ("GREENTHIRTEEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_13);
                     break;
                 case ("REDWIZARD"):
                     viewHolder.card_holder.setImageResource(R.drawable.z_04);
@@ -1127,7 +1136,9 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("BLUETWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.bl_12);
                     break;
-
+                case ("BLUETHIRTEEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_13);
+                    break;
                 case ("REDONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_01);
                     break;
@@ -1164,7 +1175,9 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("REDTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ro_12);
                     break;
-
+                case ("REDTHIRTEEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_13);
+                    break;
                 case ("YELLOWONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_01);
                     break;
@@ -1201,7 +1214,9 @@ public class GamePlayActivity extends AppCompatActivity {
                 case ("YELLOWTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.ge_12);
                     break;
-
+                case ("YELLOWTHIRTEEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_13);
+                    break;
                 case ("GREENONE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_01);
                     break;
@@ -1237,6 +1252,9 @@ public class GamePlayActivity extends AppCompatActivity {
                     break;
                 case ("GREENTWELVE"):
                     viewHolder.card_holder.setImageResource(R.drawable.gr_12);
+                    break;
+                case ("GREENTHIRTEEN"):
+                    viewHolder.card_holder.setImageResource(R.drawable.gr_13);
                     break;
                 case ("REDWIZARD"):
                     viewHolder.card_holder.setImageResource(R.drawable.z_04);
