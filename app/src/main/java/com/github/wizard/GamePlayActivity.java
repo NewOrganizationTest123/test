@@ -403,7 +403,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     public void updateNumberOfStichesTextview() {
         TextView stiche = findViewById(R.id.stiche_made);
-        stiche.setText("You habe already made " + numberOfStitchesMade + " Stiche");
+        stiche.setText("You have already made " + numberOfStitchesMade + " Stiche");
     }
 
     private class GameActionRunnable implements GrpcRunnableNew {
@@ -514,6 +514,10 @@ public class GamePlayActivity extends AppCompatActivity {
                                     updateCardsInMiddleRecyclerView(cardsInMiddle);
 
                                     cards = cardsInHand;
+
+                                    String nextPlayerName = cardList.getTurn();
+                                    ((TextView) activity.findViewById(R.id.whosTurnIsItTextview))
+                                            .setText("Its " + nextPlayerName + "'s turn!");
                                 }
 
                                 private void showTrump(Activity activity, Response response) {
