@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import com.github.wizard.Updater;
 import com.github.wizard.api.Card;
+import io.grpc.stub.StreamObserver;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import io.grpc.stub.StreamObserver;
 
 @ExtendWith(MockitoExtension.class)
 public class GameTests {
@@ -86,6 +85,7 @@ public class GameTests {
     public void testStartGame() {
         when(mocked_player2.getName()).thenReturn("mocked_player2");
         when(mocked_player1.getName()).thenReturn("mocked_player1");
+        game_withMockedPlayers.setNextPlayer(mocked_player1);
         game_withMockedPlayers.start();
         Round firstRound = game_withMockedPlayers.getCurrentRound();
 
@@ -123,6 +123,8 @@ public class GameTests {
 
         Round round = new Round(game_withMockedPlayers, trickMocked, 1);
         when(trickMocked.getCardsPlayed()).thenReturn(2);
+        game_withMockedPlayers.setNextPlayer(mocked_player1);
+        when(mocked_player1.getName()).thenReturn("test");
         round.playCard(mock(Card.class), mocked_player1);
 
         new Timer()
@@ -136,7 +138,7 @@ public class GameTests {
                                 verify(mocked_player2)
                                         .update(Updater.newOnTrickTakenResponse(new Player(null)));
                                 verify(mocked_player2)
-                                        .update(Updater.newOnGameBoardUpdate(null, null));
+                                        .update(Updater.newOnGameBoardUpdate(null, null, "test"));
                             }
                         },
                         3000);
@@ -146,12 +148,15 @@ public class GameTests {
     public void playCardTest_NotLastCard() {
         Round round = new Round(game_withMockedPlayers, trickMocked, 1);
         when(trickMocked.getCardsPlayed()).thenReturn(1);
+        game_withMockedPlayers.setNextPlayer(mocked_player1);
+        when(mocked_player1.getName()).thenReturn("test");
+        when(mocked_player1.getName()).thenReturn("test2");
 
         round.playCard(mock(Card.class), mocked_player1);
 
         //        verify(mocked_player2).update(Updater.newCardPlayRequestResponse());not applicable
         // any more
-        verify(mocked_player2).update(Updater.newOnGameBoardUpdate(null, null));
+        verify(mocked_player2).update(Updater.newOnGameBoardUpdate(null, null, "test2"));
     }
 
     @Test
@@ -198,17 +203,17 @@ public class GameTests {
         assertEquals(player2.getPoints(), player2_points - 10);
         assertTrue(player2.iHaveCHeatedFlag);
     }
+
     @Test
     public void testEndGame() {
 
         Updater updater = mock(Updater.class);
         player1.setUpdater(updater);
         player2.setUpdater(updater);
-        StreamObserver responseStreamObserver=mock(StreamObserver.class);
+        StreamObserver responseStreamObserver = mock(StreamObserver.class);
         when(updater.responseStreamObserver()).thenReturn(responseStreamObserver);
 
         game.endGame();
-        verify(responseStreamObserver,times(2)).onCompleted();
-
+        verify(responseStreamObserver, times(2)).onCompleted();
     }
 }
