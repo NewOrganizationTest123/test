@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import io.grpc.stub.StreamObserver;
 
 @ExtendWith(MockitoExtension.class)
 public class GameTests {
@@ -194,5 +197,18 @@ public class GameTests {
 
         assertEquals(player2.getPoints(), player2_points - 10);
         assertTrue(player2.iHaveCHeatedFlag);
+    }
+    @Test
+    public void testEndGame() {
+
+        Updater updater = mock(Updater.class);
+        player1.setUpdater(updater);
+        player2.setUpdater(updater);
+        StreamObserver responseStreamObserver=mock(StreamObserver.class);
+        when(updater.responseStreamObserver()).thenReturn(responseStreamObserver);
+
+        game.endGame();
+        verify(responseStreamObserver,times(2)).onCompleted();
+
     }
 }
