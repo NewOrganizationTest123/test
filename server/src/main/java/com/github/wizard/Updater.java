@@ -84,7 +84,7 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
     }
 
     public static Response newGetPlayersResponse(Player.Players players) {
-        ArrayList<GrpcPlayer> temp = new ArrayList();
+        ArrayList<GrpcPlayer> temp = new ArrayList<>();
         for (Player p : players)
             temp.add(
                     GrpcPlayer.newBuilder()

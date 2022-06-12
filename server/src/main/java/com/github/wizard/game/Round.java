@@ -1,7 +1,6 @@
 package com.github.wizard.game;
 
 import com.github.wizard.api.Card;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.tinylog.Logger;
@@ -12,8 +11,6 @@ public final class Round {
     private final Player.Players players;
     private final Trick cardsInTheMiddle;
     private final int number;
-
-    private static final Random random = new Random();
 
     public static Round create(Game game, int number) {
 
@@ -85,7 +82,6 @@ public final class Round {
                                         game.setCurrentRound(Round.create(game, number + 1));
                                         game.setNextPlayer(winner);
                                         game.proceed();
-                                        return;
                                     } else {
                                         cardsInTheMiddle.reset();
                                         players.updateGAmeBoard(cardsInTheMiddle.getCards());

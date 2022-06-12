@@ -22,12 +22,6 @@ public class Game {
         return players;
     }
 
-    /**
-     * adds a player to the current game. This does not include the subscription for updates
-     *
-     * @param player
-     * @return the playerId of whoever was added
-     */
     public int addPlayer(Player player) {
         players.add(player);
         return player.getPlayerId();

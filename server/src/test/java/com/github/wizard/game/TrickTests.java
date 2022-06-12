@@ -1,7 +1,9 @@
 package com.github.wizard.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -97,8 +99,8 @@ class TrickTests {
         player2.giveMeCards(cards);
         redTrumpTrick.playCard(
                 yellow10, player2); // player two plays yellow card despite having green
-        assertEquals(true, player2.iHaveCHeatedFlag);
-        assertEquals(false, player1.iHaveCHeatedFlag);
+        assertTrue(player2.iHaveCHeatedFlag);
+        assertFalse(player1.iHaveCHeatedFlag);
     }
 
     @Test
@@ -115,8 +117,8 @@ class TrickTests {
         player2.giveMeCards(cards);
         redTrumpTrick.playCard(
                 green5, player2); // player two plays yellow card despite having green
-        assertEquals(false, player2.iHaveCHeatedFlag);
-        assertEquals(false, player1.iHaveCHeatedFlag);
+        assertFalse(player2.iHaveCHeatedFlag);
+        assertFalse(player1.iHaveCHeatedFlag);
     }
 
     @Test
@@ -130,7 +132,7 @@ class TrickTests {
         player2.giveMeCards(cards);
         redTrumpTrick.playCard(
                 yellow10, player2); // player two plays yellow card despite having green
-        assertEquals(false, player2.iHaveCHeatedFlag);
+        assertFalse(player2.iHaveCHeatedFlag);
     }
 
     @Test
