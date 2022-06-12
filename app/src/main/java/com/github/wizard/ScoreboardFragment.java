@@ -32,7 +32,6 @@ public class ScoreboardFragment extends Fragment {
         TextView points4 = view.findViewById(R.id.Player4Points);
         TextView points5 = view.findViewById(R.id.Player5Points);
         TextView points6 = view.findViewById(R.id.Player6Points);
-        TextView round = view.findViewById(R.id.Roundscounter);
         List<ClientPlayer> players = new ArrayList<>();
         players = GamePlayActivity.getPlayers();
 
@@ -89,7 +88,6 @@ public class ScoreboardFragment extends Fragment {
         TextView points4 = view.findViewById(R.id.Player4Points);
         TextView points5 = view.findViewById(R.id.Player5Points);
         TextView points6 = view.findViewById(R.id.Player6Points);
-        TextView round = view.findViewById(R.id.Roundscounter);
 
         ClientPlayer winner = GamePlayActivity.getPlayers().get(0);
         for (ClientPlayer p : GamePlayActivity.getPlayers())

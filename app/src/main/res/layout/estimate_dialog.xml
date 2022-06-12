@@ -16,7 +16,9 @@
         android:text="Please enter your estimate:"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardsInEstimateDialog" />
+        app:layout_constraintTop_toBottomOf="@+id/cardsInEstimateDialog"
+        style="@style/TextViewStyleBlack"
+        android:textSize="16dp" />
 
     <EditText
         android:id="@+id/dialogEstimateInput"
