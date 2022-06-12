@@ -205,11 +205,11 @@ public class GamePlayActivity extends AppCompatActivity {
 
         closeScoreboard = findViewById(R.id.closeScoreboardButton);
         closeScoreboard.setVisibility(View.GONE);
-        closeScoreboard.setOnClickListener(e->{
-            scoreboardframe.setVisibility(View.GONE);
-            closeScoreboard.setVisibility(View.GONE);
-        });
-
+        closeScoreboard.setOnClickListener(
+                e -> {
+                    scoreboardframe.setVisibility(View.GONE);
+                    closeScoreboard.setVisibility(View.GONE);
+                });
     }
 
     public static String getPlayerpoints(int i) {
@@ -248,18 +248,18 @@ public class GamePlayActivity extends AppCompatActivity {
             FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
             fragmenttrans.replace(R.id.framescoreboard, fragment);
             fragmenttrans.commit();
-            //endgame.setVisibility(View.GONE);
-            //whosTurnIsItText.setVisibility(View.VISIBLE);
-            //cardsInHandRecyclerView.setVisibility(View.VISIBLE);
-            //cardsInTheMiddleRecyclerView.setVisibility(View.VISIBLE);
+            // endgame.setVisibility(View.GONE);
+            // whosTurnIsItText.setVisibility(View.VISIBLE);
+            // cardsInHandRecyclerView.setVisibility(View.VISIBLE);
+            // cardsInTheMiddleRecyclerView.setVisibility(View.VISIBLE);
         } else {
             scoreboardframe.setVisibility(View.VISIBLE);
             scoreboardframe.bringToFront();
             closeScoreboard.setVisibility(View.VISIBLE);
-            //endgame.setVisibility(View.VISIBLE);
-            //whosTurnIsItText.setVisibility(View.INVISIBLE);
-            //cardsInHandRecyclerView.setVisibility(View.INVISIBLE);
-            //cardsInTheMiddleRecyclerView.setVisibility(View.INVISIBLE);
+            // endgame.setVisibility(View.VISIBLE);
+            // whosTurnIsItText.setVisibility(View.INVISIBLE);
+            // cardsInHandRecyclerView.setVisibility(View.INVISIBLE);
+            // cardsInTheMiddleRecyclerView.setVisibility(View.INVISIBLE);
             FragmentManager fragmentm = getSupportFragmentManager();
             FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
             fragmenttrans.replace(R.id.framescoreboard, fragment);
