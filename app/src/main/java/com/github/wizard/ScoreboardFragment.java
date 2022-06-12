@@ -98,32 +98,26 @@ public class ScoreboardFragment extends Fragment {
         if (GamePlayActivity.getPlayers().indexOf(winner) == 0) {
             points1.setBackgroundColor(
                     ContextCompat.getColor(this.getContext(), android.R.color.holo_green_light));
-            points1.setTextColor(android.R.color.black);
 
         } else if (GamePlayActivity.getPlayers().indexOf(winner) == 1) {
             points2.setBackgroundColor(
                     ContextCompat.getColor(this.getContext(), android.R.color.holo_green_light));
-            points2.setTextColor(android.R.color.black);
 
         } else if (GamePlayActivity.getPlayers().indexOf(winner) == 2) {
             points3.setBackgroundColor(
                     ContextCompat.getColor(this.getContext(), android.R.color.holo_green_light));
-            points3.setTextColor(android.R.color.black);
 
         } else if (GamePlayActivity.getPlayers().indexOf(winner) == 3) {
             points4.setBackgroundColor(
                     ContextCompat.getColor(this.getContext(), android.R.color.holo_green_light));
-            points4.setTextColor(android.R.color.black);
 
         } else if (GamePlayActivity.getPlayers().indexOf(winner) == 4) {
             points5.setBackgroundColor(
                     ContextCompat.getColor(this.getContext(), android.R.color.holo_green_light));
-            points5.setTextColor(android.R.color.black);
 
         } else if (GamePlayActivity.getPlayers().indexOf(winner) == 5) {
             points6.setBackgroundColor(
                     ContextCompat.getColor(this.getContext(), android.R.color.holo_green_light));
-            points6.setTextColor(android.R.color.black);
         }
     }
 }
