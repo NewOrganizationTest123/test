@@ -37,7 +37,8 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
         return Response.newBuilder().setType("2").setData("Please play a card").build();
     }
 
-    public static Response newOnGameBoardUpdate(List<Card> hand, List<Card> table) {
+    public static Response newOnGameBoardUpdate(
+            List<Card> hand, List<Card> table, String nextPlayer) {
         if (hand == null) hand = new ArrayList<>();
         if (table == null) table = new ArrayList<>();
 
@@ -47,7 +48,12 @@ public record Updater(StreamObserver<Response> responseStreamObserver) {
                 table.stream().toString());
         return Response.newBuilder()
                 .setType("3")
-                .setCardList(CardList.newBuilder().addAllHand(hand).addAllTable(table).build())
+                .setCardList(
+                        CardList.newBuilder()
+                                .addAllHand(hand)
+                                .addAllTable(table)
+                                .setTurn(nextPlayer)
+                                .build())
                 .build();
     }
 

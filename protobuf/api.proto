@@ -100,6 +100,7 @@ message CardList{
 
   repeated Card hand = 1;
   repeated Card table = 2;
+  string turn=3;
 
 }
 

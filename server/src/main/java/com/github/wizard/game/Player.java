@@ -383,8 +383,16 @@ public class Player {
         }
 
         public void updateGAmeBoard(List<Card> tableCards) {
-            Round round = game.getCurrentRound();
-            forEach(p -> p.update(Updater.newOnGameBoardUpdate(p.getCards(), tableCards)));
+
+            forEach(
+                    p ->
+                            p.update(
+                                    Updater.newOnGameBoardUpdate(
+                                            p.getCards(),
+                                            tableCards,
+                                            game.getNextPlayer() != null
+                                                    ? game.getNextPlayer().getName()
+                                                    : "")));
         }
 
         public void finishTrick(Player winningPlayer) {
