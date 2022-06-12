@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ScoreboardFragment extends Fragment {
 
     View view;
@@ -34,45 +37,40 @@ public class ScoreboardFragment extends Fragment {
         TextView points5 = view.findViewById(R.id.Player5Points);
         TextView points6 = view.findViewById(R.id.Player6Points);
         TextView round = view.findViewById(R.id.Roundscounter);
-
-        int points1int = Integer.parseInt(points1.getText().toString());
-        int points2int = Integer.parseInt(points2.getText().toString());
-        int points3int = Integer.parseInt(points3.getText().toString());
-        int points4int = Integer.parseInt(points4.getText().toString());
-        int points5int = Integer.parseInt(points5.getText().toString());
-        int points6int = Integer.parseInt(points6.getText().toString());
+        List<ClientPlayer> players = new ArrayList<>();
+        players = GamePlayActivity.getPlayers();
 
         int i = 0;
-        while (i < GamePlayActivity.getPlayers().size()) {
+        while (i < players.size()) {
             switch (i) {
                 case 0:
-                    name1.setText(GamePlayActivity.getPlayers().get(0).getName());
-                    points1.setText(GamePlayActivity.getPlayers().get(0).getPoints());
+                    name1.setText(players.get(0).getName());
+                    points1.setText(GamePlayActivity.getPlayerpoints(0));
                     i++;
                     break;
                 case 1:
-                    name2.setText(GamePlayActivity.getPlayers().get(1).getName());
-                    points2.setText(GamePlayActivity.getPlayers().get(1).getPoints());
+                    name2.setText(players.get(1).getName());
+                    points2.setText(GamePlayActivity.getPlayerpoints(1));
                     i++;
                     break;
                 case 2:
-                    name3.setText(GamePlayActivity.getPlayers().get(2).getName());
-                    points3.setText(GamePlayActivity.getPlayers().get(2).getPoints());
+                    name3.setText(players.get(2).getName());
+                    points3.setText(GamePlayActivity.getPlayerpoints(2));
                     i++;
                     break;
                 case 3:
-                    name4.setText(GamePlayActivity.getPlayers().get(3).getName());
-                    points4.setText(GamePlayActivity.getPlayers().get(3).getPoints());
+                    name4.setText(players.get(3).getName());
+                    points4.setText(GamePlayActivity.getPlayerpoints(3));
                     i++;
                     break;
                 case 4:
-                    name5.setText(GamePlayActivity.getPlayers().get(4).getName());
-                    points5.setText(GamePlayActivity.getPlayers().get(4).getPoints());
+                    name5.setText(players.get(4).getName());
+                    points5.setText(GamePlayActivity.getPlayerpoints(4));
                     i++;
                     break;
                 case 5:
-                    name6.setText(GamePlayActivity.getPlayers().get(5).getName());
-                    points6.setText(GamePlayActivity.getPlayers().get(5).getPoints());
+                    name6.setText(players.get(5).getName());
+                    points6.setText(GamePlayActivity.getPlayerpoints(5));
                     i++;
                     break;
             }

@@ -195,6 +195,10 @@ public class GamePlayActivity extends AppCompatActivity {
         });
     }
 
+    public static String getPlayerpoints(int i){
+        return players.get(i).getPoints().toString();
+    }
+
     /* just for testcase*/
     public void EndofGame( ScoreboardFragment scoreboardfragment) {
         scoreboardframe.setVisibility(View.VISIBLE);
