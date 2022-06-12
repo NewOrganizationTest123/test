@@ -4,13 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextClock;
 import android.widget.TextView;
-
 import androidx.fragment.app.Fragment;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +14,8 @@ public class ScoreboardFragment extends Fragment {
     View view;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_scoreboard, container, false);
 
@@ -45,42 +40,41 @@ public class ScoreboardFragment extends Fragment {
             switch (i) {
                 case 0:
                     name1.setText(players.get(0).getName());
-                    points1.setText(GamePlayActivity.getPlayerpoints(0));
+                    points1.setText(players.get(0).getPoints());
                     i++;
                     break;
                 case 1:
                     name2.setText(players.get(1).getName());
-                    points2.setText(GamePlayActivity.getPlayerpoints(1));
+                    points2.setText(players.get(1).getPoints());
                     i++;
                     break;
                 case 2:
                     name3.setText(players.get(2).getName());
-                    points3.setText(GamePlayActivity.getPlayerpoints(2));
+                    points3.setText(players.get(2).getPoints());
                     i++;
                     break;
                 case 3:
                     name4.setText(players.get(3).getName());
-                    points4.setText(GamePlayActivity.getPlayerpoints(3));
+                    points4.setText(players.get(3).getPoints());
                     i++;
                     break;
                 case 4:
                     name5.setText(players.get(4).getName());
-                    points5.setText(GamePlayActivity.getPlayerpoints(4));
+                    points5.setText(players.get(4).getPoints());
                     i++;
                     break;
                 case 5:
                     name6.setText(players.get(5).getName());
-                    points6.setText(GamePlayActivity.getPlayerpoints(5));
+                    points6.setText(players.get(5).getPoints());
                     i++;
                     break;
             }
-
         }
 
         return view;
     }
 
-    public void winningplayerhighlighted(){
+    public void winningplayerhighlighted() {
 
         TextView name1 = view.findViewById(R.id.Player1Name);
         TextView name2 = view.findViewById(R.id.Player2Name);
@@ -96,40 +90,33 @@ public class ScoreboardFragment extends Fragment {
         TextView points6 = view.findViewById(R.id.Player6Points);
         TextView round = view.findViewById(R.id.Roundscounter);
 
-        int points1int = Integer.parseInt(points1.getText().toString());
-        int points2int = Integer.parseInt(points2.getText().toString());
-        int points3int = Integer.parseInt(points3.getText().toString());
-        int points4int = Integer.parseInt(points4.getText().toString());
-        int points5int = Integer.parseInt(points5.getText().toString());
-        int points6int = Integer.parseInt(points6.getText().toString());
-        int max = Math.max(points1int, Math.max(points2int, Math.max(points3int, Math.max(points4int, Math.max(points5int, points6int)))));
+        ClientPlayer winner = GamePlayActivity.getPlayers().get(0);
+        for (ClientPlayer p : GamePlayActivity.getPlayers())
+            if (Integer.parseInt(p.getPoints()) > Integer.parseInt(winner.getPoints())) winner = p;
 
-
-        if (max == points1int) {
+        if (GamePlayActivity.getPlayers().indexOf(winner) == 0) {
             points1.setBackgroundColor(android.R.color.holo_green_light);
             points1.setTextColor(android.R.color.black);
 
-        } else if (max == points2int) {
+        } else if (GamePlayActivity.getPlayers().indexOf(winner) == 1) {
             points2.setBackgroundColor(android.R.color.holo_green_light);
             points2.setTextColor(android.R.color.black);
 
-        } else if (max == points3int) {
+        } else if (GamePlayActivity.getPlayers().indexOf(winner) == 2) {
             points3.setBackgroundColor(android.R.color.holo_green_light);
             points3.setTextColor(android.R.color.black);
 
-        } else if (max == points4int) {
+        } else if (GamePlayActivity.getPlayers().indexOf(winner) == 3) {
             points4.setBackgroundColor(android.R.color.holo_green_light);
             points4.setTextColor(android.R.color.black);
 
-        } else if (max == points5int) {
+        } else if (GamePlayActivity.getPlayers().indexOf(winner) == 4) {
             points5.setBackgroundColor(android.R.color.holo_green_light);
             points5.setTextColor(android.R.color.black);
 
-        } else if (max == points6int) {
+        } else if (GamePlayActivity.getPlayers().indexOf(winner) == 5) {
             points6.setBackgroundColor(android.R.color.holo_green_light);
             points6.setTextColor(android.R.color.black);
-
         }
     }
-
 }

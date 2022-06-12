@@ -17,11 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.wizard.api.Card;
@@ -77,6 +80,10 @@ public class GamePlayActivity extends AppCompatActivity {
     private int cardPlayTimerProgress;
     private CardsInHandRecyclerViewAdapter playcardadapter;
     private ArrayList<String> cards;
+    private Button showscore;
+    private FrameLayout scoreboardframe;
+    private Button homebutton;
+    private Button endgame; // ONLY for testcases
 
     public static String getGameId() {
         return gameId;
@@ -120,6 +127,10 @@ public class GamePlayActivity extends AppCompatActivity {
                 .execute(); // fire up the streaming service
 
         points = findViewById(R.id.points);
+        showscore = findViewById(R.id.btnscoreboard);
+        scoreboardframe = findViewById(R.id.framescoreboard);
+        endgame = findViewById(R.id.btnendgame);
+        homebutton = findViewById(R.id.btnhomescreen);
         whosTurnIsItText = findViewById(R.id.whosTurnIsItTextview);
         cheatsView = findViewById(R.id.ExposeCheatsView);
         cheatsView.bringToFront();
@@ -167,6 +178,81 @@ public class GamePlayActivity extends AppCompatActivity {
         ArrayList<String> cardsMiddleList = new ArrayList<>();
         cards_middle_adapter = new CardsInTheMiddleRecyclerViewAdapter(this, cardsMiddleList);
         cardsInTheMiddleRecyclerView.setAdapter(cards_middle_adapter);
+
+        showscore.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showScoreBoard(new ScoreboardFragment());
+                    }
+                });
+        endgame.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EndofGame(new ScoreboardFragment());
+                    }
+                });
+        homebutton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        backtohome();
+                    }
+                });
+    }
+
+    public static String getPlayerpoints(int i) {
+        return players.get(i).getPoints().toString();
+    }
+
+    /* just for testcase*/
+    public void EndofGame(ScoreboardFragment scoreboardfragment) {
+        scoreboardframe.setVisibility(View.VISIBLE);
+        FragmentManager fragmentm = getSupportFragmentManager();
+        FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
+        fragmenttrans.replace(R.id.framescoreboard, scoreboardfragment);
+        fragmenttrans.commit();
+        showscore.setVisibility(View.GONE);
+        endgame.setVisibility(View.GONE);
+        playersRecyclerView.setVisibility(View.GONE);
+        cardsInHandRecyclerView.setVisibility(View.GONE);
+        cardsInTheMiddleRecyclerView.setVisibility(View.GONE);
+        hideCheatingExposingView();
+        homebutton.setVisibility(View.VISIBLE);
+        whosTurnIsItText.setVisibility(View.GONE);
+        cheatsViewTitle.setVisibility(View.GONE);
+        points.setVisibility(View.GONE);
+    }
+
+    /*just for test cases*/
+    public void backtohome() {
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        startActivity(intent);
+    }
+
+    public void showScoreBoard(ScoreboardFragment fragment) {
+        if (scoreboardframe.getVisibility() == View.VISIBLE) {
+            scoreboardframe.setVisibility(View.GONE);
+            FragmentManager fragmentm = getSupportFragmentManager();
+            FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
+            fragmenttrans.replace(R.id.framescoreboard, fragment);
+            fragmenttrans.commit();
+            endgame.setVisibility(View.GONE);
+            whosTurnIsItText.setVisibility(View.VISIBLE);
+            cardsInHandRecyclerView.setVisibility(View.VISIBLE);
+            cardsInTheMiddleRecyclerView.setVisibility(View.VISIBLE);
+        } else {
+            scoreboardframe.setVisibility(View.VISIBLE);
+            endgame.setVisibility(View.VISIBLE);
+            whosTurnIsItText.setVisibility(View.INVISIBLE);
+            cardsInHandRecyclerView.setVisibility(View.INVISIBLE);
+            cardsInTheMiddleRecyclerView.setVisibility(View.INVISIBLE);
+            FragmentManager fragmentm = getSupportFragmentManager();
+            FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
+            fragmenttrans.replace(R.id.framescoreboard, fragment);
+            fragmenttrans.commit();
+        }
     }
 
     public void showCheatingExposingView() {
@@ -188,7 +274,7 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     public void updatePlayersInRecyclerView(List<ClientPlayer> realplayers) {
-        players = realplayers; // include myself for scoreboard
+        players = new ArrayList<ClientPlayer>(realplayers); // include myself for scoreboard
         // remove myself
         for (ClientPlayer cPlayer : realplayers) {
             if (cPlayer.getId().equals(playerId)) {
@@ -268,11 +354,13 @@ public class GamePlayActivity extends AppCompatActivity {
     private void showGameResults(Activity activity) {
         // TODO: 26.05.2022 Silvio, show your scoreboard whith winning player highlighted when this
         // is called, forward to home screen when scoreboard is closed
-        Toast.makeText(
-                        activity.getApplication().getApplicationContext(),
-                        "The game has ended! Good bye",
-                        Toast.LENGTH_SHORT)
-                .show();
+        /*Toast.makeText(
+                activity.getApplication().getApplicationContext(),
+                "The game has ended! Good bye",
+                Toast.LENGTH_SHORT)
+        .show();*/
+        ScoreboardFragment score = new ScoreboardFragment();
+        score.winningplayerhighlighted();
     }
 
     private void updateCardsInHandRecyclerView(ArrayList<String> cardsInHand) {
