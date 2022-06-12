@@ -901,131 +901,85 @@ public class GamePlayActivity extends AppCompatActivity {
         }
     }
 
-    int cardNameToImageResource(String cardName) throws IllegalArgumentException {
-        switch (cardName) {
-            case ("BLUEONE"):
-                return R.drawable.bl_01;
-            case ("BLUETWO"):
-                return R.drawable.bl_02;
-            case ("BLUETHREE"):
-                return R.drawable.bl_03;
-            case ("BLUEFOUR"):
-                return R.drawable.bl_04;
-            case ("BLUEFIVE"):
-                return R.drawable.bl_05;
-            case ("BLUESIX"):
-                return R.drawable.bl_06;
-            case ("BLUESEVEN"):
-                return R.drawable.bl_07;
-            case ("BLUEEIGHT"):
-                return R.drawable.bl_08;
-            case ("BLUENINE"):
-                return R.drawable.bl_09;
-            case ("BLUETEN"):
-                return R.drawable.bl_10;
-            case ("BLUEELEVEN"):
-                return R.drawable.bl_11;
-            case ("BLUETWELVE"):
-                return R.drawable.bl_12;
-            case ("BLUETHIRTEEN"):
-                return R.drawable.bl_13;
-            case ("REDONE"):
-                return R.drawable.ro_01;
-            case ("REDTWO"):
-                return R.drawable.ro_02;
-            case ("REDTHREE"):
-                return R.drawable.ro_03;
-            case ("REDFOUR"):
-                return R.drawable.ro_04;
-            case ("REDFIVE"):
-                return R.drawable.ro_05;
-            case ("REDSIX"):
-                return R.drawable.ro_06;
-            case ("REDSEVEN"):
-                return R.drawable.ro_07;
-            case ("REDEIGHT"):
-                return R.drawable.ro_08;
-            case ("REDNINE"):
-                return R.drawable.ro_09;
-            case ("REDTEN"):
-                return R.drawable.ro_10;
-            case ("REDELEVEN"):
-                return R.drawable.ro_11;
-            case ("REDTWELVE"):
-                return R.drawable.ro_12;
-            case ("REDTHIRTEEN"):
-                return R.drawable.ro_13;
-            case ("YELLOWONE"):
-                return R.drawable.ge_01;
-            case ("YELLOWTWO"):
-                return R.drawable.ge_02;
-            case ("YELLOWTHREE"):
-                return R.drawable.ge_03;
-            case ("YELLOWFOUR"):
-                return R.drawable.ge_04;
-            case ("YELLOWFIVE"):
-                return R.drawable.ge_05;
-            case ("YELLOWSIX"):
-                return R.drawable.ge_06;
-            case ("YELLOWSEVEN"):
-                return R.drawable.ge_07;
-            case ("YELLOWEIGHT"):
-                return R.drawable.ge_08;
-            case ("YELLOWNINE"):
-                return R.drawable.ge_09;
-            case ("YELLOWTEN"):
-                return R.drawable.ge_10;
-            case ("YELLOWELEVEN"):
-                return R.drawable.ge_11;
-            case ("YELLOWTWELVE"):
-                return R.drawable.ge_12;
-            case ("YELLOWTHIRTEEN"):
-                return R.drawable.ge_13;
-            case ("GREENONE"):
-                return R.drawable.gr_01;
-            case ("GREENTWO"):
-                return R.drawable.gr_02;
-            case ("GREENTHREE"):
-                return R.drawable.gr_03;
-            case ("GREENFOUR"):
-                return R.drawable.gr_04;
-            case ("GREENFIVE"):
-                return R.drawable.gr_05;
-            case ("GREENSIX"):
-                return R.drawable.gr_06;
-            case ("GREENSEVEN"):
-                return R.drawable.gr_07;
-            case ("GREENEIGHT"):
-                return R.drawable.gr_08;
-            case ("GREENNINE"):
-                return R.drawable.gr_09;
-            case ("GREENTEN"):
-                return R.drawable.gr_10;
-            case ("GREENLEVEN"):
-                return R.drawable.gr_11;
-            case ("GREENTWELVE"):
-                return R.drawable.gr_12;
-            case ("GREENTHIRTEEN"):
-                return R.drawable.gr_13;
-            case ("REDWIZARD"):
-                return R.drawable.z_04;
-            case ("YELLOWWIZARD"):
-                return R.drawable.z_03;
-            case ("GREENWIZARD"):
-                return R.drawable.z_02;
-            case ("BLUEWIZARD"):
-                return R.drawable.z_01;
-            case ("REDJESTER"):
-                return R.drawable.n_02;
-            case ("YELLOWJESTER"):
-                return R.drawable.n_03;
-            case ("BLUEJESTER"):
-                return R.drawable.n_01;
-            case ("GREENJESTER"):
-                return R.drawable.n_04;
+    private enum CardNames {
+        BLUEONE(R.drawable.bl_01),
+        BLUETWO(R.drawable.bl_02),
+        BLUETHREE(R.drawable.bl_03),
+        BLUEFOUR(R.drawable.bl_04),
+        BLUEFIVE(R.drawable.bl_05),
+        BLUESIX(R.drawable.bl_06),
+        BLUESEVEN(R.drawable.bl_07),
+        BLUEEIGHT(R.drawable.bl_08),
+        BLUENINE(R.drawable.bl_09),
+        BLUETEN(R.drawable.bl_10),
+        BLUEELEVEN(R.drawable.bl_11),
+        BLUETWELVE(R.drawable.bl_12),
+        BLUETHIRTEEN(R.drawable.bl_13),
+        REDONE(R.drawable.ro_01),
+        REDTWO(R.drawable.ro_02),
+        REDTHREE(R.drawable.ro_03),
+        REDFOUR(R.drawable.ro_04),
+        REDFIVE(R.drawable.ro_05),
+        REDSIX(R.drawable.ro_06),
+        REDSEVEN(R.drawable.ro_07),
+        REDEIGHT(R.drawable.ro_08),
+        REDNINE(R.drawable.ro_09),
+        REDTEN(R.drawable.ro_10),
+        REDELEVEN(R.drawable.ro_11),
+        REDTWELVE(R.drawable.ro_12),
+        REDTHIRTEEN(R.drawable.ro_13),
+        YELLOWONE(R.drawable.ge_01),
+        YELLOWTWO(R.drawable.ge_02),
+        YELLOWTHREE(R.drawable.ge_03),
+        YELLOWFOUR(R.drawable.ge_04),
+        YELLOWFIVE(R.drawable.ge_05),
+        YELLOWSIX(R.drawable.ge_06),
+        YELLOWSEVEN(R.drawable.ge_07),
+        YELLOWEIGHT(R.drawable.ge_08),
+        YELLOWNINE(R.drawable.ge_09),
+        YELLOWTEN(R.drawable.ge_10),
+        YELLOWELEVEN(R.drawable.ge_11),
+        YELLOWTWELVE(R.drawable.ge_12),
+        YELLOWTHIRTEEN(R.drawable.ge_13),
+        GREENONE(R.drawable.gr_01),
+        GREENTWO(R.drawable.gr_02),
+        GREENTHREE(R.drawable.gr_03),
+        GREENFOUR(R.drawable.gr_04),
+        GREENFIVE(R.drawable.gr_05),
+        GREENSIX(R.drawable.gr_06),
+        GREENSEVEN(R.drawable.gr_07),
+        GREENEIGHT(R.drawable.gr_08),
+        GREENNINE(R.drawable.gr_09),
+        GREENTEN(R.drawable.gr_10),
+        GREENLEVEN(R.drawable.gr_11),
+        GREENTWELVE(R.drawable.gr_12),
+        GREENTHIRTEEN(R.drawable.gr_13),
+        REDWIZARD(R.drawable.z_04),
+        YELLOWWIZARD(R.drawable.z_03),
+        GREENWIZARD(R.drawable.z_02),
+        BLUEWIZARD(R.drawable.z_01),
+        REDJESTER(R.drawable.n_02),
+        YELLOWJESTER(R.drawable.n_03),
+        BLUEJESTER(R.drawable.n_01),
+        GREENJESTER(R.drawable.n_04);
+
+        private int id;
+
+        CardNames(int cardId) {
+            this.id = cardId;
         }
 
-        throw new IllegalArgumentException(String.format("unknown card name: %s", cardName));
+        static CardNames fromName(String name) {
+            return valueOf(name);
+        }
+
+        static int nameToId(String name) {
+            return fromName(name).getId();
+        }
+
+        int getId() {
+            return id;
+        }
     }
 
     public class CardsInHandRecyclerViewAdapter
@@ -1054,10 +1008,6 @@ public class GamePlayActivity extends AppCompatActivity {
             return new ViewHolder(view);
         }
 
-        private void setImageResource(ViewHolder viewHolder, int drawable) {
-            viewHolder.cardHolder.setImageResource(drawable);
-        }
-
         @SuppressLint("UseCompatLoadingForDrawables")
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
@@ -1067,7 +1017,7 @@ public class GamePlayActivity extends AppCompatActivity {
             counter++;
 
             try {
-                int imageResource = cardNameToImageResource(cardname);
+                int imageResource = GamePlayActivity.CardNames.nameToId(cardname);
                 viewHolder.cardHolder.setImageResource(imageResource);
             } catch (IllegalArgumentException e) {
                 // ignore if no resource was found for the card name
@@ -1121,7 +1071,7 @@ public class GamePlayActivity extends AppCompatActivity {
             String cardname = cards.get(position);
 
             try {
-                int imageResource = cardNameToImageResource(cardname);
+                int imageResource = GamePlayActivity.CardNames.nameToId(cardname);
                 viewHolder.cardsImageView.setImageResource(imageResource);
             } catch (IllegalArgumentException e) {
                 // ignore if no resource was found for the card name

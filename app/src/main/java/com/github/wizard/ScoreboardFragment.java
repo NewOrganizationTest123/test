@@ -30,7 +30,6 @@ public class ScoreboardFragment extends Fragment {
         R.id.Player5Points,
         R.id.Player6Points
     };
-    private int roundId = R.id.Roundscounter;
 
     private List<TextView> playerNameViews;
     private List<TextView> playerPointViews;
