@@ -34,7 +34,7 @@ public class Trick {
         return getCards().size();
     }
 
-    public Player getWinningPlayer() { // TODO: 11.06.2022  second wizzard
+    public Player getWinningPlayer() {
         Card.Color firstColor =
                 getCards().get(0).getColor(); // as only cards of similar color and wizards count
 
