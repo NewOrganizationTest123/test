@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String GAME_ID_KEY = "com.github.wizard.GAME_ID_KEY";
     public static final String PLAYER_ID_KEY = "com.github.wizard.PLAYER_ID_KEY";
     public static final String TAG = "wizard";
-    public static final String SERVER_ADDRESS = "10.0.2.2";
-    public static final boolean USE_PLAINTEXT = true;
+    public static final String SERVER_ADDRESS = "shgy.xyz";
+    public static final boolean USE_PLAINTEXT = false;
     public static final int SERVER_PORT = 50051;
     public static final int SERVER_TIMEOUT_SECONDS = 10;
     public static String PLAYER_NAME;
