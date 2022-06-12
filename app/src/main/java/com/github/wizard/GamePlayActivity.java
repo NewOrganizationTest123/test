@@ -352,13 +352,6 @@ public class GamePlayActivity extends AppCompatActivity {
      * game
      */
     private void showGameResults(Activity activity) {
-        // TODO: 26.05.2022 Silvio, show your scoreboard whith winning player highlighted when this
-        // is called, forward to home screen when scoreboard is closed
-        /*Toast.makeText(
-                activity.getApplication().getApplicationContext(),
-                "The game has ended! Good bye",
-                Toast.LENGTH_SHORT)
-        .show();*/
         ScoreboardFragment score = new ScoreboardFragment();
         score.winningplayerhighlighted();
     }
