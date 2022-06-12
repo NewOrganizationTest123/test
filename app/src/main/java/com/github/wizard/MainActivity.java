@@ -326,13 +326,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static class activateGAme implements GrpcRunnable {
 
-        /**
-         * Perform a grpcRunnable and return all the logs.
-         *
-         * @param activityReference
-         */
         @Override
-        public String run(WeakReference<Activity> activityReference) throws Exception {
+        public String run(WeakReference<Activity> activityReference) {
             JoinRequest request =
                     JoinRequest.newBuilder().setGameid(gameIdInt + "").setName("").build();
             if (gamePlayBlockingStub.setAsReady(request).getReady()) return "Success";

@@ -1,7 +1,7 @@
 package com.github.wizard;
 
 public class ClientPlayer {
-    private String id;
+    private final String id;
     private String name;
     private String points;
 

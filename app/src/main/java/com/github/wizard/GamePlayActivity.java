@@ -388,9 +388,6 @@ public class GamePlayActivity extends AppCompatActivity {
             return updateGameBoard(asyncStub, activityReference);
         }
 
-        @Override
-        public void doWhenDone(WeakReference<Activity> activityReference) {}
-
         /**
          * Bi-directional example, which can only be asynchronous. Send some chat messages, and
          * print any chat messages that are sent from the server.
