@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,27 +96,33 @@ public class ScoreboardFragment extends Fragment {
             if (Integer.parseInt(p.getPoints()) > Integer.parseInt(winner.getPoints())) winner = p;
 
         if (GamePlayActivity.getPlayers().indexOf(winner) == 0) {
-            points1.setBackgroundColor(android.R.color.holo_green_light);
+            points1.setBackgroundColor(
+                    ContextCompat.getColor(this.getContext(), android.R.color.holo_green_light));
             points1.setTextColor(android.R.color.black);
 
         } else if (GamePlayActivity.getPlayers().indexOf(winner) == 1) {
-            points2.setBackgroundColor(android.R.color.holo_green_light);
+            points2.setBackgroundColor(
+                    ContextCompat.getColor(this.getContext(), android.R.color.holo_green_light));
             points2.setTextColor(android.R.color.black);
 
         } else if (GamePlayActivity.getPlayers().indexOf(winner) == 2) {
-            points3.setBackgroundColor(android.R.color.holo_green_light);
+            points3.setBackgroundColor(
+                    ContextCompat.getColor(this.getContext(), android.R.color.holo_green_light));
             points3.setTextColor(android.R.color.black);
 
         } else if (GamePlayActivity.getPlayers().indexOf(winner) == 3) {
-            points4.setBackgroundColor(android.R.color.holo_green_light);
+            points4.setBackgroundColor(
+                    ContextCompat.getColor(this.getContext(), android.R.color.holo_green_light));
             points4.setTextColor(android.R.color.black);
 
         } else if (GamePlayActivity.getPlayers().indexOf(winner) == 4) {
-            points5.setBackgroundColor(android.R.color.holo_green_light);
+            points5.setBackgroundColor(
+                    ContextCompat.getColor(this.getContext(), android.R.color.holo_green_light));
             points5.setTextColor(android.R.color.black);
 
         } else if (GamePlayActivity.getPlayers().indexOf(winner) == 5) {
-            points6.setBackgroundColor(android.R.color.holo_green_light);
+            points6.setBackgroundColor(
+                    ContextCompat.getColor(this.getContext(), android.R.color.holo_green_light));
             points6.setTextColor(android.R.color.black);
         }
     }
