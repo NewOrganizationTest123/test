@@ -905,6 +905,87 @@ public class GamePlayActivity extends AppCompatActivity {
         }
     }
 
+    private enum CardNames {
+        BLUEONE(R.drawable.bl_01),
+        BLUETWO(R.drawable.bl_02),
+        BLUETHREE(R.drawable.bl_03),
+        BLUEFOUR(R.drawable.bl_04),
+        BLUEFIVE(R.drawable.bl_05),
+        BLUESIX(R.drawable.bl_06),
+        BLUESEVEN(R.drawable.bl_07),
+        BLUEEIGHT(R.drawable.bl_08),
+        BLUENINE(R.drawable.bl_09),
+        BLUETEN(R.drawable.bl_10),
+        BLUEELEVEN(R.drawable.bl_11),
+        BLUETWELVE(R.drawable.bl_12),
+        BLUETHIRTEEN(R.drawable.bl_13),
+        REDONE(R.drawable.ro_01),
+        REDTWO(R.drawable.ro_02),
+        REDTHREE(R.drawable.ro_03),
+        REDFOUR(R.drawable.ro_04),
+        REDFIVE(R.drawable.ro_05),
+        REDSIX(R.drawable.ro_06),
+        REDSEVEN(R.drawable.ro_07),
+        REDEIGHT(R.drawable.ro_08),
+        REDNINE(R.drawable.ro_09),
+        REDTEN(R.drawable.ro_10),
+        REDELEVEN(R.drawable.ro_11),
+        REDTWELVE(R.drawable.ro_12),
+        REDTHIRTEEN(R.drawable.ro_13),
+        YELLOWONE(R.drawable.ge_01),
+        YELLOWTWO(R.drawable.ge_02),
+        YELLOWTHREE(R.drawable.ge_03),
+        YELLOWFOUR(R.drawable.ge_04),
+        YELLOWFIVE(R.drawable.ge_05),
+        YELLOWSIX(R.drawable.ge_06),
+        YELLOWSEVEN(R.drawable.ge_07),
+        YELLOWEIGHT(R.drawable.ge_08),
+        YELLOWNINE(R.drawable.ge_09),
+        YELLOWTEN(R.drawable.ge_10),
+        YELLOWELEVEN(R.drawable.ge_11),
+        YELLOWTWELVE(R.drawable.ge_12),
+        YELLOWTHIRTEEN(R.drawable.ge_13),
+        GREENONE(R.drawable.gr_01),
+        GREENTWO(R.drawable.gr_02),
+        GREENTHREE(R.drawable.gr_03),
+        GREENFOUR(R.drawable.gr_04),
+        GREENFIVE(R.drawable.gr_05),
+        GREENSIX(R.drawable.gr_06),
+        GREENSEVEN(R.drawable.gr_07),
+        GREENEIGHT(R.drawable.gr_08),
+        GREENNINE(R.drawable.gr_09),
+        GREENTEN(R.drawable.gr_10),
+        GREENLEVEN(R.drawable.gr_11),
+        GREENTWELVE(R.drawable.gr_12),
+        GREENTHIRTEEN(R.drawable.gr_13),
+        REDWIZARD(R.drawable.z_04),
+        YELLOWWIZARD(R.drawable.z_03),
+        GREENWIZARD(R.drawable.z_02),
+        BLUEWIZARD(R.drawable.z_01),
+        REDJESTER(R.drawable.n_02),
+        YELLOWJESTER(R.drawable.n_03),
+        BLUEJESTER(R.drawable.n_01),
+        GREENJESTER(R.drawable.n_04);
+
+        private int id;
+
+        CardNames(int cardId) {
+            this.id = cardId;
+        }
+
+        static CardNames fromName(String name) {
+            return valueOf(name);
+        }
+
+        static int nameToId(String name) {
+            return fromName(name).getId();
+        }
+
+        int getId() {
+            return id;
+        }
+    }
+
     public class CardsInHandRecyclerViewAdapter
             extends RecyclerView.Adapter<CardsInHandRecyclerViewAdapter.ViewHolder> {
         private ArrayList<String> cards;
@@ -939,189 +1020,11 @@ public class GamePlayActivity extends AppCompatActivity {
             viewHolder.cardHolder.setTag(counter);
             counter++;
 
-            switch (cardname) {
-                case ("BLUEONE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.bl_01);
-                    break;
-                case ("BLUETWO"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.bl_02);
-                    break;
-                case ("BLUETHREE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.bl_03);
-                    break;
-                case ("BLUEFOUR"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.bl_04);
-                    break;
-                case ("BLUEFIVE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.bl_05);
-                    break;
-                case ("BLUESIX"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.bl_06);
-                    break;
-                case ("BLUESEVEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.bl_07);
-                    break;
-                case ("BLUEEIGHT"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.bl_08);
-                    break;
-                case ("BLUENINE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.bl_09);
-                    break;
-                case ("BLUETEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.bl_10);
-                    break;
-                case ("BLUEELEVEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.bl_11);
-                    break;
-                case ("BLUETWELVE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.bl_12);
-                    break;
-                case ("BLUETHIRTEEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_13);
-                    break;
-                case ("REDONE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ro_01);
-                    break;
-                case ("REDTWO"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ro_02);
-                    break;
-                case ("REDTHREE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ro_03);
-                    break;
-                case ("REDFOUR"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ro_04);
-                    break;
-                case ("REDFIVE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ro_05);
-                    break;
-                case ("REDSIX"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ro_06);
-                    break;
-                case ("REDSEVEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ro_07);
-                    break;
-                case ("REDEIGHT"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ro_08);
-                    break;
-                case ("REDNINE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ro_09);
-                    break;
-                case ("REDTEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ro_10);
-                    break;
-                case ("REDELEVEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ro_11);
-                    break;
-                case ("REDTWELVE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ro_12);
-                    break;
-                case ("REDTHIRTEEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_13);
-                    break;
-                case ("YELLOWONE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ge_01);
-                    break;
-                case ("YELLOWTWO"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ge_02);
-                    break;
-                case ("YELLOWTHREE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ge_03);
-                    break;
-                case ("YELLOWFOUR"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ge_04);
-                    break;
-                case ("YELLOWFIVE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ge_05);
-                    break;
-                case ("YELLOWSIX"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ge_06);
-                    break;
-                case ("YELLOWSEVEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ge_07);
-                    break;
-                case ("YELLOWEIGHT"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ge_08);
-                    break;
-                case ("YELLOWNINE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ge_09);
-                    break;
-                case ("YELLOWTEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ge_10);
-                    break;
-                case ("YELLOWELEVEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ge_11);
-                    break;
-                case ("YELLOWTWELVE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.ge_12);
-                    break;
-                case ("YELLOWTHIRTEEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_13);
-                    break;
-                case ("GREENONE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_01);
-                    break;
-                case ("GREENTWO"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_02);
-                    break;
-                case ("GREENTHREE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_03);
-                    break;
-                case ("GREENFOUR"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_04);
-                    break;
-                case ("GREENFIVE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_05);
-                    break;
-                case ("GREENSIX"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_06);
-                    break;
-                case ("GREENSEVEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_07);
-                    break;
-                case ("GREENEIGHT"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_08);
-                    break;
-                case ("GREENNINE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_09);
-                    break;
-                case ("GREENTEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_10);
-                    break;
-                case ("GREENLEVEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_11);
-                    break;
-                case ("GREENTWELVE"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_12);
-                    break;
-                case ("GREENTHIRTEEN"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.gr_13);
-                    break;
-                case ("REDWIZARD"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.z_04);
-                    break;
-                case ("YELLOWWIZARD"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.z_03);
-                    break;
-                case ("GREENWIZARD"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.z_02);
-                    break;
-                case ("BLUEWIZARD"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.z_01);
-                    break;
-                case ("REDJESTER"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.n_02);
-                    break;
-                case ("YELLOWJESTER"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.n_03);
-                    break;
-                case ("BLUEJESTER"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.n_01);
-                    break;
-                case ("GREENJESTER"):
-                    viewHolder.cardHolder.setImageResource(R.drawable.n_04);
-                    break;
-                default:
-                    break;
+            try {
+                int imageResource = GamePlayActivity.CardNames.nameToId(cardname);
+                viewHolder.cardHolder.setImageResource(imageResource);
+            } catch (IllegalArgumentException e) {
+                // ignore if no resource was found for the card name
             }
         }
 
@@ -1171,189 +1074,11 @@ public class GamePlayActivity extends AppCompatActivity {
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
             String cardname = cards.get(position);
 
-            switch (cardname) {
-                case ("BLUEONE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.bl_01);
-                    break;
-                case ("BLUETWO"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.bl_02);
-                    break;
-                case ("BLUETHREE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.bl_03);
-                    break;
-                case ("BLUEFOUR"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.bl_04);
-                    break;
-                case ("BLUEFIVE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.bl_05);
-                    break;
-                case ("BLUESIX"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.bl_06);
-                    break;
-                case ("BLUESEVEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.bl_07);
-                    break;
-                case ("BLUEEIGHT"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.bl_08);
-                    break;
-                case ("BLUENINE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.bl_09);
-                    break;
-                case ("BLUETEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.bl_10);
-                    break;
-                case ("BLUEELEVEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.bl_11);
-                    break;
-                case ("BLUETWELVE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.bl_12);
-                    break;
-                case ("BLUETHIRTEEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_13);
-                    break;
-                case ("REDONE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ro_01);
-                    break;
-                case ("REDTWO"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ro_02);
-                    break;
-                case ("REDTHREE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ro_03);
-                    break;
-                case ("REDFOUR"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ro_04);
-                    break;
-                case ("REDFIVE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ro_05);
-                    break;
-                case ("REDSIX"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ro_06);
-                    break;
-                case ("REDSEVEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ro_07);
-                    break;
-                case ("REDEIGHT"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ro_08);
-                    break;
-                case ("REDNINE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ro_09);
-                    break;
-                case ("REDTEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ro_10);
-                    break;
-                case ("REDELEVEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ro_11);
-                    break;
-                case ("REDTWELVE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ro_12);
-                    break;
-                case ("REDTHIRTEEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_13);
-                    break;
-                case ("YELLOWONE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ge_01);
-                    break;
-                case ("YELLOWTWO"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ge_02);
-                    break;
-                case ("YELLOWTHREE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ge_03);
-                    break;
-                case ("YELLOWFOUR"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ge_04);
-                    break;
-                case ("YELLOWFIVE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ge_05);
-                    break;
-                case ("YELLOWSIX"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ge_06);
-                    break;
-                case ("YELLOWSEVEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ge_07);
-                    break;
-                case ("YELLOWEIGHT"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ge_08);
-                    break;
-                case ("YELLOWNINE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ge_09);
-                    break;
-                case ("YELLOWTEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ge_10);
-                    break;
-                case ("YELLOWELEVEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ge_11);
-                    break;
-                case ("YELLOWTWELVE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.ge_12);
-                    break;
-                case ("YELLOWTHIRTEEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_13);
-                    break;
-                case ("GREENONE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_01);
-                    break;
-                case ("GREENTWO"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_02);
-                    break;
-                case ("GREENTHREE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_03);
-                    break;
-                case ("GREENFOUR"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_04);
-                    break;
-                case ("GREENFIVE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_05);
-                    break;
-                case ("GREENSIX"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_06);
-                    break;
-                case ("GREENSEVEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_07);
-                    break;
-                case ("GREENEIGHT"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_08);
-                    break;
-                case ("GREENNINE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_09);
-                    break;
-                case ("GREENTEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_10);
-                    break;
-                case ("GREENLEVEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_11);
-                    break;
-                case ("GREENTWELVE"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_12);
-                    break;
-                case ("GREENTHIRTEEN"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.gr_13);
-                    break;
-                case ("REDWIZARD"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.z_04);
-                    break;
-                case ("YELLOWWIZARD"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.z_03);
-                    break;
-                case ("GREENWIZARD"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.z_02);
-                    break;
-                case ("BLUEWIZARD"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.z_01);
-                    break;
-                case ("REDJESTER"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.n_02);
-                    break;
-                case ("YELLOWJESTER"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.n_03);
-                    break;
-                case ("BLUEJESTER"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.n_01);
-                    break;
-                case ("GREENJESTER"):
-                    viewHolder.cardsImageView.setImageResource(R.drawable.n_04);
-                    break;
-                default:
-                    break;
+            try {
+                int imageResource = GamePlayActivity.CardNames.nameToId(cardname);
+                viewHolder.cardsImageView.setImageResource(imageResource);
+            } catch (IllegalArgumentException e) {
+                // ignore if no resource was found for the card name
             }
         }
 
