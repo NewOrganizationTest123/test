@@ -25,10 +25,6 @@ public class GameActionRunner extends AsyncTask<Void, Void, String> {
         this.channel = channel;
     }
 
-    /**
-     * @param voids
-     * @deprecated
-     */
     @Override
     protected String doInBackground(Void... voids) {
         boolean reconnect = false;

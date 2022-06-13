@@ -23,7 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class GameTests {
+class GameTests {
     Game game;
     Player player1;
     Player player2;
@@ -33,7 +33,7 @@ public class GameTests {
     Player mocked_player2;
 
     @BeforeEach
-    public void init() {
+    void init() {
         game = new Game(1);
         player1 = new Player("player_1_name");
         player2 = new Player("player_2_name");
@@ -50,7 +50,7 @@ public class GameTests {
     }
 
     @Test
-    public void addPlayerTest() {
+    void addPlayerTest() {
         assertEquals(2, game.getNrPlayers());
         Player player3 = new Player("player_3_name");
         game.addPlayer(player3);
@@ -59,7 +59,7 @@ public class GameTests {
     }
 
     @Test
-    public void addToManyPlayerTest() {
+    void addToManyPlayerTest() {
         Player player3 = new Player("player_3_name");
         game.addPlayer(player3);
         assertEquals(3, game.getNrPlayers());
@@ -82,7 +82,7 @@ public class GameTests {
     }
 
     @Test
-    public void testStartGame() {
+    void testStartGame() {
         when(mocked_player2.getName()).thenReturn("mocked_player2");
         when(mocked_player1.getName()).thenReturn("mocked_player1");
         game_withMockedPlayers.setNextPlayer(mocked_player1);
@@ -97,14 +97,14 @@ public class GameTests {
     }
 
     @Test
-    public void testAllPlayersSubscribed_True() {
+    void testAllPlayersSubscribed_True() {
         when(mocked_player1.isSubscribed()).thenReturn(true);
         when(mocked_player2.isSubscribed()).thenReturn(true);
         assertTrue(game_withMockedPlayers.getPlayers().areSubscribed());
     }
 
     @Test
-    public void testAllPlayersSubscribed_False() {
+    void testAllPlayersSubscribed_False() {
         when(mocked_player1.isSubscribed()).thenReturn(true);
         when(mocked_player2.isSubscribed()).thenReturn(false);
         assertFalse(game_withMockedPlayers.getPlayers().areSubscribed());
@@ -113,7 +113,7 @@ public class GameTests {
     @Mock Trick trickMocked;
 
     @Test
-    public void playCardTest_lastCard() {
+    void playCardTest_lastCard() {
 
         player1.makeEstimate(0);
         player2.makeEstimate(1);
@@ -145,7 +145,7 @@ public class GameTests {
     }
 
     @Test
-    public void playCardTest_NotLastCard() {
+    void playCardTest_NotLastCard() {
         Round round = new Round(game_withMockedPlayers, trickMocked, 1);
         when(trickMocked.getCardsPlayed()).thenReturn(1);
         game_withMockedPlayers.setNextPlayer(mocked_player1);
@@ -160,20 +160,20 @@ public class GameTests {
     }
 
     @Test
-    public void allEstimatesSubmittedTest() {
+    void allEstimatesSubmittedTest() {
         player1.makeEstimate(1);
         player2.makeEstimate(0);
         assertTrue(game.allEstimatesSubmitted());
     }
 
     @Test
-    public void notAllEstimatesSubmittedTest() {
+    void notAllEstimatesSubmittedTest() {
         player1.makeEstimate(1);
         assertFalse(game.allEstimatesSubmitted());
     }
 
     @Test
-    public void CorrectCheatDiscoverySubmittedTest() {
+    void CorrectCheatDiscoverySubmittedTest() {
         Updater updater = mock(Updater.class);
         player1.setUpdater(updater);
         player2.setUpdater(updater);
@@ -190,7 +190,7 @@ public class GameTests {
     }
 
     @Test
-    public void FalseCheatDiscoverySubmittedTest() {
+    void FalseCheatDiscoverySubmittedTest() {
         Updater updater = mock(Updater.class);
         player1.setUpdater(updater);
         player2.setUpdater(updater);

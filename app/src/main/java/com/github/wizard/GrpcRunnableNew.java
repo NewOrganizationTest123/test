@@ -11,6 +11,4 @@ public interface GrpcRunnableNew {
             GameActionsGrpc.GameActionsStub asyncStub,
             WeakReference<Activity> activityReference)
             throws Exception;
-
-    void doWhenDone(WeakReference<Activity> activityReference);
 }

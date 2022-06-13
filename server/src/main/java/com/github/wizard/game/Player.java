@@ -17,7 +17,7 @@ public class Player {
     private byte playerId;
     Game game;
     boolean iHaveCHeatedFlag = false;
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     private Updater updater;
     private final ArrayList<Card> cards = new ArrayList<>();
@@ -283,11 +283,7 @@ public class Player {
         return updater != null;
     }
 
-    /**
-     * removes the card from the player's hand
-     *
-     * @param index
-     */
+    /** removes the card from the player's hand */
     public void playCard(int index) {
         clearCardPlayTimeout();
         try {
@@ -383,7 +379,6 @@ public class Player {
         }
 
         public void updateGAmeBoard(List<Card> tableCards) {
-
             forEach(
                     p ->
                             p.update(
@@ -455,11 +450,12 @@ public class Player {
 
         public void onCHeatingDiscovered(Player cheater) {
             forEach(
-                    p -> {
-                        p.update(
-                                Updater.newOnCheatingSubmittedResponse(
-                                        cheater, cheater.iHaveCHeatedFlag, getGrpcPlayerList()));
-                    });
+                    p ->
+                            p.update(
+                                    Updater.newOnCheatingSubmittedResponse(
+                                            cheater,
+                                            cheater.iHaveCHeatedFlag,
+                                            getGrpcPlayerList())));
         }
         /** will hand out random cards to all players, according to the round */
         public void handoutCards(int roundNumber, Deck deck) {

@@ -1,7 +1,9 @@
 package com.github.wizard.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -10,7 +12,7 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TrickTests {
+class TrickTests {
     Trick redTrumpTrick;
 
     Card wizard = Card.newBuilder().setColor(Card.Color.RED).setValue(Card.Value.WIZARD).build();
@@ -36,13 +38,13 @@ public class TrickTests {
     Game mock;
 
     @BeforeEach
-    public void init() {
+    void init() {
         redTrumpTrick = new Trick(red1);
         mock = mock(Game.class);
     }
 
     @Test
-    public void firstWizardWins() {
+    void firstWizardWins() {
         redTrumpTrick.playCard(wizard, player1);
         redTrumpTrick.playCard(wizard, player2);
 
@@ -50,7 +52,7 @@ public class TrickTests {
     }
 
     @Test
-    public void highestTrumpWins() {
+    void highestTrumpWins() {
         redTrumpTrick.playCard(yellow10, player1);
         redTrumpTrick.playCard(red13, player2);
         redTrumpTrick.playCard(red3, player3);
@@ -59,7 +61,7 @@ public class TrickTests {
     }
 
     @Test
-    public void trumpWins() {
+    void trumpWins() {
         redTrumpTrick.playCard(yellow10, player1);
         redTrumpTrick.playCard(red3, player2);
 
@@ -67,7 +69,7 @@ public class TrickTests {
     }
 
     @Test
-    public void higherValueWins() {
+    void higherValueWins() {
         redTrumpTrick.playCard(green5, player1);
         redTrumpTrick.playCard(green2, player2);
 
@@ -75,7 +77,7 @@ public class TrickTests {
     }
 
     @Test
-    public void jesterLoses() {
+    void jesterLoses() {
         redTrumpTrick.playCard(green2, player1);
         redTrumpTrick.playCard(jester, player2);
         redTrumpTrick.playCard(yellow10, player3);
@@ -84,7 +86,7 @@ public class TrickTests {
     }
 
     @Test
-    public void iHaveCheatedFlagTEst_cheated() {
+    void iHaveCheatedFlagTEst_cheated() {
         redTrumpTrick.playCard(
                 green2,
                 player1); // initial card, other players must now play green if they have some
@@ -97,12 +99,12 @@ public class TrickTests {
         player2.giveMeCards(cards);
         redTrumpTrick.playCard(
                 yellow10, player2); // player two plays yellow card despite having green
-        assertEquals(true, player2.iHaveCHeatedFlag);
-        assertEquals(false, player1.iHaveCHeatedFlag);
+        assertTrue(player2.iHaveCHeatedFlag);
+        assertFalse(player1.iHaveCHeatedFlag);
     }
 
     @Test
-    public void iHaveCheatedFlagTEst_noCheating() {
+    void iHaveCheatedFlagTEst_noCheating() {
         redTrumpTrick.playCard(
                 green2,
                 player1); // initial card, other players must now play green if they have some
@@ -115,12 +117,12 @@ public class TrickTests {
         player2.giveMeCards(cards);
         redTrumpTrick.playCard(
                 green5, player2); // player two plays yellow card despite having green
-        assertEquals(false, player2.iHaveCHeatedFlag);
-        assertEquals(false, player1.iHaveCHeatedFlag);
+        assertFalse(player2.iHaveCHeatedFlag);
+        assertFalse(player1.iHaveCHeatedFlag);
     }
 
     @Test
-    public void iHaveCheatedFlagTEst_noCheating_singlePlayer() {
+    void iHaveCheatedFlagTEst_noCheating_singlePlayer() {
         ArrayList<Card> cards = new ArrayList<>();
         when(mock.getRoundNr())
                 .thenReturn(2); // for avoiding the error checking while handing out cards
@@ -130,11 +132,11 @@ public class TrickTests {
         player2.giveMeCards(cards);
         redTrumpTrick.playCard(
                 yellow10, player2); // player two plays yellow card despite having green
-        assertEquals(false, player2.iHaveCHeatedFlag);
+        assertFalse(player2.iHaveCHeatedFlag);
     }
 
     @Test
-    public void playCard() {
+    void playCard() {
         assertEquals(0, redTrumpTrick.getCardsPlayed());
 
         redTrumpTrick.playCard(jester, player1);

@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -55,12 +56,8 @@ public class GamePlayActivity extends AppCompatActivity {
 
     private static String gameId;
     private static String playerId;
-    private static String playername;
     private static int myPoints = 0;
     private static List<ClientPlayer> players = new ArrayList<>();
-    private static PlayersRecyclerviewAdapter players_adapter;
-    private static CardsInHandRecyclerViewAdapter cards_adapter;
-    private static CardsInTheMiddleRecyclerViewAdapter cards_middle_adapter;
 
     ManagedChannel channel;
     private static final BlockingQueue<GameMove> serverWaitingQueue = new LinkedBlockingQueue<>();
@@ -124,7 +121,6 @@ public class GamePlayActivity extends AppCompatActivity {
         Intent intent = getIntent();
         gameId = intent.getStringExtra(MainActivity.GAME_ID_KEY); // reuse for later requests
         playerId = intent.getStringExtra(MainActivity.PLAYER_ID_KEY);
-        playername = intent.getStringExtra(MainActivity.PLAYER_NAME);
         new GameActionRunner(new GameActionRunnable(), new WeakReference<>(this), channel)
                 .execute(); // fire up the streaming service
 
@@ -160,7 +156,7 @@ public class GamePlayActivity extends AppCompatActivity {
         LinearLayoutManager layoutManagerPlayers = new LinearLayoutManager(this);
         playersRecyclerView.setLayoutManager(layoutManagerPlayers);
 
-        players_adapter = new PlayersRecyclerviewAdapter(this, players);
+        PlayersRecyclerviewAdapter players_adapter = new PlayersRecyclerviewAdapter(this, players);
         playersRecyclerView.setAdapter(players_adapter);
 
         cardsInHandRecyclerView = findViewById(R.id.cardsInHandRecyclerview);
@@ -168,8 +164,6 @@ public class GamePlayActivity extends AppCompatActivity {
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         cardsInHandRecyclerView.setLayoutManager(layoutManagerCards);
 
-        ArrayList<String> cardsList = new ArrayList<>();
-        cards_adapter = new CardsInHandRecyclerViewAdapter(this, cardsList);
         cardsInHandRecyclerView.setAdapter(players_adapter);
 
         cardsInTheMiddleRecyclerView = findViewById(R.id.cardsInTheMiddleRecyclerView);
@@ -178,30 +172,13 @@ public class GamePlayActivity extends AppCompatActivity {
         cardsInTheMiddleRecyclerView.setLayoutManager(layoutManagerCardsMiddle);
 
         ArrayList<String> cardsMiddleList = new ArrayList<>();
-        cards_middle_adapter = new CardsInTheMiddleRecyclerViewAdapter(this, cardsMiddleList);
+        CardsInTheMiddleRecyclerViewAdapter cards_middle_adapter =
+                new CardsInTheMiddleRecyclerViewAdapter(this, cardsMiddleList);
         cardsInTheMiddleRecyclerView.setAdapter(cards_middle_adapter);
 
-        showscore.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        showScoreBoard(new ScoreboardFragment());
-                    }
-                });
-        endgame.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        EndofGame(new ScoreboardFragment());
-                    }
-                });
-        homebutton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        backtohome();
-                    }
-                });
+        showscore.setOnClickListener(view -> showScoreBoard(new ScoreboardFragment()));
+        endgame.setOnClickListener(view -> EndofGame(new ScoreboardFragment()));
+        homebutton.setOnClickListener(view -> backtohome());
 
         closeScoreboard = findViewById(R.id.closeScoreboardButton);
         closeScoreboard.setVisibility(View.GONE);
@@ -278,7 +255,7 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     public void updatePlayersInRecyclerView(List<ClientPlayer> realplayers) {
-        players = new ArrayList<ClientPlayer>(realplayers); // include myself for scoreboard
+        players = new ArrayList<>(realplayers); // include myself for scoreboard
         // remove myself
         for (ClientPlayer cPlayer : realplayers) {
             if (cPlayer.getId().equals(playerId)) {
@@ -355,7 +332,7 @@ public class GamePlayActivity extends AppCompatActivity {
      * this should show the final score board and end the game session. This is the last call of the
      * game
      */
-    private void showGameResults(Activity activity) {
+    private void showGameResults() {
         ScoreboardFragment score = new ScoreboardFragment();
         score.winningplayerhighlighted();
     }
@@ -376,6 +353,7 @@ public class GamePlayActivity extends AppCompatActivity {
         // TODO: only allow playing Card when CardPlayRequest
         CountDownTimer cardPlayTimer;
         playcardadapter = (CardsInHandRecyclerViewAdapter) cardsInHandRecyclerView.getAdapter();
+        assert playcardadapter != null;
         playcardadapter.activatePlayingCard();
         whosTurnIsItText.setText("Its your turn!");
         ProgressBar cardPlayTimeout = findViewById(R.id.cardPlayTimeout);
@@ -418,9 +396,6 @@ public class GamePlayActivity extends AppCompatActivity {
             return updateGameBoard(asyncStub, activityReference);
         }
 
-        @Override
-        public void doWhenDone(WeakReference<Activity> activityReference) {}
-
         /**
          * Bi-directional example, which can only be asynchronous. Send some chat messages, and
          * print any chat messages that are sent from the server.
@@ -434,24 +409,6 @@ public class GamePlayActivity extends AppCompatActivity {
             final CountDownLatch finishLatch = new CountDownLatch(1);
             StreamObserver<GameMove> requestObserver =
                     asyncStub.gameStream(
-                            /**
-                             * Receives a value from the stream.
-                             *
-                             * <p>Can be called many times but is never called after {@link
-                             * #onError(Throwable)} or {@link #onCompleted()} are called.
-                             *
-                             * <p>Unary calls must invoke onNext at most once. Clients may invoke
-                             * onNext at most once for server streaming calls, but may receive many
-                             * onNext callbacks. Servers may invoke onNext at most once for client
-                             * streaming calls, but may receive many onNext callbacks.
-                             *
-                             * <p>If an exception is thrown by an implementation the caller is
-                             * expected to terminate the stream by calling {@link
-                             * #onError(Throwable)} with the caught exception prior to propagating
-                             * it.
-                             *
-                             * @param value the value passed to the stream
-                             */
                             new StreamObserver<Response>() {
 
                                 private void showStich(Activity activity, StichMade stichmade) {
@@ -710,15 +667,14 @@ public class GamePlayActivity extends AppCompatActivity {
                                                             youCheated(
                                                                     activity,
                                                                     response.getCheating()));
-                                            return;
                                         } else { // someone else has cheated
                                             activity.runOnUiThread(
                                                     () ->
                                                             someOneCheated(
                                                                     activity,
                                                                     response.getCheating()));
-                                            return;
                                         }
+                                        return;
                                     } else if (response.getActionCase()
                                             == Response.ActionCase.PLAYERLIST) {
 
@@ -748,23 +704,22 @@ public class GamePlayActivity extends AppCompatActivity {
                                         case "0":
                                             break;
                                         case "1":
+                                        case "6":
+                                        case "3":
                                             break;
                                         case "2":
-                                            activity.runOnUiThread(() -> makeCardPlayRequest());
-                                            break;
-                                        case "3":
+                                            activity.runOnUiThread(this::makeCardPlayRequest);
                                             break;
                                         case "4":
                                             activity.runOnUiThread(
                                                     () -> showTrump(activity, response));
                                             break;
                                         case "5":
-                                            activity.runOnUiThread(() -> makeEstimate());
-                                            break;
-                                        case "6":
+                                            activity.runOnUiThread(this::makeEstimate);
                                             break;
                                         case "7":
-                                            activity.runOnUiThread(() -> showGameResults(activity));
+                                            activity.runOnUiThread(
+                                                    GamePlayActivity.this::showGameResults);
                                             break;
                                         case "8":
                                             activity.runOnUiThread(
@@ -863,16 +818,17 @@ public class GamePlayActivity extends AppCompatActivity {
     public class PlayersRecyclerviewAdapter
             extends RecyclerView.Adapter<PlayersRecyclerviewAdapter.ViewHolder> {
 
-        private List<ClientPlayer> players;
-        private LayoutInflater layoutInflater;
+        private final List<ClientPlayer> players;
+        private final LayoutInflater layoutInflater;
 
         PlayersRecyclerviewAdapter(Context context, List<ClientPlayer> players) {
             this.layoutInflater = LayoutInflater.from(context);
             this.players = players;
         }
 
+        @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
             View view =
                     layoutInflater.inflate(
                             R.layout.players_recyclerview_textfield, viewGroup, false);
@@ -988,8 +944,8 @@ public class GamePlayActivity extends AppCompatActivity {
 
     public class CardsInHandRecyclerViewAdapter
             extends RecyclerView.Adapter<CardsInHandRecyclerViewAdapter.ViewHolder> {
-        private ArrayList<String> cards;
-        private LayoutInflater layoutInflater;
+        private final ArrayList<String> cards;
+        private final LayoutInflater layoutInflater;
         private int counter = 0;
         private boolean allowPlayingCard = false;
 
@@ -1006,8 +962,9 @@ public class GamePlayActivity extends AppCompatActivity {
             allowPlayingCard = false;
         }
 
+        @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
             View view = layoutInflater.inflate(R.layout.cards_recyclerview_image, viewGroup, false);
             return new ViewHolder(view);
         }
@@ -1035,7 +992,6 @@ public class GamePlayActivity extends AppCompatActivity {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             ImageView cardHolder;
-            String cardname;
 
             ViewHolder(View view) {
                 super(view);
@@ -1053,25 +1009,26 @@ public class GamePlayActivity extends AppCompatActivity {
         }
     }
 
-    public class CardsInTheMiddleRecyclerViewAdapter
+    public static class CardsInTheMiddleRecyclerViewAdapter
             extends RecyclerView.Adapter<CardsInTheMiddleRecyclerViewAdapter.ViewHolder> {
-        private ArrayList<String> cards;
-        private LayoutInflater layoutInflater;
+        private final ArrayList<String> cards;
+        private final LayoutInflater layoutInflater;
 
         CardsInTheMiddleRecyclerViewAdapter(Context context, ArrayList<String> cards) {
             this.layoutInflater = LayoutInflater.from(context);
             this.cards = cards;
         }
 
+        @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
             View view = layoutInflater.inflate(R.layout.cards_recyclerview_image, viewGroup, false);
             return new ViewHolder(view);
         }
 
         @SuppressLint("UseCompatLoadingForDrawables")
         @Override
-        public void onBindViewHolder(ViewHolder viewHolder, int position) {
+        public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
             String cardname = cards.get(position);
 
             try {
@@ -1087,7 +1044,7 @@ public class GamePlayActivity extends AppCompatActivity {
             return cards.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
+        public static class ViewHolder extends RecyclerView.ViewHolder {
             ImageView cardsImageView;
 
             ViewHolder(View view) {

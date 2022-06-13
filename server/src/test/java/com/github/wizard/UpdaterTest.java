@@ -29,15 +29,6 @@ class UpdaterTest {
         verify(streamObserver).onNext(response);
     }
 
-    // TODO: 01.06.2022 test not working any more due to changes in server api
-    /*  @Test
-    void newOnTrickTakenResponse() {
-        Response response = Updater.newOnTrickTakenResponse(new Player("player"));
-
-        assertEquals("1", response.getType());
-        assertEquals("Player player has made this trick with value 13", response.getData());
-    }*/
-
     @Test
     void newCardPlayRequestResponse() {
         Response response = Updater.newCardPlayRequestResponse();

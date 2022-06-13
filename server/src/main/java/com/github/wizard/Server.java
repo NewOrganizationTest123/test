@@ -202,12 +202,8 @@ public class Server implements Callable<Integer> {
         }
     }
 
-    class GamePlayImpl extends GamePlayGrpc.GamePlayImplBase {
+    static class GamePlayImpl extends GamePlayGrpc.GamePlayImplBase {
 
-        /**
-         * @param request
-         * @param responseObserver
-         */
         @Override
         public void getPlayers(JoinRequest request, StreamObserver<Player> responseObserver) {
             Logger.debug("getPlayers called");
@@ -228,10 +224,6 @@ public class Server implements Callable<Integer> {
             responseObserver.onCompleted();
         }
 
-        /**
-         * @param request
-         * @param responseObserver
-         */
         @Override
         public void setAsReady(JoinRequest request, StreamObserver<ReadyToJoin> responseObserver) {
             Logger.debug("setAsReady called");
@@ -250,9 +242,8 @@ public class Server implements Callable<Integer> {
         }
     }
 
-    class GameActionsImpl extends GameActionsGrpc.GameActionsImplBase {
+    static class GameActionsImpl extends GameActionsGrpc.GameActionsImplBase {
 
-        /** @param responseObserver */
         @Override
         public StreamObserver<GameMove> gameStream(StreamObserver<Response> responseObserver) {
             Logger.debug("gameStream called");
