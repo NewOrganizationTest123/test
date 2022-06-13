@@ -2,6 +2,7 @@ package com.github.wizard.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +40,16 @@ public class TrickTests {
     public void init() {
         redTrumpTrick = new Trick(red1);
         mock = mock(Game.class);
+    }
+
+    @Test
+    void reset() {
+        redTrumpTrick.playCard(wizard, player1);
+        redTrumpTrick.playCard(wizard, player2);
+
+        redTrumpTrick.reset();
+
+        assertEquals(0, redTrumpTrick.getCardsPlayed());
     }
 
     @Test
@@ -140,5 +151,14 @@ public class TrickTests {
         redTrumpTrick.playCard(jester, player1);
 
         assertEquals(1, redTrumpTrick.getCardsPlayed());
+    }
+
+    @Test
+    public void playTooManyCards() {
+        for (int i = 0; i < 6; i++) {
+            redTrumpTrick.playCard(jester, player1);
+        }
+
+        assertThrows(IllegalArgumentException.class, () -> redTrumpTrick.playCard(jester, player1));
     }
 }
