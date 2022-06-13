@@ -6,7 +6,6 @@ import static org.mockito.Mockito.verify;
 import com.github.wizard.api.Card;
 import com.github.wizard.api.Response;
 import com.github.wizard.game.Player;
-
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
 import java.util.List;
