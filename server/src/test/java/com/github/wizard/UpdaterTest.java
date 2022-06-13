@@ -57,7 +57,7 @@ class UpdaterTest {
     void newOnGameBoardUpdate() {
         List<Card> cards = List.of(wizard, red1, red3, red13, yellow10, green2, green5, jester);
 
-        Response response = Updater.newOnGameBoardUpdate(cards, cards);
+        Response response = Updater.newOnGameBoardUpdate(cards, cards, "test");
 
         assertEquals("3", response.getType());
         assertEquals(cards.get(0), response.getCardList().getHand(0));

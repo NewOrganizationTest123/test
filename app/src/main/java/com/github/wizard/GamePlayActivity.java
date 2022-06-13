@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -77,10 +78,11 @@ public class GamePlayActivity extends AppCompatActivity {
     private int cardPlayTimerProgress;
     private CardsInHandRecyclerViewAdapter playcardadapter;
     private ArrayList<String> cards;
-    private Button showscore;
+    private ImageButton showscore;
     private FrameLayout scoreboardframe;
     private Button homebutton;
     private Button endgame; // ONLY for testcases
+    private Button closeScoreboard;
 
     public static String getGameId() {
         return gameId;
@@ -177,6 +179,18 @@ public class GamePlayActivity extends AppCompatActivity {
         showscore.setOnClickListener(view -> showScoreBoard(new ScoreboardFragment()));
         endgame.setOnClickListener(view -> EndofGame(new ScoreboardFragment()));
         homebutton.setOnClickListener(view -> backtohome());
+
+        closeScoreboard = findViewById(R.id.closeScoreboardButton);
+        closeScoreboard.setVisibility(View.GONE);
+        closeScoreboard.setOnClickListener(
+                e -> {
+                    scoreboardframe.setVisibility(View.GONE);
+                    closeScoreboard.setVisibility(View.GONE);
+                });
+    }
+
+    public static String getPlayerpoints(int i) {
+        return players.get(i).getPoints().toString();
     }
 
     /* just for testcase*/
@@ -211,16 +225,10 @@ public class GamePlayActivity extends AppCompatActivity {
             FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
             fragmenttrans.replace(R.id.framescoreboard, fragment);
             fragmenttrans.commit();
-            endgame.setVisibility(View.GONE);
-            whosTurnIsItText.setVisibility(View.VISIBLE);
-            cardsInHandRecyclerView.setVisibility(View.VISIBLE);
-            cardsInTheMiddleRecyclerView.setVisibility(View.VISIBLE);
         } else {
             scoreboardframe.setVisibility(View.VISIBLE);
-            endgame.setVisibility(View.VISIBLE);
-            whosTurnIsItText.setVisibility(View.INVISIBLE);
-            cardsInHandRecyclerView.setVisibility(View.INVISIBLE);
-            cardsInTheMiddleRecyclerView.setVisibility(View.INVISIBLE);
+            scoreboardframe.bringToFront();
+            closeScoreboard.setVisibility(View.VISIBLE);
             FragmentManager fragmentm = getSupportFragmentManager();
             FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
             fragmenttrans.replace(R.id.framescoreboard, fragment);
@@ -467,7 +475,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                 private void showTrump(Activity activity, Response response) {
                                     ((TextView) activity.findViewById(R.id.trumpf))
-                                            .setText("Trumpf is " + response.getData());
+                                            .setText("Trump is " + response.getData());
 
                                     switch (response.getData()) {
                                         case "GREEN":
@@ -528,11 +536,11 @@ public class GamePlayActivity extends AppCompatActivity {
                                         }
                                     }
                                     ((TextView) activity.findViewById(R.id.points))
-                                            .setText("You have " + myPoints + " points");
+                                            .setText(myPoints + " Points");
 
                                     int roundNr = Integer.parseInt(gameStatus.getRound()) + 1;
                                     ((TextView) activity.findViewById(R.id.round))
-                                            .setText("This is round " + roundNr);
+                                            .setText("Round " + roundNr);
 
                                     Toast.makeText(
                                                     activity.getApplication()
@@ -564,7 +572,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                     }
 
                                     ((TextView) activity.findViewById(R.id.points))
-                                            .setText("You have " + myPoints + " points");
+                                            .setText(myPoints + " Points");
                                     Toast.makeText(
                                                     activity.getApplication()
                                                             .getApplicationContext(),

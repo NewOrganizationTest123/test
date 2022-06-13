@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="TextViewStyle">
+        <item name="fontFamily">@font/macondo</item>
         <item name="android:textColor">#EEE8E8</item>
         <item name="android:textStyle">bold</item>
         <item name="android:shadowRadius">15</item>
         <item name="android:shadowColor">#1871B8</item>
-        <item name="android:textSize">14dp</item>
+        <item name="android:textSize">16dp</item>
+    </style>
+    <style name="TextViewStyleBlack">
+        <item name="fontFamily">@font/macondo</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18dp</item>
+    </style>
+    <style name="ButtonTextStyle">
+        <item name="fontFamily">@font/macondo</item>
+        <item name="android:textColor">#EEE8E8</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18dp</item>
     </style>
 
 </resources>
