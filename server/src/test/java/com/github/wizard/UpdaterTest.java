@@ -5,6 +5,8 @@ import static org.mockito.Mockito.verify;
 
 import com.github.wizard.api.Card;
 import com.github.wizard.api.Response;
+import com.github.wizard.game.Player;
+
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +31,16 @@ class UpdaterTest {
         verify(streamObserver).onNext(response);
     }
 
-    // TODO: 01.06.2022 test not working any more due to changes in server api
-    /*  @Test
+    @Test
     void newOnTrickTakenResponse() {
         Response response = Updater.newOnTrickTakenResponse(new Player("player"));
 
         assertEquals("1", response.getType());
-        assertEquals("Player player has made this trick with value 13", response.getData());
-    }*/
+        assertEquals("Player player has made this trick", response.getData());
+        assertEquals("0", response.getStichMade().getPlayerid());
+        assertEquals("player", response.getStichMade().getPlayerName());
+        assertEquals("0", response.getStichMade().getTotalstichebyplayer());
+    }
 
     @Test
     void newCardPlayRequestResponse() {
@@ -99,5 +103,11 @@ class UpdaterTest {
         Response response = Updater.newOnRoundFinishedResponse(new ArrayList<>(), 4);
         assertEquals("6", response.getType());
         assertEquals("/4", response.getData());
+    }
+
+    @Test
+    void newRandomCardPlayedResponse() {
+        Response response = Updater.newRandomCardPlayedResponse();
+        assertEquals("9", response.getType());
     }
 }
