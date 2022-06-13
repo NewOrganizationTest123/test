@@ -37,29 +37,26 @@
 
     <FrameLayout
         android:id="@+id/framescoreboard"
-        android:layout_width="350dp"
-        android:layout_height="600dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.496">
+        app:layout_constraintTop_toTopOf="parent">
 
     </FrameLayout>
 
-    <Button
+    <ImageButton
         android:id="@+id/btnscoreboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/macondo"
-        android:text="Scoreboard"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/green"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.236"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.011" />
+        app:layout_constraintTop_toBottomOf="@+id/stiche_made"
+        app:srcCompat="@android:drawable/ic_dialog_dialer" />
 
     <Button
         android:id="@+id/button_play_card"
@@ -110,7 +107,7 @@
         android:layout_marginTop="32dp"
         android:text="Wait for Trump..."
         android:textColor="#FFFFFF"
-        android:textSize="18dp"
+        android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/stiche_made" />
@@ -232,8 +229,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/ExposeCheatsView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trumpf"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/trumpf" />
 
     <TextView
         android:id="@+id/myCardsTextview"
@@ -253,11 +249,22 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="5dp"
+        android:visibility="invisible"
+        app:indicatorColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:visibility="invisible"
-        app:trackColor="#BCBCBC"
-        app:indicatorColor="#FFFFFF"
-        />
+        app:trackColor="#BCBCBC" />
+
+    <Button
+        android:id="@+id/closeScoreboardButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/green"
+        android:text="CLOSE"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/framescoreboard"
+        app:layout_constraintEnd_toEndOf="@id/framescoreboard"
+        app:layout_constraintStart_toStartOf="@id/framescoreboard" />
 </androidx.constraintlayout.widget.ConstraintLayout>

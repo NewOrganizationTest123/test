@@ -70,7 +70,6 @@ public class ScoreboardFragment extends Fragment {
     }
 
     public void winningplayerhighlighted() {
-
         // ensure that the views are fetched
         setupPlayerPointViews();
 
