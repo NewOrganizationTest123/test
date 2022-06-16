@@ -244,6 +244,7 @@ public class GamePlayActivity extends AppCompatActivity {
     public void showScoreBoard(ScoreboardFragment fragment) {
         if (scoreboardframe.getVisibility() == View.VISIBLE) {
             scoreboardframe.setVisibility(View.GONE);
+            closeScoreboard.setVisibility(View.GONE);
             FragmentManager fragmentm = getSupportFragmentManager();
             FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
             fragmenttrans.replace(R.id.framescoreboard, fragment);
@@ -516,8 +517,11 @@ public class GamePlayActivity extends AppCompatActivity {
                                     cards = cardsInHand;
 
                                     String nextPlayerName = cardList.getTurn();
-                                    ((TextView) activity.findViewById(R.id.whosTurnIsItTextview))
-                                            .setText("Its " + nextPlayerName + "'s turn!");
+
+                                    if(!nextPlayerName.equals("")){
+                                        ((TextView) activity.findViewById(R.id.whosTurnIsItTextview))
+                                                .setText("Its " + nextPlayerName + "'s turn!");
+                                    }
                                 }
 
                                 private void showTrump(Activity activity, Response response) {
