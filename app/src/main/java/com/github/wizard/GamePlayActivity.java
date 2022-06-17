@@ -518,8 +518,10 @@ public class GamePlayActivity extends AppCompatActivity {
 
                                     String nextPlayerName = cardList.getTurn();
 
-                                    if(!nextPlayerName.equals("")){
-                                        ((TextView) activity.findViewById(R.id.whosTurnIsItTextview))
+                                    if (!nextPlayerName.equals("")) {
+                                        ((TextView)
+                                                        activity.findViewById(
+                                                                R.id.whosTurnIsItTextview))
                                                 .setText("Its " + nextPlayerName + "'s turn!");
                                     }
                                 }
