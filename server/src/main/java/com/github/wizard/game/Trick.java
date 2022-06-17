@@ -13,7 +13,7 @@ public class Trick {
     Card trump;
 
     public void reset() {
-        getCards().clear();
+        cards.clear();
         players.clear();
     }
 

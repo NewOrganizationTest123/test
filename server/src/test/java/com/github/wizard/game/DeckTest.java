@@ -19,6 +19,13 @@ class DeckTest {
     }
 
     @Test
+    void getCardsAvailable() {
+        int cardAmount = deck.getCardsAvailable();
+
+        assertEquals(60, cardAmount);
+    }
+
+    @Test
     void shuffle() {
         deck.draw(60);
 

@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 
 public class Deck {
 
-    public static final List<Card.Color> validColors;
-    public static final List<Card.Value> validNumbers;
+    protected static final List<Card.Color> validColors;
+    protected static final List<Card.Value> validNumbers;
 
     public static final List<Card> allCards;
 
@@ -66,7 +66,6 @@ public class Deck {
                 .toList();
     }
 
-    /** @return the number of cards available in the total game */
     public int getCardsAvailable() {
         return allCards.size();
     }
