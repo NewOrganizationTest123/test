@@ -124,7 +124,6 @@ public class GameTests {
         Round round = new Round(game_withMockedPlayers, trickMocked, 1);
         when(trickMocked.getCardsPlayed()).thenReturn(2);
         game_withMockedPlayers.setNextPlayer(mocked_player1);
-        when(mocked_player1.getName()).thenReturn("test");
         round.playCard(mock(Card.class), mocked_player1);
 
         new Timer()
@@ -138,7 +137,7 @@ public class GameTests {
                                 verify(mocked_player2)
                                         .update(Updater.newOnTrickTakenResponse(new Player(null)));
                                 verify(mocked_player2)
-                                        .update(Updater.newOnGameBoardUpdate(null, null, "test"));
+                                        .update(Updater.newOnGameBoardUpdate(null, null, ""));
                             }
                         },
                         3000);
@@ -149,14 +148,12 @@ public class GameTests {
         Round round = new Round(game_withMockedPlayers, trickMocked, 1);
         when(trickMocked.getCardsPlayed()).thenReturn(1);
         game_withMockedPlayers.setNextPlayer(mocked_player1);
-        when(mocked_player1.getName()).thenReturn("test");
-        when(mocked_player1.getName()).thenReturn("test2");
 
         round.playCard(mock(Card.class), mocked_player1);
 
         //        verify(mocked_player2).update(Updater.newCardPlayRequestResponse());not applicable
         // any more
-        verify(mocked_player2).update(Updater.newOnGameBoardUpdate(null, null, "test2"));
+        verify(mocked_player2).update(Updater.newOnGameBoardUpdate(null, null, ""));
     }
 
     @Test

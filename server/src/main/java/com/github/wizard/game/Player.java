@@ -382,7 +382,7 @@ public class Player {
                                             getGrpcPlayerList(), roundNumber)));
         }
 
-        public void updateGAmeBoard(List<Card> tableCards) {
+        public void updateGAmeBoard(List<Card> tableCards, String nextPlayerName) {
 
             forEach(
                     p ->
@@ -390,9 +390,7 @@ public class Player {
                                     Updater.newOnGameBoardUpdate(
                                             p.getCards(),
                                             tableCards,
-                                            game.getNextPlayer() != null
-                                                    ? game.getNextPlayer().getName()
-                                                    : "")));
+                                            nextPlayerName != null ? nextPlayerName : "")));
         }
 
         public void finishTrick(Player winningPlayer) {

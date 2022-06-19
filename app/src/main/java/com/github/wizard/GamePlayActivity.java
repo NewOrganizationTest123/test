@@ -523,7 +523,11 @@ public class GamePlayActivity extends AppCompatActivity {
                                                         activity.findViewById(
                                                                 R.id.whosTurnIsItTextview))
                                                 .setText("Its " + nextPlayerName + "'s turn!");
-                                    }
+                                    } else
+                                        ((TextView)
+                                                        activity.findViewById(
+                                                                R.id.whosTurnIsItTextview))
+                                                .setText("Please wait for your turn!");
                                 }
 
                                 private void showTrump(Activity activity, Response response) {
