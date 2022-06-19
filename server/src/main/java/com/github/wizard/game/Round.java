@@ -34,7 +34,7 @@ public final class Round {
 
         players.tellAllTrumpSelected(cardsInTheMiddle.trump);
 
-        players.updateGAmeBoard(cardsInTheMiddle.getCards());
+        players.updateGAmeBoard(cardsInTheMiddle.getCards(), "");
         players.getAllEstimates();
     }
 
@@ -61,17 +61,17 @@ public final class Round {
         cardsInTheMiddle.playCard(card, player);
 
         if (cardsInTheMiddle.getCardsPlayed() == players.size()) {
-
-            players.updateGAmeBoard(cardsInTheMiddle.getCards());
+            Player winner = cardsInTheMiddle.getWinningPlayer();
+            players.updateGAmeBoard(
+                    cardsInTheMiddle.getCards(), ""); // round finished, no next player
 
             new Timer()
                     .schedule(
                             new TimerTask() {
                                 @Override
                                 public void run() {
-                                    Player winner = cardsInTheMiddle.getWinningPlayer();
-                                    players.finishTrick(winner); // notify other players
 
+                                    players.finishTrick(winner); // notify other players
                                     if (winner.cardsLeft() == 0) {
                                         players.notifyAboutPointsAndRound(number);
 
@@ -88,7 +88,7 @@ public final class Round {
                                         return;
                                     } else {
                                         cardsInTheMiddle.reset();
-                                        players.updateGAmeBoard(cardsInTheMiddle.getCards());
+                                        players.updateGAmeBoard(cardsInTheMiddle.getCards(), "");
                                         winner.playCardRequestWithTimeout(); // request to start
                                         // next trick
                                     }
@@ -96,8 +96,8 @@ public final class Round {
                             },
                             3000);
         } else {
-            players.updateGAmeBoard(cardsInTheMiddle.getCards());
             Player nextPlayer = players.getNextPlayer(player);
+            players.updateGAmeBoard(cardsInTheMiddle.getCards(), nextPlayer.getName());
             nextPlayer.playCardRequestWithTimeout();
             Logger.info("asking player {} to play", nextPlayer.getPlayerId());
         }

@@ -244,6 +244,7 @@ public class GamePlayActivity extends AppCompatActivity {
     public void showScoreBoard(ScoreboardFragment fragment) {
         if (scoreboardframe.getVisibility() == View.VISIBLE) {
             scoreboardframe.setVisibility(View.GONE);
+            closeScoreboard.setVisibility(View.GONE);
             FragmentManager fragmentm = getSupportFragmentManager();
             FragmentTransaction fragmenttrans = fragmentm.beginTransaction();
             fragmenttrans.replace(R.id.framescoreboard, fragment);
@@ -336,7 +337,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     private void updateEstimateTextview(String estimate) {
         TextView estimateTextView = findViewById(R.id.stiche_estimated);
-        estimateTextView.setText("You wanted to make " + estimate + " Stiche");
+        estimateTextView.setText("You wanted to make " + estimate + " tricks");
     }
 
     private void submitEstimate(String estimate) {
@@ -403,7 +404,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     public void updateNumberOfStichesTextview() {
         TextView stiche = findViewById(R.id.stiche_made);
-        stiche.setText("You habe already made " + numberOfStitchesMade + " Stiche");
+        stiche.setText("You have already made " + numberOfStitchesMade + " tricks");
     }
 
     private class GameActionRunnable implements GrpcRunnableNew {
@@ -472,7 +473,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                                 .setText(
                                                         "You have already made "
                                                                 + stichmade.getTotalstichebyplayer()
-                                                                + " Stiche");
+                                                                + " tricks");
 
                                     } else { // someone else made the stich
                                         Toast.makeText(
@@ -514,6 +515,19 @@ public class GamePlayActivity extends AppCompatActivity {
                                     updateCardsInMiddleRecyclerView(cardsInMiddle);
 
                                     cards = cardsInHand;
+
+                                    String nextPlayerName = cardList.getTurn();
+
+                                    if (!nextPlayerName.equals("")) {
+                                        ((TextView)
+                                                        activity.findViewById(
+                                                                R.id.whosTurnIsItTextview))
+                                                .setText("Its " + nextPlayerName + "'s turn!");
+                                    } else
+                                        ((TextView)
+                                                        activity.findViewById(
+                                                                R.id.whosTurnIsItTextview))
+                                                .setText("Please wait for your turn!");
                                 }
 
                                 private void showTrump(Activity activity, Response response) {
@@ -552,7 +566,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                     Toast.makeText(
                                                     activity.getApplication()
                                                             .getApplicationContext(),
-                                                    "trumpf is: " + response.getData(),
+                                                    "trump is: " + response.getData(),
                                                     Toast.LENGTH_SHORT)
                                             .show();
                                 }
@@ -565,7 +579,7 @@ public class GamePlayActivity extends AppCompatActivity {
                                         Activity activity, GameStatus gameStatus) {
                                     // reset stich counter to 0 when new round starts
                                     ((TextView) activity.findViewById(R.id.stiche_made))
-                                            .setText("You have already made 0 Stiche");
+                                            .setText("You have already made 0 tricks");
 
                                     for (GrpcPlayer grpcPlayer : gameStatus.getPlayersList()) {
                                         // update my points
