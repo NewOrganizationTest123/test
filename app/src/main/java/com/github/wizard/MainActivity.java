@@ -78,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
                         min2players.setVisibility(View.GONE);
                         new GrpcTaskGamePlay(new activateGAme(), new WeakReference<>(this))
                                 .execute();
-                    }
-                    else {
+                    } else {
                         min2players.setVisibility(View.VISIBLE);
                         startOnNext = true;
                         new GrpcTaskGamePlay(new getPlayers(), new WeakReference<>(this)).execute();
@@ -258,12 +257,11 @@ public class MainActivity extends AppCompatActivity {
                             Button refresh = activity.findViewById(R.id.refresh_playerList);
                             refresh.setVisibility(View.VISIBLE);
                             refresh.setOnClickListener(
-                                    (View view) ->
-                                    {
-                                        TextView min2players = activity.findViewById(R.id.min2playersTextView);
+                                    (View view) -> {
+                                        TextView min2players =
+                                                activity.findViewById(R.id.min2playersTextView);
                                         min2players.setVisibility(View.GONE);
-                                        new GrpcTaskGamePlay(
-                                                new getPlayers(), activityReference)
+                                        new GrpcTaskGamePlay(new getPlayers(), activityReference)
                                                 .execute();
                                     });
                         });
