@@ -236,7 +236,9 @@ public class Server implements Callable<Integer> {
         public void setAsReady(JoinRequest request, StreamObserver<ReadyToJoin> responseObserver) {
             Logger.debug("setAsReady called");
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
-            if (newGame != null && newGame.getNrPlayers() < MAX_PLAYERS&&newGame.getNrPlayers()>1) {
+            if (newGame != null
+                    && newGame.getNrPlayers() < MAX_PLAYERS
+                    && newGame.getNrPlayers() > 1) {
                 newGame.ready = true;
                 ReadyToJoin reply = ReadyToJoin.newBuilder().setReady(true).build();
                 responseObserver.onNext(reply);
