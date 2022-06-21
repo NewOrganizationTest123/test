@@ -87,6 +87,9 @@ public class Game {
         if (nextPlayer == null)
             nextPlayer =
                     players.getNextPlayer(players.get(0)); // the host shall start the first round
+        players.updateGAmeBoard(
+                getCurrentRound().getCardsInTheMiddle().getCards(),
+                nextPlayer.getName()); // inform other players about whose time it is
         nextPlayer.playCardRequestWithTimeout();
         Logger.info(
                 "asking player {} to play the first card after all estimates were received",
