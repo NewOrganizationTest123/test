@@ -23,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.MainThread;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -214,6 +216,12 @@ public class GamePlayActivity extends AppCompatActivity {
 
     public static String getPlayerpoints(int i) {
         return players.get(i).getPoints().toString();
+    }
+
+    @Override
+    public void onBackPressed(){
+        //back button not needed because of button in GUI
+        //super.onBackPressed();
     }
 
     /* just for testcase*/
