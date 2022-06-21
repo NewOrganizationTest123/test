@@ -33,7 +33,6 @@
             android:theme="@style/Theme.MyApplication.NoActionBar"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:parentActivityName=".MainMenuActivity"
         />
     </application>
 
