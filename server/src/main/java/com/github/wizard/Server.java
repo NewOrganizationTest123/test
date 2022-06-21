@@ -236,7 +236,9 @@ public class Server implements Callable<Integer> {
         public void setAsReady(JoinRequest request, StreamObserver<ReadyToJoin> responseObserver) {
             Logger.debug("setAsReady called");
             Game newGame = games.get(Integer.valueOf(request.getGameid()));
-            if (newGame != null && newGame.getNrPlayers() < MAX_PLAYERS) {
+            if (newGame != null
+                    && newGame.getNrPlayers() < MAX_PLAYERS
+                    && newGame.getNrPlayers() > 1) {
                 newGame.ready = true;
                 ReadyToJoin reply = ReadyToJoin.newBuilder().setReady(true).build();
                 responseObserver.onNext(reply);
@@ -309,6 +311,11 @@ public class Server implements Callable<Integer> {
                                     game.cheatDiscoverySubmitted(cheater, player);
                                 }
                             }
+                        }
+                        case "-2" -> {
+                            newGame.endGame();
+                            Logger.debug("Game ended on request by player " + player.getName());
+                            break;
                         }
                         default -> throw new IllegalArgumentException(
                                 "This game Action is not yet implemented");
