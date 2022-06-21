@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private static boolean startOnNext = false;
     private static int playerId;
     private Button backtoMenu;
+    private TextView min2players;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,12 +70,16 @@ public class MainActivity extends AppCompatActivity {
         startGame.setOnClickListener(this::startNewGame);
         joinGame.setOnClickListener(this::joinGame);
         backtoMenu.setOnClickListener(this::backtoMenu);
+        min2players = findViewById(R.id.min2playersTextView);
+        min2players.setVisibility(View.GONE);
         next.setOnClickListener(
                 (View view) -> {
-                    if (playersCounter > 1)
+                    if (playersCounter > 1) {
+                        min2players.setVisibility(View.GONE);
                         new GrpcTaskGamePlay(new activateGAme(), new WeakReference<>(this))
                                 .execute();
-                    else {
+                    } else {
+                        min2players.setVisibility(View.VISIBLE);
                         startOnNext = true;
                         new GrpcTaskGamePlay(new getPlayers(), new WeakReference<>(this)).execute();
                     }
@@ -252,10 +257,13 @@ public class MainActivity extends AppCompatActivity {
                             Button refresh = activity.findViewById(R.id.refresh_playerList);
                             refresh.setVisibility(View.VISIBLE);
                             refresh.setOnClickListener(
-                                    (View view) ->
-                                            new GrpcTaskGamePlay(
-                                                            new getPlayers(), activityReference)
-                                                    .execute());
+                                    (View view) -> {
+                                        TextView min2players =
+                                                activity.findViewById(R.id.min2playersTextView);
+                                        min2players.setVisibility(View.GONE);
+                                        new GrpcTaskGamePlay(new getPlayers(), activityReference)
+                                                .execute();
+                                    });
                         });
             }
         }
