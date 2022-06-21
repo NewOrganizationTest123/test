@@ -145,6 +145,14 @@ public class GamePlayActivity extends AppCompatActivity {
         hideCheatingExposingView(); // by default, the cheating-exposing view is not visible; only
         // shows up after shaking device
 
+        endgame.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        endServerGame();
+                    }
+                });
+
         closeCheatsViewButton.setOnClickListener(e -> hideCheatingExposingView());
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -188,13 +196,6 @@ public class GamePlayActivity extends AppCompatActivity {
                         showScoreBoard(new ScoreboardFragment());
                     }
                 });
-        endgame.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        EndofGame(new ScoreboardFragment());
-                    }
-                });
         homebutton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -209,6 +210,7 @@ public class GamePlayActivity extends AppCompatActivity {
                 e -> {
                     scoreboardframe.setVisibility(View.GONE);
                     closeScoreboard.setVisibility(View.GONE);
+                    findViewById(R.id.btnendgame).setVisibility(View.GONE);
                 });
     }
 
@@ -243,6 +245,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     public void showScoreBoard(ScoreboardFragment fragment) {
         if (scoreboardframe.getVisibility() == View.VISIBLE) {
+            findViewById(R.id.btnendgame).setVisibility(View.GONE);
             scoreboardframe.setVisibility(View.GONE);
             closeScoreboard.setVisibility(View.GONE);
             FragmentManager fragmentm = getSupportFragmentManager();
@@ -250,6 +253,7 @@ public class GamePlayActivity extends AppCompatActivity {
             fragmenttrans.replace(R.id.framescoreboard, fragment);
             fragmenttrans.commit();
         } else {
+            findViewById(R.id.btnendgame).setVisibility(View.VISIBLE);
             scoreboardframe.setVisibility(View.VISIBLE);
             scoreboardframe.bringToFront();
             closeScoreboard.setVisibility(View.VISIBLE);
@@ -855,6 +859,10 @@ public class GamePlayActivity extends AppCompatActivity {
 
             return logs.toString();
         }
+    }
+
+    private void endServerGame() {
+        serverWaitingQueue.add(newGameMove(-2, "I want to quit the game"));
     }
 
     private void randomCardPlayed() {

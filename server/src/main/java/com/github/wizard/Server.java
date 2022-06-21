@@ -310,6 +310,11 @@ public class Server implements Callable<Integer> {
                                 }
                             }
                         }
+                        case "-2" -> {
+                            newGame.endGame();
+                            Logger.debug("Game ended on request by player " + player.getName());
+                            break;
+                        }
                         default -> throw new IllegalArgumentException(
                                 "This game Action is not yet implemented");
                     }
