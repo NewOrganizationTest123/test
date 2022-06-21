@@ -11,7 +11,7 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="wer_bist_du">Who are you?</string>
     <string name="game_id">Game ID</string>
-    <string name="hallo_zauberlehrling">Welcome, sorcerers apprentice!</string>
+    <string name="hallo_zauberlehrling">Welcome,\n sorcerers apprentice!</string>
     <string name="neues_spiel_starten">New Game</string>
     <string name="spiel_beitreten">Join Game</string>
     <string name="anleitung">Game Rules</string>
@@ -20,6 +20,6 @@
     <string name="punkte">0</string>
     <string name="runde">0</string>
     <string name="spiel_starten">Start Game</string>
-    <string name="gib_deinen_namen_ein">Enter your name:</string>
+    <string name="gib_deinen_namen_ein">Enter your name...</string>
     <string name="aktuelle_spieler">Current players:</string>
 </resources>
