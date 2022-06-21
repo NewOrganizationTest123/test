@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
     private static int playerId;
     private Button backtoMenu;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,14 +135,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
-    public void onBackPressed(){
-        //back button not needed because of button in GUI
-        //super.onBackPressed();
+    public void onBackPressed() {
+        // back button not needed because of button in GUI
+        // super.onBackPressed();
     }
 
-    public void backtoMenu(View view){
+    public void backtoMenu(View view) {
         setContentView(R.layout.activity_main_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
