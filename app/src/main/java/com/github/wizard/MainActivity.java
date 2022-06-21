@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     private static GameStarterGrpc.GameStarterBlockingStub gameStarterBlockingStub;
     private static GamePlayGrpc.GamePlayBlockingStub gamePlayBlockingStub;
     private static int gameIdInt;
+    private static int playersCounter = 0;
+    private static boolean startOnNext = false;
     private static int playerId;
 
     @Override
@@ -65,9 +67,15 @@ public class MainActivity extends AppCompatActivity {
         startGame.setOnClickListener(this::startNewGame);
         joinGame.setOnClickListener(this::joinGame);
         next.setOnClickListener(
-                (View view) ->
+                (View view) -> {
+                    if (playersCounter > 1)
                         new GrpcTaskGamePlay(new activateGAme(), new WeakReference<>(this))
-                                .execute());
+                                .execute();
+                    else {
+                        startOnNext = true;
+                        new GrpcTaskGamePlay(new getPlayers(), new WeakReference<>(this)).execute();
+                    }
+                });
         gameId.addTextChangedListener(
                 new TextWatcher() {
 
@@ -259,10 +267,17 @@ public class MainActivity extends AppCompatActivity {
                     JoinRequest.newBuilder().setGameid(gameIdInt + "").setName("").build();
             Iterator<Player> players = gamePlayBlockingStub.getPlayers(request);
 
+            playersCounter = 0;
             while (players.hasNext()) {
+                playersCounter++;
                 Player player = players.next();
                 activity.runOnUiThread(() -> playersTextView.append(player.getName() + "\n"));
                 logs.append(player.getName()).append("\n");
+            }
+            if (startOnNext) {
+                if (playersCounter > 1)
+                    new GrpcTaskGamePlay(new activateGAme(), activityReference).execute();
+                else startOnNext = false;
             }
 
             return logs + "\ngame is ready to launch!";
