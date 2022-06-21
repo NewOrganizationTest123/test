@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private static int playersCounter = 0;
     private static boolean startOnNext = false;
     private static int playerId;
+    private Button backtoMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +63,12 @@ public class MainActivity extends AppCompatActivity {
         name = findViewById(R.id.editTextTextPersonName);
         gameId = findViewById(R.id.editTextNumber);
         joinGame = findViewById(R.id.button3);
+        backtoMenu = findViewById(R.id.backbutton);
         Button startGame = findViewById(R.id.button);
         Button next = findViewById(R.id.next);
         startGame.setOnClickListener(this::startNewGame);
         joinGame.setOnClickListener(this::joinGame);
+        backtoMenu.setOnClickListener(this::backtoMenu);
         next.setOnClickListener(
                 (View view) -> {
                     if (playersCounter > 1)
@@ -138,6 +141,17 @@ public class MainActivity extends AppCompatActivity {
         } else {
             startGame.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // back button not needed because of button in GUI
+        // super.onBackPressed();
+    }
+
+    public void backtoMenu(View view) {
+        setContentView(R.layout.activity_main_menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void startNewGame(View view) {

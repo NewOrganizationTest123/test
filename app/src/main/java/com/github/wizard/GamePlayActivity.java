@@ -218,6 +218,12 @@ public class GamePlayActivity extends AppCompatActivity {
         return players.get(i).getPoints().toString();
     }
 
+    @Override
+    public void onBackPressed() {
+        // back button not needed because of button in GUI
+        // super.onBackPressed();
+    }
+
     /* just for testcase*/
     public void EndofGame(ScoreboardFragment scoreboardfragment) {
         scoreboardframe.setVisibility(View.VISIBLE);
